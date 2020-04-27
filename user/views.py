@@ -12,26 +12,20 @@ from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from django.contrib.auth.decorators import login_required
-
-
-
-# Vieư cho trang login
 from .validators import validate_user_id
 
 
+# View cho trang login
 def login_view(request):
     if request.method == 'POST':
-
         form = CustomUserLoginForm(request.POST)
         if form.is_valid():
-            print('test')
             user = authenticate(email=form.cleaned_data['email'], password=form.cleaned_data['password'])
             print(user)
             if user is not None:
                 login(request, user)
                 print(request.GET)
                 return redirect(request.GET.get('next', 'hm:index'))
-
     else:
         form = CustomUserLoginForm()
     return render(request, 'user/login.html', {'form': form})
@@ -42,9 +36,12 @@ def signup(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
+            # Save user object nhưng không đẩy lên database
             user = form.save(commit=False)
-            user.is_active = False
+            user.is_active = False  # Chưa cho tài khoản này được sử dụng
             user.save()
+
+            # Gen token và gửi email
             current_site = get_current_site(request)
             mail_subject = 'Activate your account.'
             message = render_to_string('user/acc_active_email.html', {
@@ -58,6 +55,8 @@ def signup(request):
                 mail_subject, message, to=[to_email]
             )
             email.send()
+
+            # Gửi phản hồi
             return HttpResponse('Please confirm your email address to complete the registration')
     else:
         form = CustomUserCreationForm()
@@ -65,12 +64,15 @@ def signup(request):
 
 
 # View kích hoạt email
+# Người dùng truy cập link verify trong email sẽ được chuyển đến đây
+# Hàm nhận 3 tham số request, id user, token để verify
 def activate(request, uidb64, token):
     try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = get_user_model().objects.get(pk=uid)
+        uid = force_text(urlsafe_base64_decode(uidb64))  # Decode uid
+        user = get_user_model().objects.get(pk=uid)  # get user từ uid
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
+    # Kiểm tra token có đúng không
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
@@ -81,6 +83,8 @@ def activate(request, uidb64, token):
         return HttpResponse('Activation link is invalid!')
 
 
+# Khi người dùng nhập email để đăng kí kiểm tra email hợp lệ ở đây rồi báo trực tiếp về client
+# Chắc nên chuyển thành code Js đặt ở browser
 def validate_ajax_answer(request):
     print(request.POST)
     check_email = request.POST.get('isEmail', None)
@@ -92,6 +96,7 @@ def validate_ajax_answer(request):
     return JsonResponse(data)
 
 
+# View log out
 @login_required
 def logout_view(request):
     logout(request)

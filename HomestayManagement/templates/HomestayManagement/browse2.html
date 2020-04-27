@@ -1,11 +1,20 @@
+/*
+File template duyệt trang chính
+*/
+
+
 {% extends "HomestayManagement/base.html" %}
+
 {% load static %}
 {% load homestaytags %}
+
 {% block content_main %}
 <div class="content-wrapper">
     <div class='preview-section'>
         <h1 class='preview-section-header'>Header 1</h1>
         <div class='results'>
+
+{#            For với mỗi homestay truyền vào, tạo một thẻ cho homestay#}
             {% for homestay in homestay_list %}
                 <div class='result-card'>
                     {% with homestay.reviewimage_set.all.0 as review_image %}

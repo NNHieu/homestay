@@ -1,3 +1,8 @@
+
+/*
+Trang hiện thông tin chi tiết
+*/
+
 {% extends "HomestayManagement/base.html" %}
 {% load static %}
 {% load homestaytags %}
@@ -8,6 +13,7 @@
     <link rel="stylesheet" href="{% static "hms/map.css" %}">
 {% endblock %}
 {% block js %}
+    //Cdn Bản đồ open layer.
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
 {% endblock %}
 {% block content_main %}
@@ -16,54 +22,7 @@
          style="background-image: url({{ homestay.reviewimage_set.all.0.image.url }});"
     >
     </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="catchphrase">
-                    <h1 class="homestay-title" itemprop="name">{{ homestay.title }}</h1>
-                    <div class="spacer"></div><h5>Homestay in Sutton - Dublin, Ireland</h5>
-                </div>
-            </div>
-            <div class="col-md-4 col-xs-10 col-xs-push-2 col-sm-push-2 col-md-push-0 text-right bottom-align-sm">
-                <div class="spacer-double-xs"></div><div class="cheapest-rate" data-default-cheapest-rate-amount="2083" data-default-cheapest-rate-currency-code="EUR" data-default-cheapest-rate-room-id="273424" id="cheapest-rate">
-                <h5><a data-scroll-offset="-100" data-scroll-to="true" href="#bedrooms">
-                    <span class="value">From <strong data-currency-code="EUR" data-format="no-cents" data-price="" data-amount="16500.166666666664">
-                        <span class="price-amount">
-                            <span class="currency_symbol">₫</span>4,204,127</span>
-                    </strong> per week</span></a></h5></div><div class="spacer-half">
 
-            </div>
-                <a class="button medium secondary contact-host-cta hidden-md hidden-lg hidden" data-scroll-offset="-20" data-scroll-to="true" href="#bedroom-section">Check Availability</a>
-                <div class="spacer spacer-0-xs"></div>
-            </div>
-        </div>
-        <div class="favourite-buttons favourite_11932" data-homestay-id="11932">
-            <div class="favourite-button unfavourite" data-href="/favourites?city=dublin&amp;country=ireland&amp;id=11932" data-original-title="" title=""></div>
-            <div class="favourite-button favourite hidden" data-href="/favourites/11932?city=dublin&amp;country=ireland"></div>
-        </div>
-        <div class="banner-navigation" id="js-follow-once-passed" style="padding-top: 0px;">
-            <nav class="navbar navbar-secondary navbar-anchor">
-                <div class="container"><ul class="nav navbar-nav">
-                    <li><a class="inline-link" data-scroll-offset="-40" data-scroll-to="true" href="#homestay">Homestay</a></li>
-                    <li><a class="inline-link" data-scroll-offset="-40" data-scroll-to="true" href="#photos">Photos</a></li>
-                    <li><a class="inline-link" data-scroll-offset="-100" data-scroll-to="true" href="#bedrooms">Rooms</a></li>
-                    <li><a class="inline-link" data-scroll-offset="-20" data-scroll-to="true" href="#location">Location</a></li>
-                    <li><a class="inline-link" data-scroll-offset="-20" data-scroll-to="true" href="#meals-and-rules">Meals &amp; Rules</a></li>
-                    <li><a class="inline-link" data-scroll-offset="-20" data-scroll-to="true" href="#reviews">16 Reviews</a></li>
-                    <li><a class="inline-link" data-scroll-offset="-20" data-scroll-to="true" href="#how-to-book">How to book</a></li>
-                </ul>
-                    <div class="nav navbar-nav navbar-right">
-                        <a class="button secondary medium wide contact-host-cta cheapest-rate hidden" data-scroll-offset="-20" data-scroll-to="true" href="#bedroom-section">
-                            <span class="value hidden-sm hidden-xs">From <strong data-currency-code="EUR" data-format="no-cents" data-price="" data-amount="16500.166666666664">
-                                <span class="price-amount"><span class="currency_symbol">₫</span>4,204,127</span>
-                            </strong> per week
-                            </span>
-                            <span class="hs-icon-envelope hidden-md hidden-lg"></span></a>
-                    </div>
-                </div>
-            </nav>
-        </div>
-    </div>
 </div>
 <div class="container_12 content">
     <h2>About the Homestay</h2>
@@ -83,8 +42,6 @@
         <!--The div element for the map -->
     <div id="map" class="map" data-lng="{{ homestay.address.lng }}" data-lat="{{ homestay.address.lat }}"></div>
     </div>
-
-
     <div class="grid_4 omega">
         <p>{{ homestay.address.about_area }}</p>
     </div>
@@ -92,7 +49,6 @@
         <h3>LOCAL AREA FACILITIES</h3>
         {% show_area_facilities homestay %}
     </div>
-    <!-- Replace the value of the key parameter with your own API key. -->
     <script type="module" src="{% static "hms/map.js" %}"></script>
 </div>
 {% endblock %}

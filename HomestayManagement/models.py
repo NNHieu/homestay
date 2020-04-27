@@ -15,7 +15,7 @@ def validator_welcome_value(value):
             params={'value': value}
         )
 
-
+# Model cho Homestay
 class Homestay(models.Model):
     # owner = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
@@ -70,6 +70,8 @@ class Homestay(models.Model):
 #     images = models.ManyToManyField('ReviewImage', symmetrical=False)
 #
 #
+
+# Model lưu thông tin địa chỉ
 class Address(models.Model):
     lat = models.FloatField()
     lng = models.FloatField()
@@ -83,6 +85,7 @@ class Address(models.Model):
         unique_together = ('lat', 'lng',)
 
 
+# Model về các tiện ích
 class Facility(models.Model):
     name = models.CharField(max_length=20, unique=True)
     is_area_facility = models.BooleanField(default=False)  # Thuộc về khu vực
@@ -92,6 +95,7 @@ class Facility(models.Model):
         return self.name
 
 
+# Model về các ảnh review
 class ReviewImage(models.Model):
     image = models.ImageField(unique=True, upload_to='image/mysite/')
     homestay = models.ForeignKey(Homestay, on_delete=models.CASCADE)
