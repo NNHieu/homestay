@@ -25,7 +25,7 @@ class HomestayDotCom(scrapy.Spider):
 
     def parse_list(self, response):
         links = response.xpath('//a[@class="profile-link"]/@href').getall()
-        for link in links[0:1]:
+        for link in links:
             yield scrapy.Request('https://homestay.com' + link, callback=self.parse_detail)
 
     def parse_detail(self, response):

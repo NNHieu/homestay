@@ -21,5 +21,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('user.urls')),
-    path('homestay/', include('HomestayManagement.urls'))
+    path('', include('HomestayManagement.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

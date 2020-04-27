@@ -24,9 +24,10 @@
 - [ ] Gửi mail thông báo
 - [ ] ...
 
+
 # Chú ý
-* Để sử dụng dữ liệu có sẵn cần tải thư mục https://drive.google.com/open?id=1ZdFuNpQYj7xkeqyV0xXxvvtCbg0PTBz3
-đặt vào folder /media
+* account supper user: email=admin@email.com, password=imadmin
+* Để sử dụng dữ liệu có sẵn cần tải file media.zip ở đây https://drive.google.com/drive/u/1/folders/1ZdFuNpQYj7xkeqyV0xXxvvtCbg0PTBz3 giải nén ở thử mục gốc của project
 * Database sdlite3: https://drive.google.com/open?id=1QX7vpcQtBWh9JrSecTfizWEYq0_aNHQI
 # Hình ảnh
 https://drive.google.com/open?id=1NRBR60wudIkZxl74SMpbvoM-kJ1CQMUA
