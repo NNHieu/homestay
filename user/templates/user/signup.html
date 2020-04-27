@@ -1,0 +1,54 @@
+{% extends "user/base.html" %}
+{% load static %}
+{% block src_script %}
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="{% static "register.js" %}"></script>
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
+{% endblock %}
+
+{% block input_fields %}
+    {% for field in form %}
+    <div class="form-group__text">
+        {{ field.errors }}
+        {{ field.label_tag }}
+        <div class="input-line">
+        {% if not 'password' in field.name %}
+            <input type="text" id="{{field.id_for_label}}" name="{{field.name}}" class value="{{ field.value|default_if_none:'' }}" required
+            autocomplete="off" data-validate-url="{% url "account:validate" %}">
+
+            {% if field.name == 'username' or field.name == 'email' %}
+                <i class='fas fa-check-circle tick' id="i_{{ field.name }}"></i>
+            {% endif %}
+            {% if field.help_text %}
+              <small style="display: none">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+              <p style="color: red">{{ error }}</p>
+            {% endfor %}
+        {% else %}
+            <input type="password" id="{{field.id_for_label}}" name="{{field.name}}" class value required
+            autocomplete="off" data-validate-url="{% url "account:validate" %}">
+
+        {% endif %}
+{#                                {% if field.help_text %}#}
+{#                                <p class="help">{{ field.help_text|safe }}</p>#}
+{#                                {% endif %}#}
+        </div>
+    </div>
+    {% endfor %}
+
+{% endblock %}
+{% block submit_button_text %}Sign up{% endblock %}
+
+{% block other_option %}
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        validate_email();
+    </script>
+{% endblock %}

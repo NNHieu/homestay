@@ -1,0 +1,115 @@
+.content-wrapper {
+    max-width: 1100px;
+    min-width: 620px;
+    margin: 0px auto;
+}
+
+.preview-section {
+    margin: 0px auto;
+}
+
+.preview-section-header {
+    font-size: 22px;
+    margin: 1px;
+}
+
+.results {
+    display: inline-grid;
+    grid-gap: 20px 15px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.result-card {
+    display: inline-grid;
+    grid-template-rows: 240px auto;
+    width: 354px;
+    min-height: 400px;
+    position: relative;
+
+    box-shadow: 0 1px 10px rgba(49, 54, 68, .09);
+    border: 1px solid #e0e0e0;
+    border-radius: 3px;
+    transition: all 0.3s ease-in-out;
+    /*overflow: hidden;*/
+
+    background-color: rgb(var(--color-foreground));
+}
+
+
+.result-card::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+    box-shadow: 0 2px 20px rgba(49, 54, 68, .22);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.result-card:hover {
+    transform: scale(1.05, 1.05);
+}
+
+.result-card:hover::after {
+    opacity: 1;
+}
+
+.cover {
+    background-position: 50%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    border-radius: 3px;
+    margin: 4px;
+}
+
+.data {
+    position: relative;
+}
+
+.title-link {
+    font-size: 20px;
+    line-height: 2.4rem;
+    word-wrap: break-word; /* IE 5.5-7 */
+    white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+    white-space: pre-wrap; /* current browsers */
+    padding: 5px 10px;
+    height: 5.4rem;
+    text-align: center;
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+.title-link:hover {
+    color: sandybrown;
+}
+
+.description {
+    font-size: 13px;
+    line-height: 1.4rem;
+}
+.card.description{
+    padding: 12px;
+    overflow: hidden;
+    height: 23rem;
+    margin-bottom: 45px;
+}
+
+.card.description:hover {
+    overflow-y: scroll;
+}
+
+.facilities {
+    background: rgb(var(--color-foreground-blue));
+    color: rgb(var(--color-text-lighter));
+    position: absolute;
+    bottom: 0;
+    padding: 6px 10px;
+    text-align: center;
+    width: 100%;
+    line-height: 15px;
+    height: 40px;
+    overflow: hidden;
+}

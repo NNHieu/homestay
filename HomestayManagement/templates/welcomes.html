@@ -1,0 +1,8 @@
+<ul>
+    <li class="small">
+        Welcomes
+    </li>
+    {% for tick, label in show %}
+    <li class="small">{% if tick %} &#10004; {% else %} &#10008; {% endif %} {{ label }}</li>
+    {% endfor %}
+</ul>

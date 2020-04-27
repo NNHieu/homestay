@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New Homestay</title>
+</head>
+<body>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    {% for form in image_formset %}
+        <div style="display: block;">{{ form }}</div>
+
+    {% endfor %}
+    <button type="submit">Upload</button>
+</form>
+</body>
+</html>

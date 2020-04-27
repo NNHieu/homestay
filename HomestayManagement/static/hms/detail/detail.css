@@ -1,0 +1,43 @@
+.banner{
+    position: absolute;
+    width: 100%;
+    padding: 10px 0px;
+}
+
+.banner .background-image{
+    background-image: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 100%);
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50%;
+}
+
+.content{
+    margin-top: 385px;
+}
+
+ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+ul li{
+    float: left;
+    padding: 16px;
+}
+
+#map{
+    height: 400px;  /* The height is 400 pixels */
+    width: 100%;
+}
+
+@media (min-width: 992px){
+    .banner{
+        min-height: 385px;
+    }
+}
