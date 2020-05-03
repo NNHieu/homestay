@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, get_user_model, logout
 from django.urls import reverse
 
-from .forms import CustomUserCreationForm, CustomUserLoginForm
+from .forms import CustomUserCreationForm, CustomUserLoginForm, EditProfileForm, ProfileForm
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -25,7 +25,7 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 print(request.GET)
-                return redirect(request.GET.get('next', 'hm:index'))
+                return redirect(request.GET.get('next', 'homestay:index'))
     else:
         form = CustomUserLoginForm()
     return render(request, 'user/login.html', {'form': form})
@@ -100,4 +100,21 @@ def validate_ajax_answer(request):
 @login_required
 def logout_view(request):
     logout(request)
-    return redirect("hm:index")
+    return redirect("homestay:index")
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.userprofile)  # request.FILES is show the selected image or file
+        if form.is_valid() and profile_form.is_valid():
+            user_form = form.save()
+            custom_form = profile_form.save(False)
+            custom_form.user = user_form
+            custom_form.save()
+            return HttpResponse('Success')
+        
+    else:
+        form = EditProfileForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.userprofile)
+    return render(request, 'user/edit_profile.html', {'form': form, 'profile_form': profile_form})

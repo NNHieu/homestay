@@ -1,0 +1,48 @@
+
+/*
+Trang hiện thông tin chi tiết
+*/
+
+{% extends "homestay/base.html" %}
+{% load static %}
+{% load homestaytags %}
+{% block css %}
+     <link rel="stylesheet" text="text/css" href="{% static "homestay/css/detail.css" %}">
+     <link rel="stylesheet" text="text/css" href="{% static "homestay/css/960.css" %}">
+    <style>
+        .map {
+              height: 300px;
+              width: 100%;
+        }
+    </style>
+{% endblock %}
+{% block js %}
+    //Cdn Bản đồ open layer.
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
+{% endblock %}
+{% block content_main %}
+<div class="banner">
+    <div class="background-image"
+         style="background-image: url({{ homestay.reviewimage_set.all.0.image.url }});"
+    >
+    </div>
+
+</div>
+<div class="container_12 content">
+   
+
+    <h2>About the Area</h2>
+    <div class="grid_8 alpha">
+        <!--The div element for the map -->
+    <div id="map" class="map" data-lng="{{ homestay.address.lng }}" data-lat="{{ homestay.address.lat }}"></div>
+    </div>
+    <div class="grid_4 omega">
+        <p>{{ homestay.address.about_area }}</p>
+    </div>
+    <div class="grid_12">
+        <h3>LOCAL AREA FACILITIES</h3>
+        {% show_area_facilities homestay %}
+    </div>
+    <script type="module" src="{% static "homestay/js/map.js" %}"></script>
+</div>
+{% endblock %}

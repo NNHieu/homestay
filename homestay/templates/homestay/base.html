@@ -1,0 +1,69 @@
+{% load static %}
+{% load homestaytags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Browse Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    {% block include_css %}
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    {% endblock include_css %}
+    
+    <style>
+    {% block style %}
+        body,h1,h2,h3,h4,h5,h6 {
+            font-family: "Raleway", Arial, Helvetica, sans-serif
+        }
+        body, html {
+            height: 100%;
+            color: #777;
+            line-height: 1.8;
+        }
+        .nav-button:hover{
+            color: #000 !important;
+            background-color: #ccc !important;
+        }
+
+        .nav-button{
+            white-space: normal;
+            text-decoration: none;
+        }
+    {% endblock %}
+    </style>
+
+    
+    {% block include_js %}
+    <script
+      <script
+        src="https://code.jquery.com/jquery-3.5.0.slim.js"
+        integrity="sha256-sCexhaKpAfuqulKjtSY7V9H7QT0TCN90H+Y5NlmqOUE="
+        crossorigin="anonymous"></script>
+    </script>
+    {% endblock %}
+    
+</head>
+<body>
+
+{% block navbar %}
+{% include "./navbar.html" with user=request.user only%}
+{% endblock navbar %}
+
+{% block banner %}
+{% endblock banner %}
+
+{% block content_main %}
+{% endblock %}
+
+{% block bottom_script %}
+{% endblock bottom_script %}
+
+{% block footer %}
+<!-- Footer -->
+{% endblock footer %}
+</body>
+</html>

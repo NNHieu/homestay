@@ -19,6 +19,7 @@
                 <div class="welcome">
                     <h2>Welcome</h2>
                 </div>
+                {% block nav %}<a href="{% url "homestay:index" %}"><div style="display: inline-block; width: 40px;height: 30px">Home</div></a>{% endblock %}
                 {% block error_alex %}{% endblock %}
                 <form id="login-from" action="" method="post" autocomplete="off">
                     {% csrf_token %}
@@ -30,7 +31,7 @@
 {#                        <input type="hidden" name="next" value="{{ next }}">#}
                     </div>
                 </form>
-            </div>
+            </>
             <div class="form-needHelp"></div>
             {% block other_option %}{% endblock %}
         </div>

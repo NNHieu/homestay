@@ -1,0 +1,136 @@
+{% extends 'homestay/base.html' %}
+
+{% load static %}
+{% load homestaytags %}
+
+{% block include_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'homestay/css/detail.css' %}">
+  <!-- Open Layer-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/css/ol.css" type="text/css">
+  <!-- t-datepicker -->
+  <link href="{% static 'homestay/css/t-datepicker.min.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'homestay/css/themes/t-datepicker-bluegrey.css' %}" rel="stylesheet" type="text/css">
+{% endblock include_css %}
+
+{% block style %}
+{{ block.super }}
+.ol-attribution {
+  line-height: 0.5px
+}
+.t-datepicker-days{
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  translate: -50%;
+}
+
+.t-check-out .t-datepicker-day {
+    left: 50%;
+}
+{% endblock style %}
+
+{% block include_js %}
+{{ block.super }}
+  <!-- Open Layer -->
+  <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+  <script type="text/javascript" src="https://cdn.polyfill.io/v2/polyfill.min.js?features=fetch,requestAnimationFrame,Element.prototype.classList,URL"></script>
+  <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
+{% endblock include_js %}
+
+{% block navbar %}
+{{ block.super }}
+{% endblock navbar %}
+
+{% block content_main %}
+<div class="w3-content" style="max-width:1600px">
+  <!-- Side Bar -->
+  <div class="w3-sidebar w3-white" style="width: 300px;" >
+    <div class="w3-display-container">
+        <img src="https://www.w3schools.com/w3images/avatar_hat.jpg" style="width:100%" alt="Avatar">
+        <div class="w3-display-bottomleft w3-container w3-text-black">
+          <h2>Jane Doe</h2>
+        </div>
+    </div>
+    <div class="w3-container">
+      <a href="#" onclick="w3_close()" class="w3-hide-large w3-right w3-small w3-padding w3-hover-grey" title="close menu">
+      <i class="fa fa-remove"></i>
+      </a>
+      <p><i class="fa fa-home fa-fw w3-margin-right w3-large w3-text-teal"></i>London, UK</p>
+      <p><i class="fa fa-envelope fa-fw w3-margin-right w3-large w3-text-teal"></i>ex@mail.com</p>
+      <p><i class="fa fa-phone fa-fw w3-margin-right w3-large w3-text-teal"></i>1224435534</p>
+      <hr>
+
+      <div class="t-datepicker">
+          <div class="t-check-in"></div>
+          <div class="t-check-out"></div>
+        </div>
+      <br>
+    </div>
+  <!-- End SideBar -->
+  </div>
+
+  <!-- !PAGE CONTENT! -->
+  <div class="w3-main" style="margin-left: 310px;">
+
+    <div class="w3-container w3-card w3-white w3-margin-bottom">
+        <h2>About the Homestay</h2>
+      <div class="grid_12">
+          {% show_welcomes homestay.welcomes%}
+      </div>
+      <div class="grid_12 description">
+          <p>{{ homestay.description }}</p>
+      </div>
+      <div class="grid_12">
+          <h3>HOUSE FACILITIES</h3>
+          {% show_homestay_facilities homestay%}
+      </div>
+    </div>
+
+    <div class="w3-container w3-card w3-white">
+      <h2>About the Area</h2>
+      <div class="grid_8 alpha">
+          <!--The div element for the map -->
+        <div id="map" class="map" data-lng="{{ homestay.address.lng }}" data-lat="{{ homestay.address.lat }}"></div>
+      </div>
+      <div class="grid_4 omega">
+          <p>{{ homestay.address.about_area }}</p>
+      </div>
+      <div class="grid_12">
+          <h3>LOCAL AREA FACILITIES</h3>
+          {% show_area_facilities homestay %}
+      </div>
+      <script type="module" src="{% static "homestay/js/map.js" %}"></script>
+    </div>
+    <hr>
+    <div class="w3-container w3-card w3-white" style="min-height: 400px">
+      <!-- First Photo Grid-->
+      <div class="w3-row-padding">
+        <div class="w3-third w3-container w3-margin-bottom">
+          <img src="{{homestay.reviewimage_set.all.0.image.url}}" alt="Norway" style="width:100%" class="w3-hover-opacity">
+        </div>
+        <div class="w3-third w3-container w3-margin-bottom">
+          <img src="{{homestay.reviewimage_set.all.1.image.url}}" alt="Norway" style="width:100%" class="w3-hover-opacity">
+        </div>
+        <div class="w3-third w3-container">
+          <img src="{{homestay.reviewimage_set.all.2.image.url}}" alt="Norway" style="width:100%" class="w3-hover-opacity">
+      </div>
+    </div>
+  <!-- End page content -->
+  </div>
+  
+</div>
+{% endblock content_main %}
+{% block bottom_script %}
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+<!-- t-datepicker -->
+<script type="text/javascript" src="{% static 'homestay/js/t-datepicker.min.js' %}"></script>
+<script>
+$(document).ready(function(){
+  // Call global the function
+  $('.t-datepicker').tDatePicker({
+    // options here
+  });
+});
+</script>
+{% endblock bottom_script %}

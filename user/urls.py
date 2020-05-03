@@ -12,5 +12,6 @@ urlpatterns = [
         views.activate, name='activate'),
     path('validate/', views.validate_ajax_answer, name='validate'),
     path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout')
+    path('logout/', views.logout_view, name='logout'),
+    path('edit/', views.edit_profile, name='edit_profile'),
 ]

@@ -1,0 +1,95 @@
+{% load static %}
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+{% if have_banner %}
+    <div class="w3-bar w3-text-white" id="myNavbar">
+{% else %}
+    <div class="w3-bar w3-card w3-animate-top w3-white" id="myNavbar">
+{% endif %}
+        <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right menus" menu="nav-options" href="javascript:void(0);" title="Toggle Navigation Menu">
+        <i class="fa fa-bars"></i>
+        </a>
+        <a href="{% url 'homestay:index' %}" class="w3-bar-item nav-button">HOME</a>
+        <a href="{% url 'homestay:about' %}" class="w3-bar-item nav-button w3-hide-small"><i class="fa fa-user"></i> ABOUT</a>
+        {% for title, link in links %}
+        <a href="{% url link %}" class="w3-bar-item nav-button w3-hide-small"><i class="fa fa-th"></i> {{ title|upper }}</a>
+        {% endfor %}
+        
+        <a href="#" class="w3-bar-item w3-button w3-hide-small w3-hover-red menus" menu='search'><i class="fa fa-search"></i> SEARCH </a>
+
+        <a class="w3-bar-item w3-button w3-right w3-hover-red menus" menu="account" id="user-link">{{ user.first_name|default:"GUEST"|upper }}</a>
+        
+  </div>
+
+  <!-- Navbar on small screens -->
+  <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium menu-box" menu="nav-options">
+    <a href="{% url 'homestay:about' %}" class="w3-bar-item w3-button" onclick="toggleFunction()">ABOUT</a>
+    <a href="#" class="w3-bar-item w3-button">SEARCH</a>
+  </div>
+
+  <!-- Account Menu -->
+  <div id="accountMenu" class="w3-card w3-bar-block w3-white w3-hide w3-animate-right w3-right menu-box" menu="account" style="width:20%; min-width: 200px; margin-top: 3px">
+    {% if user.is_authenticated %}
+    <a href="{% url 'account:edit_profile' %}" class="w3-bar-item w3-button w3-right w3-hover-red w3-center"></i>PROFILE</a>
+    <a href="{% url 'account:logout' %}" class="w3-bar-item w3-button w3-right w3-hover-red w3-center"></i>LOGOUT</a>
+    {% else %}
+    <a href="{% url 'account:login' %}" class="w3-bar-item w3-button w3-right w3-hover-red w3-center"></i>LOGIN</a>
+    {% endif %}
+  </div>
+
+  <!-- Search Menu -->
+  <div id="searchMenu" class="w3-card w3-bar-block w3-white w3-hide w3-animate-left w3-left menu-box" menu="search" style="width:20%; min-width: 200px; margin-top: 3px">
+     <form id="login-from" action="" method="get" autocomplete="off">
+        {% comment %} {% csrf_token %} {% endcomment %}
+        <div class="input">
+            <label for="address">Addess</label>
+            <input id="address" type="text" name="address">
+            <div class="form-group__text">
+                <button id="submit-login" style="width: 100% !important;" type="submit">{% block submit_button_text %}Search{% endblock %}</button>
+            </div>
+        </div>
+    </form>
+  </div>
+
+</div>
+{% if not have_banner %}
+<!-- Putdown Content -->
+<div style="margin-top:80px;"></div>
+{% endif %}
+<script>
+{% if have_banner %}
+   // Change style of navbar on scroll
+    window.onscroll = function() {myFunction()};
+    function myFunction() {
+        var navbar = document.getElementById("myNavbar");
+        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+            navbar.className = "w3-bar" + " w3-card" + " w3-animate-top" + " w3-white";
+        } else {
+            navbar.className = navbar.className.replace(" w3-card w3-animate-top w3-white", " w3-text-white");
+        }
+    }
+{% endif %}
+
+(function(){
+// Used to toggle the menu on small screens when clicking on the menu button
+$('.menus').click(function(e){
+    console.log("Open one");
+    e.stopPropagation();
+    let menubox = $(".menu-box[menu="+ $(this).attr("menu") +"]");
+    $(".menu-box[menu!="+ $(this).attr("menu") +"]").removeClass('w3-show');
+    menubox.toggleClass('w3-show');
+})
+
+$(window).click(function (e){
+    console.log(e.target);
+    if(!e.target.matches('.menus-box')) {
+        console.log('fire');
+        $('.menu-box').removeClass('w3-show');
+    }
+});
+
+})();
+
+
+</script>
+
