@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'user.apps.UserConfig',
     'homestay.apps.HmConfig',
-    'resolv_address.apps.ResolvAddressConfig'
 ]
 
 MIDDLEWARE = [
