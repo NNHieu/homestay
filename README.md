@@ -3,10 +3,12 @@
 - [x] Đăng kí, đăng nhập, đăng xuất
 - [x] Verify tài khoản đăng kí bằng email
 - [x] Một số testcase đơn giản cho việc tạo tài khoản
-- [ ] Phân biệt tài khoản owner, renter
+- [-] Phân biệt tài khoản owner, renter
+- [x] Sửa thông tin tài khoản
 
 * Về trang duyệt danh sách
 - [x] Trang duyệt qua các homestay theo dạng thẻ (sơ sài)
+- [x] Tìm kiếm theo địa chỉ bằng cách nhập text, có gợi ý
 * Về trang hiện thông tin chi tiết homestay
   * Hiện thông tin cơ bản:
     - [x] Title, description, about area
