@@ -9,6 +9,9 @@ from django.utils import timezone
 
 
 # Create your models here.
+from scipy.spatial import KDTree
+
+
 def validator_welcome_value(value):
     if value > 31:
         raise ValidationError(
@@ -74,6 +77,7 @@ class Homestay(models.Model):
 
 # Model lưu thông tin địa chỉ
 class Address(models.Model):
+
     lat = models.FloatField()
     lng = models.FloatField()
     about_area = models.TextField(max_length=1000)

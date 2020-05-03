@@ -16,8 +16,12 @@ urlpatterns = [
     path('upload/', views.upload_view, name='upload'),
     path('upload/success/', views.upload_success_view, name='upload_success'),
     path('my/', views.MyView.as_view(), name='my'),
+    path('search/', views.search, name='search'),
+    path('test/search', views.test_search, name='test_search'),
     path('about/', views.about_view, name='about'),
+
     path('test/', include(view_patterns)),
+
 ] + view_patterns 
 
 

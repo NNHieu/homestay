@@ -10,6 +10,7 @@ from django.views import generic
 from .models import *
 from .forms import HomestayForm, ReviewImageForm
 from django.contrib.auth.decorators import login_required
+from address.utils import Searcher
 
 
 # Create your views here.
@@ -43,8 +44,10 @@ class MyView(LoginRequiredMixin, generic.ListView):
 
 class HomestayView(generic.DetailView):
     model = Homestay
+
     def get_template_names(self):
-        return 'homestay/detail2.html' # if 'test/' not in self.request.path else 'homestay/detail2.html'
+        return 'homestay/detail2.html'  # if 'test/' not in self.request.path else 'homestay/detail2.html'
+
 
 @login_required(login_url='/account/login')
 def upload_view(request):
@@ -55,13 +58,13 @@ def upload_view(request):
         form = HomestayForm(request.POST)
         image_formset = ImageFormSet(request.POST, request.FILES, queryset=ReviewImage.objects.none())
 
-        #Kiểm tra form hợp lệ
+        # Kiểm tra form hợp lệ
         if form.is_valid():
             homestay = form.save(commit=False)
             homestay.owner = request.user
             homestay.save()
             if form.is_valid():
-                #Chỉ lấy những image form đúng chuẩn
+                # Chỉ lấy những image form đúng chuẩn
                 for form in image_formset.cleaned_data:
                     if form:
                         image = form['image']
@@ -90,5 +93,17 @@ def upload_success_view(request):
 def detail2(request):
     return render(request, 'homestay/detail2.html', {})
 
+
 def about_view(request):
     return render(request, 'homestay/about_us.html', {})
+
+
+def search(request):
+    lng = float(request.GET.get('lng'))
+    lat = float(request.GET.get('lat'))
+    results = Searcher.knn([lat, lng], 3)
+    homestay_list = [adr.homestay for adr in results]
+    return render(request, 'homestay/browse.html', {'homestay_list': homestay_list})
+
+def test_search(request):
+    return render(request, 'homestay/search.html', {})
