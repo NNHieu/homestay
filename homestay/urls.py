@@ -19,7 +19,7 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('test/search', views.test_search, name='test_search'),
     path('about/', views.about_view, name='about'),
-
+    path('book/<int:hid>', views.booking, name='book'),
     path('test/', include(view_patterns)),
 
 ] + view_patterns 

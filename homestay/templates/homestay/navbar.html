@@ -137,6 +137,7 @@ $('.menus').click(function(e){
 });
 
 $(window).click(function (e){
+    if(!current_menu) return;
     if(!(e.target.matches('.menus-box') || current_menu.contains(e.target) || (current_menu.attributes['id'].nodeValue ==='searchMenu' && e.target.matches('.autocomplete-list-item')))) {
         console.log('fire');
         $('.menu-box').removeClass('w3-show');
@@ -291,7 +292,7 @@ $(window).click(function (e){
                         point = [location.displayPosition.latitude, location.displayPosition.longitude];
                     } else {
                         mapView = location.mapView;
-                        point = [(mapView.topLeft.latitude + map.bottomRight.latitude)/2, (mapView.topLeft.longitude + mapView.bottomRight.longitude)/2]
+                        point = [(mapView.topLeft.latitude + mapView.bottomRight.latitude)/2, (mapView.topLeft.longitude + mapView.bottomRight.longitude)/2]
                     }
                     document.getElementById('lat').value = point[0];
                     document.getElementById('lng').value = point[1];

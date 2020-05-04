@@ -12,6 +12,9 @@ urlpatterns = [
         views.activate, name='activate'),
     path('validate/', views.validate_ajax_answer, name='validate'),
     path('login/', views.login_view, name='login'),
+    # url(r'^login/', views.login_view, name='login'),
+    # url(r'^login/(?P<uidb64>[0-9A-Za-z_\-]+)/$',
+    #     views.activate, name='login_uid'),
     path('logout/', views.logout_view, name='logout'),
     path('edit/', views.edit_profile, name='edit_profile'),
 ]

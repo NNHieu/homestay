@@ -1,9 +1,11 @@
+import datetime
+
 import numpy
 import kdtree
-from homestay.models import Address
+import homestay.models as hmodels
 from math import acos, cos, sin, radians
 from geopy.distance import distance
-
+from intervaltree import Interval, IntervalTree
 
 class Singleton(type):
     _instances = {}
@@ -44,7 +46,7 @@ class Searcher(metaclass=Singleton):
     @classmethod
     def setup(cls):
         print('sSearcher etting up')
-        cls.kdtree = kdtree.create([Item(adr.lat, adr.lng, adr) for adr in Address.objects.all()])
+        cls.kdtree = kdtree.create([Item(adr.lat, adr.lng, adr) for adr in hmodels.Address.objects.all()])
 
     @classmethod
     def search(cls, point, r):
@@ -63,3 +65,27 @@ class Searcher(metaclass=Singleton):
         return [x[0].data.data for x in results]
 
 
+class OverlapDateChecker(metaclass=Singleton):
+    dict = None
+    def __call__(self):
+        self.setup()
+
+    @classmethod
+    def setup(cls):
+        print('OverlapChecker etting up')
+        cls.dict = {}
+        for h in hmodels.Homestay.objects.all():
+            cls.dict[h.pk] = IntervalTree()
+        for contrast in hmodels.Contrast.objects.filter(state__gt=0):
+            cls.add(contrast)
+
+    @classmethod
+    def check_available(cls, homestay, checkin, checkout):
+        if not cls.dict:
+            cls.setup()
+        return cls.dict[homestay.pk][checkin:checkout + datetime.timedelta(days=1)]
+
+    @classmethod
+    def add(cls, contrast):
+        cls.dict[contrast.homestay.pk].addi(contrast.checkin_date, contrast.checkout_date + datetime.timedelta(days=1),
+                                            contrast)

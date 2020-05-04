@@ -60,11 +60,16 @@
       <p><i class="fa fa-envelope fa-fw w3-margin-right w3-large w3-text-teal"></i>ex@mail.com</p>
       <p><i class="fa fa-phone fa-fw w3-margin-right w3-large w3-text-teal"></i>1224435534</p>
       <hr>
-
-      <div class="t-datepicker">
-          <div class="t-check-in"></div>
-          <div class="t-check-out"></div>
-        </div>
+        <form action="{% url 'homestay:book' homestay.id %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="checkin_date" id="checkin_date">
+            <input type="hidden" name="checkout_date" id="checkout_date">
+            <div class="t-datepicker">
+              <div class="t-check-in"></div>
+              <div class="t-check-out"></div>
+            </div>
+            <button id="book-button" class="w3-button w3-hide" type="submit">Book</button>
+        </form>
       <br>
     </div>
   <!-- End SideBar -->
@@ -130,7 +135,34 @@ $(document).ready(function(){
   // Call global the function
   $('.t-datepicker').tDatePicker({
     // options here
-  });
+    limitPrevMonth: 11,
+    formatDate: 'yyyy-mm-dd'
+  }).on('afterCheckOut',function(e, dataDate){
+    $('#book-button').toggleClass('w3-show');
+  })
 });
+$('#book-button').click(function (e) {
+    var getDateInputs = $('.t-datepicker').tDatePicker('getDateInputs');
+    getDateInputs.map(function(el){
+      if ( el === null ) {
+        e.preventDefault();
+      }
+    });
+    var errorNull = $('.error-null').length;
+    if ( errorNull === 0 ) {
+      if ( getDateInputs[0] === null ) {
+        $( "<p class='.check-validator error-null'>Please fill out this field Check-In</p>" ).appendTo( ".check-validator .t-date-check-in" );
+      }
+      if ( getDateInputs[1] === null ) {
+        $( "<p class='.check-validator error-null'>Please fill out this field Check-Out</p>" ).appendTo( ".check-validator .t-date-check-out" );
+      }
+    };
+    // Show result demo
+    if ( getDateInputs[0] !== null && getDateInputs[1] !== null ) {
+        document.getElementById('checkin_date').value = getDateInputs[0];
+        document.getElementById('checkout_date').value = getDateInputs[1];
+    };
+
+})
 </script>
 {% endblock bottom_script %}

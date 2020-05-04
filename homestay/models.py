@@ -6,10 +6,12 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
-
+from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
 from scipy.spatial import KDTree
+
+import address.utils as utils
 
 
 def validator_welcome_value(value):
@@ -18,6 +20,7 @@ def validator_welcome_value(value):
             _('%(value)s is not an valid number for Welcomes Field'),
             params={'value': value}
         )
+
 
 # Model cho Homestay
 class Homestay(models.Model):
@@ -62,6 +65,12 @@ class Homestay(models.Model):
     def __str__(self):
         return self.title
 
+    # def save(self, *args, **kwargs):
+    #     ''' On save, update timestamps '''
+    #     if not self.id:
+    #         self.created = timezone.now()
+    #     self.modified = timezone.now()
+
 
 # class Room(models.Model):
 #     name = models.CharField(max_length=50)
@@ -77,7 +86,6 @@ class Homestay(models.Model):
 
 # Model lưu thông tin địa chỉ
 class Address(models.Model):
-
     lat = models.FloatField()
     lng = models.FloatField()
     about_area = models.TextField(max_length=1000)
@@ -105,4 +113,38 @@ class ReviewImage(models.Model):
     image = models.ImageField(unique=True, upload_to='image/mysite/')
     title = models.CharField(max_length=50, blank=True)
     homestay = models.ForeignKey(Homestay, on_delete=models.CASCADE)
-    first_save = models.DateTimeField(null=True, default=timezone.now())
+    first_save = models.DateTimeField(null=True, auto_now_add=True)
+
+
+
+class GuestInfo(models.Model):
+    user = models.ForeignKey(get_user_model(), verbose_name=_('User'), null=True, on_delete=models.SET_NULL)
+    email = models.EmailField(_("Email"), max_length=254)
+    first_name = models.CharField(_("First name"), max_length=50)
+    last_name = models.CharField(_("Last name"), max_length=50)
+    phone_number = PhoneNumberField(_("Phone number"))
+
+
+class Contrast(models.Model):
+    homestay = models.ForeignKey("Homestay", verbose_name=_("Homestay"), on_delete=models.CASCADE)
+    guest = models.ForeignKey(GuestInfo, verbose_name=_("Guest"), on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), verbose_name=_("User"), null=True, on_delete=models.SET_NULL)
+    create_date = models.DateTimeField(_("Create date"), auto_now=True, auto_now_add=False)
+    checkin_date = models.DateField(_("Check in"))
+    checkout_date = models.DateField(_("Check out"))
+
+    class State(models.IntegerChoices):
+        NEW = 1, _('Just create')
+        CONFIRMED = 2, _('confirmed/deposited')
+        OPERATIONAL = 3
+        COMPLETED = 0
+
+        CANCELED_BEFORE_CONFIRM = -1
+        CANCELED_AFTER_CONFIRM = -2
+        NOSHOW = -3
+
+    state = models.SmallIntegerField(_("state"), choices=State.choices)
+
+    def save(self, *args, **kwargs):
+        super().save(args, kwargs)
+        utils.OverlapDateChecker.add(self)

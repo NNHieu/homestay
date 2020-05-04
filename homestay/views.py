@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.views import generic
 
 from .models import *
-from .forms import HomestayForm, ReviewImageForm
+from .forms import HomestayForm, ReviewImageForm, BookingForm, BookingGuestInfoForm
 from django.contrib.auth.decorators import login_required
 from address.utils import Searcher
 
@@ -107,3 +107,25 @@ def search(request):
 
 def test_search(request):
     return render(request, 'homestay/search.html', {})
+
+
+def booking(request, hid):
+    if request.method == "POST":
+        print(request.POST)
+        guest_form = BookingGuestInfoForm(request.POST)
+        booking_form = BookingForm(request.POST)
+        if guest_form.is_valid() and booking_form.is_valid():
+            reservation = booking_form.save(commit=False)
+            guest = guest_form.save(commit=False)
+            if request.user.is_authenticated:
+                guest.user = request.user
+            guest.save()
+            reservation.guest = guest
+            reservation.homestay = Homestay.objects.get(pk=hid)
+            reservation.state = Contrast.State.NEW
+            reservation.save()
+            return HttpResponse('success')
+    else:
+        guest_form = BookingGuestInfoForm()
+        booking_form = BookingForm(initial={'hid': hid})
+    return render(request, 'booking.html', {'form': booking_form, 'guest_form': guest_form, 'hid': hid})
