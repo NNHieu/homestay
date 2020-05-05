@@ -37,6 +37,7 @@ class UserProfile(models.Model):
         MALE = 1
         FEMALE = 2
         OTHER = 3
+        UNKNOWN = -1
     gender = models.IntegerField(choices=Gender.choices)
     # Ảnh hồ sơ
     profile_picture = models.ImageField(upload_to='images/account_profile', blank=True)

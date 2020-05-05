@@ -2,6 +2,8 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import ugettext_lazy as _
 
+import user.models as umodels
+
 
 class CustomUserManager(BaseUserManager):
     """
@@ -17,8 +19,6 @@ class CustomUserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
-        profile = UserProfile(user=user)
-        profile.save()
         user.save()
         return user
 
