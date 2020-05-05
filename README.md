@@ -3,7 +3,7 @@
 - [x] Đăng kí, đăng nhập, đăng xuất
 - [x] Verify tài khoản đăng kí bằng email
 - [x] Một số testcase đơn giản cho việc tạo tài khoản
-- [-] Phân biệt tài khoản owner, renter
+- [ ] Phân biệt tài khoản owner, renter
 - [x] Sửa thông tin tài khoản
 
 * Về trang duyệt danh sách
@@ -21,6 +21,7 @@
 - [ ] Model Contract
 
 * Về việc đặt phòng:
+- [x] Kiểm tra trùng lặp 
 - [ ] Có thông tin đặt cho từng homestay
 - [ ] Cung cấp form đặt trực tuyến cho renter 
 - [ ] Gửi mail thông báo
@@ -29,7 +30,8 @@
 
 # Chú ý
 * account supper user: email=admin@email.com, password=imadmin
+* Cần tạo env theo file env.yml, tôi dùng anaconda 
 * Để sử dụng dữ liệu có sẵn cần tải file media.zip ở đây https://drive.google.com/drive/u/1/folders/1ZdFuNpQYj7xkeqyV0xXxvvtCbg0PTBz3 giải nén ở thử mục gốc của project
-* Database sdlite3: https://drive.google.com/open?id=1QX7vpcQtBWh9JrSecTfizWEYq0_aNHQI
 # Hình ảnh
-https://drive.google.com/open?id=1NRBR60wudIkZxl74SMpbvoM-kJ1CQMUA
+V0.1: https://drive.google.com/open?id=1NRBR60wudIkZxl74SMpbvoM-kJ1CQMUA
+V0.2: 
