@@ -33,5 +33,5 @@
 * Cần tạo env theo file env.yml, tôi dùng anaconda 
 * Để sử dụng dữ liệu có sẵn cần tải file media.zip ở đây https://drive.google.com/drive/u/1/folders/1ZdFuNpQYj7xkeqyV0xXxvvtCbg0PTBz3 giải nén ở thử mục gốc của project
 # Hình ảnh
-V0.1: https://drive.google.com/open?id=1NRBR60wudIkZxl74SMpbvoM-kJ1CQMUA
-V0.2: 
+V0.1: https://drive.google.com/open?id=19fXBDp8NTsWucw31sXSMXPx0kY7_xAtJ
+V0.2: https://drive.google.com/open?id=1eQuhwrv3hJZscQi_7yjLj5MEx_qQpyxf
