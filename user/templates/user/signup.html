@@ -15,7 +15,7 @@
             {{ field.label_tag }}
             <div class="input-line">
                 {% if not 'password' in field.name %}
-                    <input type="text" id="{{ field.id_for_label }}" name="{{ field.name }}" class
+                    <input type="text" id="{{ field.id_for_label }}" name="{{ field.name }}" class="w3-input w3-border"
                            value="{{ field.value|default_if_none:'' }}" required
                            autocomplete="off" data-validate-url="{% url "account:validate" %}">
 
@@ -29,7 +29,7 @@
                         <p style="color: red">{{ error }}</p>
                     {% endfor %}
                 {% else %}
-                    <input type="password" id="{{ field.id_for_label }}" name="{{ field.name }}" class value required
+                    <input type="password" id="{{ field.id_for_label }}" name="{{ field.name }}"  class="w3-input w3-border" value required
                            autocomplete="off" data-validate-url="{% url "account:validate" %}">
                 {% endif %}
                 {#                                {% if field.help_text %}#}
