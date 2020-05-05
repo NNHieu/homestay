@@ -1,11 +1,10 @@
 from django import forms
-from django.utils.translation import gettext_lazy as _
-from phonenumber_field.formfields import PhoneNumberField
+
 from .models import *
+from util.utils import OverlapDateChecker
 
-from address.utils import OverlapDateChecker
 
-
+# Form upload homestay
 class HomestayForm(forms.ModelForm):
     welcomes = forms.MultipleChoiceField(
         choices=((Homestay.Welcome[name].value, Homestay.Welcome[name].label) for name in Homestay.Welcome.names))
@@ -19,6 +18,7 @@ class HomestayForm(forms.ModelForm):
         fields = ['title', 'description', 'light_breakfast', 'use_of_kitchen', 'rules']
 
 
+# Form upload ảnh review
 class ReviewImageForm(forms.ModelForm):
     image = forms.ImageField(label='Image')
 
@@ -39,12 +39,13 @@ class BookingForm(forms.ModelForm):
         super().clean()
         hid = self.cleaned_data.get('hid')
         try:
-
             checkin = self.cleaned_data.get('checkin_date')
             checkout = self.cleaned_data.get('checkout_date')
+            # Kiểm tra ngày check out sau check in 1 ngày
             if checkin >= checkout:
                 self.add_error('checkin_date', 'checkout - checkin >= 1 ')
             homestay = Homestay.objects.get(pk=hid)
+            # Kiểm tra trùng lặp
             if OverlapDateChecker.check_available(homestay, checkin, checkout):
                 self.add_error('checkin_date', 'Overlap')
                 self.add_error('checkout_date', 'Overlap')
@@ -52,12 +53,9 @@ class BookingForm(forms.ModelForm):
         except Homestay.DoesNotExist:
             self.add_error('hid', 'Invalid hid')
 
+
+# Form nhập thông tin khách đặt phòng
 class BookingGuestInfoForm(forms.ModelForm):
-    # first_name = forms.CharField(label=_("First name"), max_length=50, required=True)
-    # last_name = forms.CharField(label=_("Last name"), max_length=50, required=True)
-    # email = forms.EmailField(label=_("Email"), required=True)
-    # phone_number = PhoneNumberField(widget=forms.TextInput(attrs={'placeholder': _('Phone')}),
-    #                                 label=_("Phone number"), required=True)
     class Meta:
         model = GuestInfo
         fields = ('email', 'first_name', 'last_name', 'phone_number')

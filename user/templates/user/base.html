@@ -4,34 +4,78 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Base{% endblock %}</title>
-    <link rel="stylesheet" text="text/css" href="{% static "values.css" %}">
-    <link rel="stylesheet" text="text/css" href="{% static "default.css" %}">
-    <link rel="stylesheet" text="text/css" href="{% static "login_style.css" %}">
-    {% block src_stylesheet %}{% endblock %}
+    {% block include_css %}
+        <link rel="stylesheet" text="text/css" href="{% static "css/values.css" %}">
+        <link rel="stylesheet" text="text/css" href="{% static "css/default.css" %}">
+        <link rel="stylesheet" text="text/css" href="{% static "css/login_style.css" %}">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    {% endblock include_css %}
+
+    <style>
+    {% block style %}
+        body,h1,h2,h3,h4,h5,h6 {
+            font-family: "Raleway", Arial, Helvetica, sans-serif
+        }
+        body, html {
+            height: 100%;
+            color: #777;
+            line-height: 1.8;
+        }
+
+        div{
+            display: block;
+        }
+
+        input {
+            border: 1px solid transparent;
+            background-color: #f1f1f1;
+            padding: 4px 10px;
+            font-size: 16px;
+        }
+
+        input[type=text] {
+            background-color: #f1f1f1;
+            width: 100%;
+        }
+
+        input[type=submit] {
+            background-color: DodgerBlue;
+            color: #fff;
+            cursor: pointer;
+        }
+
+    {% endblock %}
+    </style>
     {% block src_script %}{% endblock %}
 </head>
 <body>
+    {% block navbar %}
+    {% include 'homestay/navbar.html' with user=request.user only%}
+    {% endblock %}
     <div class="container">
         <div class="content-form">
-            <div class="form-menu"></div>
             <div class="form-main">
                 <div class="logo"></div>
                 <div class="welcome">
                     <h2>Welcome</h2>
                 </div>
-                {% block nav %}<a href="{% url "homestay:index" %}"><div style="display: inline-block; width: 40px;height: 30px">Home</div></a>{% endblock %}
-                {% block error_alex %}{% endblock %}
-                <form id="login-from" action="" method="post" autocomplete="off">
-                    {% csrf_token %}
-                    <div class="input">
-                        {% block input_fields %}{% endblock %}
-                        <div class="form-group__text">
-                            <button id="submit-login" style="width: 100% !important;" type="submit">{% block submit_button_text %}Register{% endblock %}</button>
+                <div class="w3-container">
+                    {% block error_alex %}{% endblock %}
+                    <form class="w3-form" id="login-from" action="" method="post" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="input">
+                            {% block input_fields %}{% endblock %}
+                            <div class="form-group__text">
+                                <button id="submit-login" class="w3-button w3-center" type="submit">{% block submit_button_text %}Register{% endblock %}</button>
+                            </div>
+    {#                        <input type="hidden" name="next" value="{{ next }}">#}
                         </div>
-{#                        <input type="hidden" name="next" value="{{ next }}">#}
-                    </div>
-                </form>
-            </>
+                    </form>
+                </div>
+
+            </div>
             <div class="form-needHelp"></div>
             {% block other_option %}{% endblock %}
         </div>

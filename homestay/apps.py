@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class HmConfig(AppConfig):
+class HomestayConfig(AppConfig):
     name = 'homestay'

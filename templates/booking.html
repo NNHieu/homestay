@@ -1,0 +1,13 @@
+## templates/user/edit_profile.html
+## Test
+
+{% extends 'user/base.html' %}
+
+
+{% block input_fields %}
+<table>
+{{ form.as_table }}
+{{ guest_form.as_table }}
+</table>
+<input type="hidden" name="hid" value="{{ hid }}">
+{% endblock %}

@@ -1,19 +1,19 @@
 from functools import reduce
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.forms import modelformset_factory, inlineformset_factory
+from django.forms import inlineformset_factory
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from django.urls import reverse
 from django.views import generic
 
 from .models import *
-from .forms import HomestayForm, ReviewImageForm, BookingForm, BookingGuestInfoForm
+from .forms import HomestayForm, BookingForm, BookingGuestInfoForm
 from django.contrib.auth.decorators import login_required
-from address.utils import Searcher
+from util.utils import Searcher
 
 
 # Create your views here.
+# View list các homestay
 class BrowseView(generic.ListView):
     template_name = 'homestay/browse.html'
     context_object_name = 'homestay_list'
@@ -21,12 +21,8 @@ class BrowseView(generic.ListView):
     def get_queryset(self):
         return Homestay.objects.all()[:10]
 
-    # def get_context_data(self, *, object_list=None, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['user'] = self.request.user
-    #     return context
 
-
+# View xem các Homestay User đã đăng
 class MyView(LoginRequiredMixin, generic.ListView):
     login_url = '/account/login'
 
@@ -36,12 +32,7 @@ class MyView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         return Homestay.objects.filter(owner=self.request.user).all()
 
-    # def get_context_data(self, *, object_list=None, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['user'] = self.request.user
-    #     return context
-
-
+# View Thông tin chi tiết
 class HomestayView(generic.DetailView):
     model = Homestay
 
@@ -49,6 +40,7 @@ class HomestayView(generic.DetailView):
         return 'homestay/detail2.html'  # if 'test/' not in self.request.path else 'homestay/detail2.html'
 
 
+# View upload
 @login_required(login_url='/account/login')
 def upload_view(request):
     # Tạo 1 image form set để upload nhiều image
@@ -85,7 +77,8 @@ def upload_view(request):
         image_formset = ImageFormSet(queryset=ReviewImage.objects.none())
     return render(request, 'homestay/upload_homestay.html', {'form': form, 'image_formset': image_formset})
 
-
+# View upload thành công.
+# Mới chỉ làm để test
 def upload_success_view(request):
     return render(request, 'homestay/upload_success.html', {})
 
@@ -105,16 +98,18 @@ def search(request):
     homestay_list = [adr.homestay for adr in results]
     return render(request, 'homestay/browse.html', {'homestay_list': homestay_list})
 
-def test_search(request):
-    return render(request, 'homestay/search.html', {})
 
-
+# View cho việc đặt phông
+# Mới chỉ làm chức năng kiểm tra trùng lặp ngày đặt với homestay
+# Chưa làm với user.
+# pk là primary key của homestay được đặt
 def booking(request, hid):
     if request.method == "POST":
-        print(request.POST)
         guest_form = BookingGuestInfoForm(request.POST)
         booking_form = BookingForm(request.POST)
+        # Ngày trùng lặp được kiểm tra trong clean của booking_form
         if guest_form.is_valid() and booking_form.is_valid():
+            # Sau khi kiểm tra trùng lặp
             reservation = booking_form.save(commit=False)
             guest = guest_form.save(commit=False)
             if request.user.is_authenticated:
@@ -124,8 +119,16 @@ def booking(request, hid):
             reservation.homestay = Homestay.objects.get(pk=hid)
             reservation.state = Contrast.State.NEW
             reservation.save()
+            # Gửi phản hồi đơn giản
             return HttpResponse('success')
     else:
+        # Form điền thông tin khách đặt
+        # Lưu ý có thể khác thông tin của user đang đăng nhập
         guest_form = BookingGuestInfoForm()
+        # Form điền thông tin đặt phòng
+        # Mới chỉ có ngày check in và check out
         booking_form = BookingForm(initial={'hid': hid})
     return render(request, 'booking.html', {'form': booking_form, 'guest_form': guest_form, 'hid': hid})
+
+def test_search(request):
+    return render(request, 'homestay/search.html', {})

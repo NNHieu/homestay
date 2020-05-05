@@ -10,11 +10,13 @@ from scipy import rand
 from homestay.models import Homestay, Address, Contrast
 
 
+# Sinh random string
 def randomString(stringLength=8):
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for i in range(stringLength))
 
 
+# Tạo Homestay để test
 def create_homestay():
     title = randomString()
     user = get_user_model()(email=randomString() + '@email.com')
@@ -27,26 +29,39 @@ def create_homestay():
     return h;
 
 
+# test case đặt phòng
 class Booking(TestCase):
-    def book(self, i, checkin, checkout):
-        c = Client()
-        return c.post('/book/' + str(i), {'checkin_date': checkin, 'checkout_date': checkout, 'first_name': 'Ha',
-                                          'last_name': 'Hi', 'phone_number': '+12125558268',
-                                          'email': randomString() + '@email.com', 'hid': i})
+
+    @classmethod
+    def setUpTestData(cls):
+        # Tạo 10 homestay
+        for i in range(10):
+            create_homestay()
+
+    def setUp(self):
+        self.c = Client()
+
+    # Hàm đặt phòng pk=i
+    def book(self, home_id, checkin, checkout, email=None, phone_number='+12125558268', first_name='Ha', last_name='Hi'):
+        if not email:
+            email = randomString() + '@email.com'
+        return self.c.post('/book/' + str(home_id), {
+            'checkin_date': checkin, 'checkout_date': checkout,
+            'first_name': first_name, 'last_name': last_name,
+            'phone_number': phone_number, 'email': email,
+            'hid': home_id})
 
     def test1(self):
-        h = create_homestay()
-        c = Client()
-        c.post('/book/1', {'checkin_date': '2020-05-20', 'checkout_date': '2020-05-24', 'first_name': 'Ha',
-                           'last_name': 'Hi', 'phone_number': '+12125558268', 'email': 'test@email.com', 'hid': 1})
-        self.assertTrue(Contrast.objects.filter(homestay=h, checkin_date='2020-05-20', checkout_date='2020-05-24',
+        self.book(1, '2020-05-20', '2020-05-24', email='test@email.com')
+        self.assertTrue(Contrast.objects.filter(homestay=Homestay.objects.get(pk=1),
+                                                checkin_date='2020-05-20', checkout_date='2020-05-24',
                                                 guest__email='test@email.com').exists())
 
     def test2(self):
-        for i in range(10):
-            create_homestay()
         self.book(1, '2020-05-20', '2020-05-24')
         response = self.book(1, '2020-05-20', '2020-05-23')
+        # Kiểm tra yêu cầu chọn ngày khác vì bị trùng
+        # Cần viết điều kiện rõ ràng hơn, ở đây chỉ check nếu response content có tag <form>
         self.assertTrue('<form' in str(response.content))
         response = self.book(2, '2020-05-20', '2020-05-24')
         self.assertFalse('<form' in str(response.content))
@@ -58,8 +73,6 @@ class Booking(TestCase):
         self.assertTrue('<form' in str(response.content))
 
     def test3(self):
-        for i in range(10):
-            create_homestay()
         response = self.book(2, '2020-05-20', '2020-05-24')
         self.assertFalse('<form' in str(response.content))
         response = self.book(2, '2020-05-24', '2020-05-25')

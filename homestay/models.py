@@ -1,17 +1,13 @@
-from enum import Enum
-
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
-from scipy.spatial import KDTree
 
-import address.utils as utils
+import util.utils as utils
 
 
 def validator_welcome_value(value):

@@ -2,7 +2,6 @@
 {% load static %}
 {% block src_script %}
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-    <script src="{% static "register.js" %}"></script>
     <script src='https://kit.fontawesome.com/a076d05399.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
@@ -11,33 +10,33 @@
 
 {% block input_fields %}
     {% for field in form %}
-    <div class="form-group__text">
-        {{ field.errors }}
-        {{ field.label_tag }}
-        <div class="input-line">
-        {% if not 'password' in field.name %}
-            <input type="text" id="{{field.id_for_label}}" name="{{field.name}}" class value="{{ field.value|default_if_none:'' }}" required
-            autocomplete="off" data-validate-url="{% url "account:validate" %}">
+        <div class="form-group__text" style="padding-left: 30px;">
+            {{ field.errors }}
+            {{ field.label_tag }}
+            <div class="input-line">
+                {% if not 'password' in field.name %}
+                    <input type="text" id="{{ field.id_for_label }}" name="{{ field.name }}" class
+                           value="{{ field.value|default_if_none:'' }}" required
+                           autocomplete="off" data-validate-url="{% url "account:validate" %}">
 
-            {% if field.name == 'username' or field.name == 'email' %}
-                <i class='fas fa-check-circle tick' id="i_{{ field.name }}"></i>
-            {% endif %}
-            {% if field.help_text %}
-              <small style="display: none">{{ field.help_text }}</small>
-            {% endif %}
-            {% for error in field.errors %}
-              <p style="color: red">{{ error }}</p>
-            {% endfor %}
-        {% else %}
-            <input type="password" id="{{field.id_for_label}}" name="{{field.name}}" class value required
-            autocomplete="off" data-validate-url="{% url "account:validate" %}">
-
-        {% endif %}
-{#                                {% if field.help_text %}#}
-{#                                <p class="help">{{ field.help_text|safe }}</p>#}
-{#                                {% endif %}#}
+                    {% if field.name == 'username' or field.name == 'email' %}
+                        <i class='fas fa-check-circle tick' id="i_{{ field.name }}"></i>
+                    {% endif %}
+                    {% if field.help_text %}
+                        <small style="display: none">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p style="color: red">{{ error }}</p>
+                    {% endfor %}
+                {% else %}
+                    <input type="password" id="{{ field.id_for_label }}" name="{{ field.name }}" class value required
+                           autocomplete="off" data-validate-url="{% url "account:validate" %}">
+                {% endif %}
+                {#                                {% if field.help_text %}#}
+                {#                                <p class="help">{{ field.help_text|safe }}</p>#}
+                {#                                {% endif %}#}
+            </div>
         </div>
-    </div>
     {% endfor %}
 
 {% endblock %}
@@ -49,6 +48,48 @@
 
 {% block script %}
     <script>
-        validate_email();
+        (function validate_email() {
+            //Cross Site Request Forgery protection
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
+                    }
+                }
+            });
+
+            function request(validate_url, is_email, str, icon) {
+                $.ajax({
+                    url: validate_url,
+                    type: 'POST',
+                    data:{
+                        isEmail: is_email,
+                        value: str
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data)
+                        if(data['available']){
+                            icon.css('visibility', 'visible');
+                        } else {
+                            icon.css('visibility', 'hidden');
+                        }
+
+                    }
+                });
+            }
+            let email_input = $('#id_email')
+            let url = email_input.attr('data-validate-url')
+            request(url, true, email_input.val(), $('#i_email'));
+            email_input.change(function () {
+                request(url, true, $(this).val(), $('#i_email'));
+            });
+
+        })();
     </script>
 {% endblock %}

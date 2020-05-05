@@ -17,17 +17,26 @@ from .validators import validate_user_id
 
 # View cho trang login
 def login_view(request):
+
     if request.method == 'POST':
+        # Nếu request là POST
         form = CustomUserLoginForm(request.POST)
+        # Kiểm tra form valid
         if form.is_valid():
+            # Authenticate user với thông tin từ request POST
             user = authenticate(email=form.cleaned_data['email'], password=form.cleaned_data['password'])
-            print(user)
+            # Nếu authenticate thành công
             if user is not None:
+                # Login cho user
                 login(request, user)
-                print(request.GET)
+                # Chuyển người dùng đến next trong GET data
+                # Nếu next rỗng, chuyển về trang chủ
                 return redirect(request.GET.get('next', 'homestay:index'))
     else:
+        # Nếu request không là POST
+        # Tạo form ban đầu để nhập
         form = CustomUserLoginForm()
+    # Gửi phản hồi sử dụng template user/login.html context {'form': form}
     return render(request, 'user/login.html', {'form': form})
 
 
@@ -56,7 +65,7 @@ def signup(request):
             )
             email.send()
 
-            # Gửi phản hồi
+            # Gửi phản hồi đơn giản. Cần làm trang thông báo form đăng kí gửi thành công.
             return HttpResponse('Please confirm your email address to complete the registration')
     else:
         form = CustomUserCreationForm()
@@ -83,17 +92,20 @@ def activate(request, uidb64, token):
         return HttpResponse('Activation link is invalid!')
 
 
-# Khi người dùng nhập email để đăng kí kiểm tra email hợp lệ ở đây rồi báo trực tiếp về client
-# Chắc nên chuyển thành code Js đặt ở browser
+# Khi người dùng nhập email để đăng kí, browser gửi 1 ajax request đến server để
+# kiểm tra email hợp lệ ở đây rồi báo trực tiếp về client
 def validate_ajax_answer(request):
-    print(request.POST)
-    check_email = request.POST.get('isEmail', None)
-    value = request.POST.get('value', None)
-    data = {
-        'available': validate_user_id(value, check_email == 'true')
-    }
-    print(data)
-    return JsonResponse(data)
+    if request.method == 'POST':
+        check_email = request.POST.get('isEmail', None)
+        value = request.POST.get('value', None)
+        data = {
+            'status': 'Ok',
+            'available': validate_user_id(value, check_email == 'true')
+        }
+        # Gửi JsonResponse với data = data
+        return JsonResponse(data)
+    # Gửi json yêu cầu post method
+    return JsonResponse({'status': 'Fail', 'error': 'Expect Post method'})
 
 
 # View log out
@@ -102,6 +114,7 @@ def logout_view(request):
     logout(request)
     return redirect("homestay:index")
 
+# Thay đổi profile
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
@@ -115,6 +128,7 @@ def edit_profile(request):
             return HttpResponse('Success')
         
     else:
+        # Gửi form với thông tin khởi tạo từ user đang đăng nhập
         form = EditProfileForm(instance=request.user)
         profile_form = ProfileForm(instance=request.user.userprofile)
     return render(request, 'user/edit_profile.html', {'form': form, 'profile_form': profile_form})

@@ -18,13 +18,14 @@ class MyUsernameValidator(RegexValidator):
     flags = 0
 
 
-class PhoneNumberValidator(RegexValidator):
-    regex = r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})'
-    # regex = r'^(\d{10})$'
-    message = _(
-        'Enter a valid phone number.'
-    )
-    flags = 0
+# Không cần nữa vì có django-phonenumber-field
+# class PhoneNumberValidator(RegexValidator):
+#     regex = r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})'
+#     # regex = r'^(\d{10})$'
+#     message = _(
+#         'Enter a valid phone number.'
+#     )
+#     flags = 0
 
 
 def validate_email_syntax(email):

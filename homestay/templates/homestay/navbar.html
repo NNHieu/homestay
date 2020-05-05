@@ -4,362 +4,371 @@
 {% load static %}
 <!-- Navbar (sit on top) -->
 <style>
-input {
-  border: 1px solid transparent;
-  background-color: #f1f1f1;
-  padding: 10px;
-  font-size: 16px;
-}
+    input {
+        border: 1px solid transparent;
+        background-color: #f1f1f1;
+        padding: 10px;
+        font-size: 16px;
+    }
 
-input[type=text] {
-  background-color: #f1f1f1;
-  width: 100%;
-}
+    input[type=text] {
+        background-color: #f1f1f1;
+        width: 100%;
+    }
 
-input[type=submit] {
-  background-color: DodgerBlue;
-  color: #fff;
-  cursor: pointer;
-}
+    input[type=submit] {
+        background-color: DodgerBlue;
+        color: #fff;
+        cursor: pointer;
+    }
 
-.autocomplete-items {
-  position: absolute;
-  border: 1px solid #d4d4d4;
-  border-bottom: none;
-  border-top: none;
-  z-index: 99;
-  /*position the autocomplete items to be the same width as the container:*/
-  top: 100%;
-  left: 0;
-  right: 0;
-}
+    .autocomplete-items {
+        position: absolute;
+        border: 1px solid #d4d4d4;
+        border-bottom: none;
+        border-top: none;
+        z-index: 99;
+        /*position the autocomplete items to be the same width as the container:*/
+        top: 100%;
+        left: 0;
+        right: 0;
+    }
 
-.autocomplete-items div {
-  padding: 10px;
-  cursor: pointer;
-  background-color: #fff; 
-  border-bottom: 1px solid #d4d4d4; 
-}
+    .autocomplete-items div {
+        padding: 10px;
+        cursor: pointer;
+        background-color: #fff;
+        border-bottom: 1px solid #d4d4d4;
+    }
 
-/*when hovering an item:*/
-.autocomplete-items div:hover {
-  background-color: #e9e9e9; 
-}
+    /*when hovering an item:*/
+    .autocomplete-items div:hover {
+        background-color: #e9e9e9;
+    }
 
-/*when navigating through the items using the arrow keys:*/
-.autocomplete-active {
-  background-color: DodgerBlue !important; 
-  color: #ffffff; 
-}
+    /*when navigating through the items using the arrow keys:*/
+    .autocomplete-active {
+        background-color: DodgerBlue !important;
+        color: #ffffff;
+    }
 </style>
 
 <div class="w3-top" id="navbar-container">
-{% if have_banner %}
-    <div class="w3-bar w3-text-white" id="myNavbar">
-{% else %}
-    <div class="w3-bar w3-card w3-animate-top w3-white" id="myNavbar">
-{% endif %}
-        <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right menus" menu="nav-options" href="javascript:void(0);" title="Toggle Navigation Menu">
-        <i class="fa fa-bars"></i>
-        </a>
-        <a href="{% url 'homestay:index' %}" class="w3-bar-item nav-button">HOME</a>
-        <a href="{% url 'homestay:about' %}" class="w3-bar-item nav-button w3-hide-small"><i class="fa fa-user"></i> ABOUT</a>
-        {% for title, link in links %}
-        <a href="{% url link %}" class="w3-bar-item nav-button w3-hide-small"><i class="fa fa-th"></i> {{ title|upper }}</a>
-        {% endfor %}
-        
-        <a class="w3-bar-item w3-button w3-hide-small w3-hover-red menus" menu='search'><i class="fa fa-search"></i> SEARCH </a>
-
-        <a class="w3-bar-item w3-button w3-right w3-hover-red menus" menu="account" id="user-link">{{ user.first_name|default:"GUEST"|upper }}</a>
-        
-  </div>
-
-  <!-- Navbar on small screens -->
-  <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium menu-box" menu="nav-options">
-    <a href="{% url 'homestay:about' %}" class="w3-bar-item w3-button" onclick="toggleFunction()">ABOUT</a>
-    <a class="w3-bar-item w3-button menus" menu='search'>SEARCH</a>
-  </div>
-
-  <!-- Account Menu -->
-  <div id="accountMenu" class="w3-card w3-bar-block w3-white w3-hide w3-animate-right w3-right menu-box" menu="account" style="width:20%; min-width: 200px; margin-top: 3px">
-    {% if user.is_authenticated %}
-    <a href="{% url 'account:edit_profile' %}" class="w3-bar-item w3-button w3-right w3-hover-red w3-center"></i>PROFILE</a>
-    <a href="{% url 'account:logout' %}" class="w3-bar-item w3-button w3-right w3-hover-red w3-center"></i>LOGOUT</a>
+    {# Nếu có banner thì bỏ nền trắng #}
+    {% if have_banner %}
+        <div class="w3-bar w3-text-white" id="myNavbar">
     {% else %}
-    <a href="{% url 'account:login' %}" class="w3-bar-item w3-button w3-right w3-hover-red w3-center"></i>LOGIN</a>
+        <div class="w3-bar w3-card w3-animate-top w3-white" id="myNavbar">
     {% endif %}
-  </div>
-
-  <!-- Search Menu -->
-  <div id="searchMenu" class="w3-card w3-bar-block w3-white w3-hide w3-animate-left w3-left menu-box" menu="search" style="width:20%; min-width: 200px; margin-top: 3px">
-    <div class="input">
-        <div class="autocomplete w3-row" style="width:300px;">
-            <input id="address" class="w3-twothird w3-left" type="text" name="address" placeholder="Address">
-            <a id="submit-search" class="w3-button w3-third we-right">Search</a>
-            <a id="func-my_location" class="w3-button w3-left" type="submit">My Location</a>
-        </div>
-        <input id="lat" type="hidden" name="lat">
-        <input id="lng" type="hidden" name="lng">
-        
+    {#        Các link ở nav bả#}
+    <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right menus" menu="nav-options"
+       href="javascript:void(0);" title="Toggle Navigation Menu">
+        <i class="fa fa-bars"></i>
+    </a>
+    <a href="{% url 'homestay:index' %}" class="w3-bar-item nav-button">HOME</a>
+    <a href="{% url 'homestay:about' %}" class="w3-bar-item nav-button w3-hide-small"><i class="fa fa-user"></i>
+        ABOUT</a>
+    {#        Các link bổ sung khi include#}
+    {% for title, link in links %}
+        <a href="{% url link %}" class="w3-bar-item nav-button w3-hide-small"><i class="fa fa-th"></i> {{ title|upper }}
+        </a>
+    {% endfor %}
+    <a class="w3-bar-item w3-button w3-hide-small w3-hover-red menus" menu='search'><i class="fa fa-search"></i> SEARCH
+    </a>
+    <a class="w3-bar-item w3-button w3-right w3-hover-red menus" menu="account"
+       id="user-link">{{ user.first_name|default:"GUEST"|upper }}</a>
     </div>
-  </div>
 
-</div>
-{% if not have_banner %}
-<!-- Putdown Content -->
-<div style="margin-top:80px;"></div>
-{% endif %}
-<script>
-{% if have_banner %}
-   // Change style of navbar on scroll
-    window.onscroll = function() {myFunction()};
-    function myFunction() {
-        var navbar = document.getElementById("myNavbar");
-        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-            navbar.className = "w3-bar" + " w3-card" + " w3-animate-top" + " w3-white";
-        } else {
-            navbar.className = navbar.className.replace(" w3-card w3-animate-top w3-white", " w3-text-white");
-        }
-    }
-{% endif %}
+    <!-- Navbar on small screens -->
+    <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium menu-box" menu="nav-options">
+        <a href="{% url 'homestay:about' %}" class="w3-bar-item w3-button" onclick="toggleFunction()">ABOUT</a>
+        <a class="w3-bar-item w3-button menus" menu='search'>SEARCH</a>
+    </div>
 
-{# Mở và đóng các menu box #}
-(function(){
-    var current_menu;
-// Used to toggle the menu on small screens when clicking on the menu button
-$('.menus').click(function(e){
-    console.log("Open one");
-    e.stopPropagation();
-    let menubox = $(".menu-box[menu="+ $(this).attr("menu") +"]");
-    $(".menu-box[menu!="+ $(this).attr("menu") +"]").removeClass('w3-show');
-    menubox.toggleClass('w3-show');
-    current_menu = menubox[0];
-});
+    <!-- Account Menu -->
+    <div id="accountMenu" class="w3-card w3-bar-block w3-white w3-hide w3-animate-right w3-right menu-box"
+         menu="account" style="width:20%; min-width: 200px; margin-top: 3px">
+{#        Nếu đã đăng nhập#}
+        {% if user.is_authenticated %}
+            <a href="{% url 'account:edit_profile' %}"
+               class="w3-bar-item w3-button w3-right w3-hover-red w3-center"></i>PROFILE</a>
+            <a href="{% url 'account:logout' %}" class="w3-bar-item w3-button w3-right w3-hover-red w3-center"></i>
+                LOGOUT</a>
+        {% else %}
+            <a href="{% url 'account:login' %}" class="w3-bar-item w3-button w3-right w3-hover-red w3-center"></i>
+                LOGIN</a>
+            <a href="{% url 'account:signup' %}" class="w3-bar-item w3-button w3-right w3-hover-red w3-center"></i>
+                SIGNUP</a>
+        {% endif %}
+    </div>
 
-$(window).click(function (e){
-    if(!current_menu) return;
-    if(!(e.target.matches('.menus-box') || current_menu.contains(e.target) || (current_menu.attributes['id'].nodeValue ==='searchMenu' && e.target.matches('.autocomplete-list-item')))) {
-        console.log('fire');
-        $('.menu-box').removeClass('w3-show');
-        current_menu = undefined
-    }
-});
+    <!-- Search Menu -->
+    <div id="searchMenu" class="w3-card w3-bar-block w3-white w3-hide w3-animate-left w3-left menu-box" menu="search"
+         style="width:20%; min-width: 200px; margin-top: 3px">
+        <div class="input">
+            <div class="autocomplete w3-row" style="width:300px;">
+                <input id="address" class="w3-twothird w3-left" type="text" name="address" placeholder="Address">
+                <a id="submit-search" class="w3-button w3-third we-right">Search</a>
+                <a id="func-my_location" class="w3-button w3-left" type="submit">My Location</a>
+            </div>
+            <input id="lat" type="hidden" name="lat">
+            <input id="lng" type="hidden" name="lng">
 
-})();
+        </div>
+    </div>
 
-(function () {
-    var current_location;
-
-    function getLocation() {
-        if (navigator.geolocation) {
-            if (current_location) return;
-            $.getJSON('http://ip-api.com/json?callback=?', function(data) {
-                current_location = data;
-                console.log(JSON.stringify(data, null, 2));
-                document.getElementById('lat').value = current_location['lat'];
-                document.getElementById('lng').value = current_location['lon'];
-                document.getElementById('address').value = current_location['city']+', ' + current_location['regionName'] +', ' + current_location['country'];
-            });
-        } else {
-        alert("Geolocation is not supported by this browser.");
-        }
-    }
-    function searchLatLng() {
-        let lat = $('#lat').val();
-        let lng = $('#lng').val();
-        window.location = "/search?lat="+lat+"&lng="+lng+"&dist=5";
-    }
-    
-    $('#submit-search').click(searchLatLng);
-    $('#func-my_location').click(getLocation);
-})();
-
-(function() {
-    {% comment %} function search(text, success) {
-        $.ajax({
-            url: "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/suggest",
-            data: {text: text,f: 'json',countryCode: 'VNM'},
-            type: 'get',
-            success: success
-        });
-    } {% endcomment %}
-    function search(text, success){
-        $.ajax({
-            url: "https://autocomplete.geocoder.ls.hereapi.com/6.2/suggest.json",
-            data: {apiKey: 'BA9lq866SwA-ewV-HhDsKdmwqDLrHTYaoCmU4IaHw90', 
-                    query: text,f: 'json',country: 'VNM',
-                    beginHighlight: '<b>', endHighlight: '</b>',
-                    language: 'vi'},
-            type: 'get',
-            success: success
-        });
-    }
-
-    function findAddressCandicates(text, magicKey, success){
-        $.ajax({
-            url: "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates",
-            data: {
-                SingleLine: text,
-                f: 'json',
-                magicKey: magicKey
-            },
-            type: 'get',
-            success: success
-        });
-    }
-
-    function detail_here(locationId, success){
-        $.ajax({
-            url: 'https://geocoder.ls.hereapi.com/6.2/geocode.json',
-            type: 'get',
-            data: {
-                locationId: locationId,
-                jsonattributes: '1',
-                gen: '9',
-                apiKey: 'BA9lq866SwA-ewV-HhDsKdmwqDLrHTYaoCmU4IaHw90'
-            },
-            success: success
-        })
-    }
-
-    
-
-    function autocomplete(inp) {
-        /*the autocomplete function takes two arguments,
-        the text field element and an array of possible autocompleted values:*/
-        var currentFocus;
-        /*execute a function when someone writes in the text field:*/
-        var sendQuery;
-        inp.addEventListener("input", function(e) {
-            var a, b, i, val = this.value;
-            /*close any already open lists of autocompleted values*/
-            closeAllLists();
-            if (!val) { return false;}
-            if(sendQuery) {clearTimeout(sendQuery);}
-            sendQuery = setTimeout(
-                () => new Promise( function (resolve, reject) {
-                        search(val, function (response){resolve(response.suggestions);});
-                    }
-                ).then(arr=>{
-                    currentFocus = -1;
-                    /*create a DIV element that will contain the items (values):*/
-                    createList(arr);
-                }),
-                800
-            );
-            
-    });
-
-    function createList(arr){
-        a = document.createElement("DIV");
-        a.setAttribute("id", "autocomplete-list");
-        a.setAttribute("class", "autocomplete-items w3-card w3-bar-block w3-white w3-animate-left w3-left");
-        /*append the DIV element as a child of the autocomplete container:*/
-        document.getElementById('navbar-container').appendChild(a);
-        /*for each item in the array...*/
-        for (i = 0; i < arr.length; i++) {
-            /*check if the item starts with the same letters as the text field value:*/
-            /*create a DIV element for each matching element:*/
-            {% comment %} if(arr[i].isCollection) continue; {% endcomment %}
-            b = document.createElement("DIV");
-            
-            /*insert a input field that will hold the curren
-            t array item's value:*/
-            b.innerHTML = arr[i].label;
-            b.setAttribute('value', arr[i].label);
-            b.setAttribute('locationId', arr[i].locationId);
-            b.setAttribute('class', 'autocomplete-list-item')
-            /*execute a function when someone clicks on the item value (DIV element):*/
-            b.addEventListener("click", function(e) {
-                /*insert the value for the autocomplete text field:*/
-                let locationId = this.getAttribute('locationId');
-                var html = this.getAttribute('value');
-                var div = document.createElement("div");
-                div.innerHTML = html;
-                var text = div.textContent || div.innerText || "";
-                inp.value = text;
-                new Promise(function (resolve, reject){
-                    detail_here(locationId, response => {
-                        console.log(response);
-                        resolve(response.response.view[0].result[0].location)
-                    });
-                }).then(location=>{
-                    let point;
-                    if (location.locationType == 'point'){
-                        position = location.navigationPosition[0];
-                        point = [position.latitude, position.longitude];
-                    } else if (location.locationType == 'address'){
-                        point = [location.displayPosition.latitude, location.displayPosition.longitude];
-                    } else {
-                        mapView = location.mapView;
-                        point = [(mapView.topLeft.latitude + mapView.bottomRight.latitude)/2, (mapView.topLeft.longitude + mapView.bottomRight.longitude)/2]
-                    }
-                    document.getElementById('lat').value = point[0];
-                    document.getElementById('lng').value = point[1];
-                })  
-                closeAllLists();
-                /*close the list of autocompleted values,
-                (or any other open lists of autocompleted values:*/                
-            });         
-            a.appendChild(b);
-        }
-        return a;
-    }
-    /*execute a function presses a key on the keyboard:*/
-    inp.addEventListener("keydown", function(e) {
-        var x = document.getElementById(this.id + "autocomplete-list");
-        if (x) x = x.getElementsByTagName("div");
-        if (e.keyCode == 40) {
-            /*If the arrow DOWN key is pressed,
-            increase the currentFocus variable:*/
-            currentFocus++;
-            /*and and make the current item more visible:*/
-            addActive(x);
-        } else if (e.keyCode == 38) { //up
-            /*If the arrow UP key is pressed,
-            decrease the currentFocus variable:*/
-            currentFocus--;
-            /*and and make the current item more visible:*/
-            addActive(x);
-        } else if (e.keyCode == 13) {
-            /*If the ENTER key is pressed, prevent the form from being submitted,*/
-            e.preventDefault();
-            if (currentFocus > -1) {
-            /*and simulate a click on the "active" item:*/
-            if (x) x[currentFocus].click();
+    </div>
+    {% if not have_banner %}
+        <!-- Putdown Content -->
+        <div style="margin-top:80px;"></div>
+    {% endif %}
+    <script>
+        {% if have_banner %}
+            // Change style of navbar on scroll
+            window.onscroll = function () {
+                myFunction()
+            };
+            function myFunction() {
+                const navbar = document.getElementById("myNavbar");
+                if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                    navbar.className = "w3-bar" + " w3-card" + " w3-animate-top" + " w3-white";
+                } else {
+                    navbar.className = navbar.className.replace(" w3-card w3-animate-top w3-white", " w3-text-white");
+                }
             }
-        }
-    });
-    function addActive(x) {
-        /*a function to classify an item as "active":*/
-        if (!x) return false;
-        /*start by removing the "active" class on all items:*/
-        removeActive(x);
-        if (currentFocus >= x.length) currentFocus = 0;
-        if (currentFocus < 0) currentFocus = (x.length - 1);
-        /*add class "autocomplete-active":*/
-        x[currentFocus].classList.add("autocomplete-active");
-    }
-    function removeActive(x) {
-        /*a function to remove the "active" class from all autocomplete items:*/
-        for (var i = 0; i < x.length; i++) {
-        x[i].classList.remove("autocomplete-active");
-        }
-    }
-    function closeAllLists(elmnt) {
-        /*close all autocomplete lists in the document,
-        except the one passed as an argument:*/
-        var x = document.getElementsByClassName("autocomplete-items");
-        for (var i = 0; i < x.length; i++) {
-        if (elmnt != x[i] && elmnt != inp) {
-            x[i].parentNode.removeChild(x[i]);
-        }
-        }
-    }
-    }
-    /*An array containing all the country names in the world:*/
-        /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
-    autocomplete(document.getElementById("address"));
-})();
-</script>
+        {% endif %}
+
+        {# Mở và đóng các menu box #}
+        (function () {
+            let current_menu;
+// Used to toggle the menu on small screens when clicking on the menu button
+            $('.menus').click(function (e) {
+                console.log("Open one");
+                e.stopPropagation();
+                let menubox = $(".menu-box[menu=" + $(this).attr("menu") + "]");
+                $(".menu-box[menu!=" + $(this).attr("menu") + "]").removeClass('w3-show');
+                menubox.toggleClass('w3-show');
+                current_menu = menubox[0];
+            });
+
+            $(window).click(function (e) {
+                if (!current_menu) return;
+                if (!(e.target.matches('.menus-box') || current_menu.contains(e.target) || (current_menu.attributes['id'].nodeValue === 'searchMenu' && e.target.matches('.autocomplete-list-item')))) {
+                    console.log('fire');
+                    $('.menu-box').removeClass('w3-show');
+                    current_menu = undefined
+                }
+            });
+
+        })();
+
+        {#Search#}
+        (function () {
+            var current_location;
+
+            function getMyLocation() {
+                if (navigator.geolocation) {
+                    if (current_location) return;
+                    $.getJSON('http://ip-api.com/json?callback=?', function (data) {
+                        current_location = data;
+                        console.log(JSON.stringify(data, null, 2));
+                        document.getElementById('lat').value = current_location['lat'];
+                        document.getElementById('lng').value = current_location['lon'];
+                        document.getElementById('address').value = current_location['city'] + ', ' + current_location['regionName'] + ', ' + current_location['country'];
+                    });
+                } else {
+                    alert("Geolocation is not supported by this browser.");
+                }
+            }
+
+            function searchLatLng() {
+                let lat = $('#lat').val();
+                let lng = $('#lng').val();
+                window.location = "/search?lat=" + lat + "&lng=" + lng + "&dist=5";
+            }
+
+            $('#submit-search').click(searchLatLng);
+            $('#func-my_location').click(getMyLocation);
+        })();
+
+        (function () {
+            function search(text, success) {
+                $.ajax({
+                    url: "https://autocomplete.geocoder.ls.hereapi.com/6.2/suggest.json",
+                    data: {
+                        apiKey: 'BA9lq866SwA-ewV-HhDsKdmwqDLrHTYaoCmU4IaHw90',
+                        query: text, f: 'json', country: 'VNM',
+                        beginHighlight: '<b>', endHighlight: '</b>',
+                        language: 'vi'
+                    },
+                    type: 'get',
+                    success: success
+                });
+            }
+
+            function detail_here(locationId, success) {
+                $.ajax({
+                    url: 'https://geocoder.ls.hereapi.com/6.2/geocode.json',
+                    type: 'get',
+                    data: {
+                        locationId: locationId,
+                        jsonattributes: '1',
+                        gen: '9',
+                        apiKey: 'BA9lq866SwA-ewV-HhDsKdmwqDLrHTYaoCmU4IaHw90'
+                    },
+                    success: success
+                })
+            }
+
+
+            function autocomplete(inp) {
+                /*the autocomplete function takes two arguments,
+                the text field element and an array of possible autocompleted values:*/
+                var currentFocus;
+                /*execute a function when someone writes in the text field:*/
+                var sendQuery;
+                inp.addEventListener("input", function (e) {
+                    var a, b, i, val = this.value;
+                    /*close any already open lists of autocompleted values*/
+                    closeAllLists();
+                    if (!val) {
+                        return false;
+                    }
+                    if (sendQuery) {
+                        clearTimeout(sendQuery);
+                    }
+                    {#Set timeout để tránh gửi request suggest quá nhiều#}
+                    sendQuery = setTimeout(
+                        () => new Promise(function (resolve, reject) {
+                                search(val, function (response) {
+                                    resolve(response.suggestions);
+                                });
+                            }
+                        ).then(arr => {
+                            currentFocus = -1;
+                            /*create a DIV element that will contain the items (values):*/
+                            createList(arr);
+                        }),
+                        500
+                    );
+
+                });
+
+                function createList(arr) {
+                    a = document.createElement("DIV");
+                    a.setAttribute("id", "autocomplete-list");
+                    a.setAttribute("class", "autocomplete-items w3-card w3-bar-block w3-white w3-animate-left w3-left");
+                    /*append the DIV element as a child of the autocomplete container:*/
+                    document.getElementById('navbar-container').appendChild(a);
+                    /*for each item in the array...*/
+                    for (i = 0; i < arr.length; i++) {
+                        /*check if the item starts with the same letters as the text field value:*/
+                        /*create a DIV element for each matching element:*/
+                        {% comment %} if(arr[i].isCollection) continue; {% endcomment %}
+                        b = document.createElement("DIV");
+
+                        /*insert a input field that will hold the curren
+                        t array item's value:*/
+                        b.innerHTML = arr[i].label;
+                        b.setAttribute('value', arr[i].label);
+                        b.setAttribute('locationId', arr[i].locationId);
+                        b.setAttribute('class', 'autocomplete-list-item')
+                        /*execute a function when someone clicks on the item value (DIV element):*/
+                        b.addEventListener("click", function (e) {
+                            /*insert the value for the autocomplete text field:*/
+                            let locationId = this.getAttribute('locationId');
+                            var html = this.getAttribute('value');
+                            var div = document.createElement("div");
+                            div.innerHTML = html;
+                            var text = div.textContent || div.innerText || "";
+                            inp.value = text;
+                            new Promise(function (resolve, reject) {
+                                detail_here(locationId, response => {
+                                    console.log(response);
+                                    resolve(response.response.view[0].result[0].location)
+                                });
+                            }).then(location => {
+                                let point;
+                                if (location.locationType == 'point') {
+                                    position = location.navigationPosition[0];
+                                    point = [position.latitude, position.longitude];
+                                } else if (location.locationType == 'address') {
+                                    point = [location.displayPosition.latitude, location.displayPosition.longitude];
+                                } else {
+                                    mapView = location.mapView;
+                                    point = [(mapView.topLeft.latitude + mapView.bottomRight.latitude) / 2, (mapView.topLeft.longitude + mapView.bottomRight.longitude) / 2]
+                                }
+                                document.getElementById('lat').value = point[0];
+                                document.getElementById('lng').value = point[1];
+                            })
+                            closeAllLists();
+                            /*close the list of autocompleted values,
+                            (or any other open lists of autocompleted values:*/
+                        });
+                        a.appendChild(b);
+                    }
+                    return a;
+                }
+
+                /*execute a function presses a key on the keyboard:*/
+                inp.addEventListener("keydown", function (e) {
+                    var x = document.getElementById(this.id + "autocomplete-list");
+                    if (x) x = x.getElementsByTagName("div");
+                    if (e.keyCode == 40) {
+                        /*If the arrow DOWN key is pressed,
+                        increase the currentFocus variable:*/
+                        currentFocus++;
+                        /*and and make the current item more visible:*/
+                        addActive(x);
+                    } else if (e.keyCode == 38) { //up
+                        /*If the arrow UP key is pressed,
+                        decrease the currentFocus variable:*/
+                        currentFocus--;
+                        /*and and make the current item more visible:*/
+                        addActive(x);
+                    } else if (e.keyCode == 13) {
+                        /*If the ENTER key is pressed, prevent the form from being submitted,*/
+                        e.preventDefault();
+                        if (currentFocus > -1) {
+                            /*and simulate a click on the "active" item:*/
+                            if (x) x[currentFocus].click();
+                        }
+                    }
+                });
+
+                function addActive(x) {
+                    /*a function to classify an item as "active":*/
+                    if (!x) return false;
+                    /*start by removing the "active" class on all items:*/
+                    removeActive(x);
+                    if (currentFocus >= x.length) currentFocus = 0;
+                    if (currentFocus < 0) currentFocus = (x.length - 1);
+                    /*add class "autocomplete-active":*/
+                    x[currentFocus].classList.add("autocomplete-active");
+                }
+
+                function removeActive(x) {
+                    /*a function to remove the "active" class from all autocomplete items:*/
+                    for (var i = 0; i < x.length; i++) {
+                        x[i].classList.remove("autocomplete-active");
+                    }
+                }
+
+                function closeAllLists(elmnt) {
+                    /*close all autocomplete lists in the document,
+                    except the one passed as an argument:*/
+                    var x = document.getElementsByClassName("autocomplete-items");
+                    for (var i = 0; i < x.length; i++) {
+                        if (elmnt != x[i] && elmnt != inp) {
+                            x[i].parentNode.removeChild(x[i]);
+                        }
+                    }
+                }
+            }
+
+            /*An array containing all the country names in the world:*/
+            /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+            autocomplete(document.getElementById("address"));
+        })();
+    </script>
 

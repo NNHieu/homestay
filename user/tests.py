@@ -11,7 +11,7 @@ from user.tokens import account_activation_token
 
 
 class UsersManagersTests(TestCase):
-
+    # Copy từ https://testdriven.io/blog/django-custom-user-model/
     def test_create_user(self):
         User = get_user_model()
         user = User.objects.create_user(email='testuser@user.com', password='testpassword')
@@ -32,6 +32,7 @@ class UsersManagersTests(TestCase):
         with self.assertRaises(ValueError):
             User.objects.create_user(email='', password="testpassword")
 
+    # Copy từ https://testdriven.io/blog/django-custom-user-model/
     def test_create_superuser(self):
         User = get_user_model()
         admin_user = User.objects.create_superuser('testsuper@user.com', 'password1234')
