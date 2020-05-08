@@ -40,7 +40,6 @@ Chỉ có kiểm tra email hợp lệ là có gửi ajax post với data là tex
 T không biết có nên hạn chế vụ này để tránh DDOS không?
 
 Khi gửi form đăng kí xong, mới hiện mỗi dòng "Please confirm your email address to complete the registration"
-Phải thanh template trả về ở views.signup, phần gửi phản hồi cuối if true
 
 Verify email: mới chỉ gửi email và đường link sơ sài, có thể sửa ở template user/acc_active_email.html
 
