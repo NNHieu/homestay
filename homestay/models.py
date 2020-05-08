@@ -121,7 +121,7 @@ class GuestInfo(models.Model):
     phone_number = PhoneNumberField(_("Phone number"))
 
 
-class Contrast(models.Model):
+class Contract(models.Model):
     homestay = models.ForeignKey("Homestay", verbose_name=_("Homestay"), on_delete=models.CASCADE)
     guest = models.ForeignKey(GuestInfo, verbose_name=_("Guest"), on_delete=models.CASCADE)
     user = models.ForeignKey(get_user_model(), verbose_name=_("User"), null=True, on_delete=models.SET_NULL)

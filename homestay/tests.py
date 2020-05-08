@@ -7,7 +7,7 @@ from django.test import TestCase, Client
 from numpy.random.mtrand import random_sample
 from scipy import rand
 
-from homestay.models import Homestay, Address, Contrast
+from homestay.models import Homestay, Address, Contract
 
 
 # Sinh random string
@@ -53,7 +53,7 @@ class Booking(TestCase):
 
     def test1(self):
         self.book(1, '2020-05-20', '2020-05-24', email='test@email.com')
-        self.assertTrue(Contrast.objects.filter(homestay=Homestay.objects.get(pk=1),
+        self.assertTrue(Contract.objects.filter(homestay=Homestay.objects.get(pk=1),
                                                 checkin_date='2020-05-20', checkout_date='2020-05-24',
                                                 guest__email='test@email.com').exists())
 

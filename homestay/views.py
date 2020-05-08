@@ -117,7 +117,7 @@ def booking(request, hid):
             guest.save()
             reservation.guest = guest
             reservation.homestay = Homestay.objects.get(pk=hid)
-            reservation.state = Contrast.State.NEW
+            reservation.state = Contract.State.NEW
             reservation.save()
             # Gửi phản hồi đơn giản
             return HttpResponse('success')

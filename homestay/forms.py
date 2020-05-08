@@ -31,7 +31,7 @@ class BookingForm(forms.ModelForm):
     hid = forms.IntegerField(widget=forms.HiddenInput)
 
     class Meta:
-        model = Contrast
+        model = Contract
         # fields = ()
         fields = ("checkin_date", "checkout_date")
 

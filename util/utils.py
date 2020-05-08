@@ -76,7 +76,7 @@ class OverlapDateChecker(metaclass=Singleton):
         cls.dict = {}
         for h in hmodels.Homestay.objects.all():
             cls.dict[h.pk] = IntervalTree()
-        for contrast in hmodels.Contrast.objects.filter(state__gt=0):
+        for contrast in hmodels.Contract.objects.filter(state__gt=0):
             cls.add(contrast)
 
     @classmethod
