@@ -1,18 +1,16 @@
 {% extends "user/base.html" %}
-{% block error_alex %}
-    {% if not first %}
+{% block error_alect %}
+    {% if request.POST %}
         {% if errors == -1  %}
         <p>Your username or password didn't match. Please try again.</p>
         {% elif errors == -2 %}
         <p>Your account haven't been activated yet.</p>
         {% else %}
-            {% if request.GET.next %}
-            {% if user.is_authenticated %}
+            {% if request.GET.next and user.is_authenticated %}
             <p>Your account doesn't have access to this page. To proceed,
             please login with an account that has access.</p>
             {% else %}
             <p>Please login to see this page.</p>
-            {% endif %}
             {% endif %}
         {% endif %}
     {% endif %}

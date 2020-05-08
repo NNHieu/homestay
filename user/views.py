@@ -17,27 +17,40 @@ from .validators import validate_user_id
 
 # View cho trang login
 def login_view(request):
-
+    # Báo lỗi
+    # -1 email or password sai
+    # -2 account chưa active
+    errors = 0
     if request.method == 'POST':
         # Nếu request là POST
         form = CustomUserLoginForm(request.POST)
         # Kiểm tra form valid
         if form.is_valid():
             # Authenticate user với thông tin từ request POST
-            user = authenticate(email=form.cleaned_data['email'], password=form.cleaned_data['password'])
-            # Nếu authenticate thành công
-            if user is not None:
-                # Login cho user
-                login(request, user)
-                # Chuyển người dùng đến next trong GET data
-                # Nếu next rỗng, chuyển về trang chủ
-                return redirect(request.GET.get('next', 'homestay:index'))
+            email = form.cleaned_data['email']
+            user = get_user_model().objects.get(email=email)
+            if user:
+                if not user.is_active:
+                    errors = -2
+                else:
+                    user = authenticate(user=user, password=form.cleaned_data['password'])
+                    # Nếu authenticate thành công
+                    if user is not None:
+                        # Login cho user
+                        login(request, user)
+                        # Chuyển người dùng đến next trong GET data
+                        # Nếu next rỗng, chuyển về trang chủ
+                        return redirect(request.GET.get('next', 'homestay:index'))
+                    else:
+                        errors = -1
+            else:
+                errors = -1
     else:
         # Nếu request không là POST
         # Tạo form ban đầu để nhập
         form = CustomUserLoginForm()
     # Gửi phản hồi sử dụng template user/login.html context {'form': form}
-    return render(request, 'user/login.html', {'form': form})
+    return render(request, 'user/login.html', {'form': form, 'errors': errors})
 
 
 # View cho trang sign up
