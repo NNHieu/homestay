@@ -7,12 +7,12 @@
 <body>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
-
-    {% for form in image_formset %}
-        <div style="display: block;">{{ form }}</div>
-
-    {% endfor %}
+    <table>
+        {{ form.as_table }}
+        {% for form_image in image_formset %}
+        {{ form_image.as_table }}
+        {% endfor %}
+    </table>
     <button type="submit">Upload</button>
 </form>
 </body>

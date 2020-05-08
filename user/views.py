@@ -33,7 +33,7 @@ def login_view(request):
                 if not user.is_active:
                     errors = -2
                 else:
-                    user = authenticate(user=user, password=form.cleaned_data['password'])
+                    user = authenticate(email=email, password=form.cleaned_data['password'])
                     # Nếu authenticate thành công
                     if user is not None:
                         # Login cho user
