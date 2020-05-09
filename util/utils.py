@@ -1,9 +1,7 @@
 import datetime
 
-import numpy
 import kdtree
 import homestay.models as hmodels
-from math import acos, cos, sin, radians
 from geopy.distance import distance
 from intervaltree import Interval, IntervalTree
 

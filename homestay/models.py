@@ -49,10 +49,10 @@ class Homestay(models.Model):
 
     #
     # Meals
-    light_breakfast = models.BooleanField('Complimentary Light Breakfast')
-    use_of_kitchen = models.BooleanField('Use of Kitchen')
+    light_breakfast = models.BooleanField(_('Complimentary Light Breakfast'))
+    use_of_kitchen = models.BooleanField(_('Use of Kitchen'))
     #
-    rules = models.TextField('House rules', max_length=1000)
+    rules = models.TextField(_('House rules'), max_length=1000)
     #
     address = models.OneToOneField('Address', on_delete=models.CASCADE)
     # Thông tin đánh giá:
@@ -110,7 +110,6 @@ class ReviewImage(models.Model):
     title = models.CharField(max_length=50, blank=True)
     homestay = models.ForeignKey(Homestay, on_delete=models.CASCADE)
     first_save = models.DateTimeField(null=True, auto_now_add=True)
-
 
 
 class GuestInfo(models.Model):
