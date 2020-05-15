@@ -1,0 +1,57 @@
+body{
+  margin:  0;
+  padding: 0;
+  background: #262636;
+}
+
+.stars
+{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateY(180deg);
+  display: flex;
+}
+
+.stars input
+{
+  display: none; /* bo dau tick */
+}
+
+.stars label
+{
+  display: block;
+  cursor: pointer;
+  width: 20px;
+}
+
+.stars label::before
+{
+  content: '\f005';
+  font-family: fontAwesome;
+  position: relative;
+  display: block;
+  font-size: 20px;
+  color: #101010;
+}
+
+.stars label::after
+{
+  content: '\f005';  /*hình ngôi sao */
+  font-family: fontAwesome;
+  position: absolute;  /* trung vao hinh */
+  display: block;
+  font-size: 20px;
+  color: gold;
+  top: 0;
+  opacity: 0;
+  transition: .2s;
+  text-shadow:0 2px 5px rbga(0,0,0,.5);
+}
+
+.stars label:hover::after,
+.stars label:hover:hover ~ label::after,
+.stars input:checked ~ label::after
+{
+  opacity: 1;
+}

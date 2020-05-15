@@ -59,3 +59,10 @@ class BookingGuestInfoForm(forms.ModelForm):
     class Meta:
         model = GuestInfo
         fields = ('email', 'first_name', 'last_name', 'phone_number')
+
+
+class RatingForm(forms.ModelForm):
+    feedback = forms.TextField()
+    class Meta:
+        model = Rating
+        fields = ('overall', 'facility', 'comfort',  'valueformoney', 'location', 'cleanliness', 'feedback')
