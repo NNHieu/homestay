@@ -9,9 +9,12 @@
     {% csrf_token %}
     <table>
         {{ form.as_table }}
+        {{address_form.as_table}}
+        {{ image_formset.management_form }}
         {% for form_image in image_formset %}
         {{ form_image.as_table }}
         {% endfor %}
+        
     </table>
     <button type="submit">Upload</button>
 </form>

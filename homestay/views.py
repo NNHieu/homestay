@@ -7,7 +7,7 @@ from django.shortcuts import redirect, render
 from django.views import generic
 
 from .models import *
-from .forms import HomestayForm, BookingForm, BookingGuestInfoForm
+from .forms import HomestayForm, BookingForm, BookingGuestInfoForm, AddressForm
 from django.contrib.auth.decorators import login_required
 from util.utils import Searcher
 
@@ -49,17 +49,18 @@ def upload_view(request):
         # Feed cho form điền thông tin homestay và up images
         form = HomestayForm(request.POST)
         image_formset = ImageFormSet(request.POST, request.FILES, queryset=ReviewImage.objects.none())
-
+        address_form = AddressForm(request.POST)
         # Kiểm tra form hợp lệ
-        if form.is_valid():
+        if form.is_valid() and address_form.is_valid():
             homestay = form.save(commit=False)
             homestay.owner = request.user
-            homestay.save()
+            address = address_form.save(commit=False)
+            homestay.address = address
             if form.is_valid():
                 # Chỉ lấy những image form đúng chuẩn
-                for form in image_formset.cleaned_data:
-                    if form:
-                        image = form['image']
+                for image_form in image_formset.cleaned_data:
+                    if image_form:
+                        image = image_form['image']
                         photo = ReviewImage(homestay=homestay, image=image)
                         photo.save()
             try:
@@ -68,14 +69,16 @@ def upload_view(request):
                     homestay.facilities.add(int(f))
             except ValueError:
                 pass
+            address.save()
             homestay.save()
 
             # Redirect đến trang upload thành công
-            return redirect('hm:upload_success')
+            return redirect('homestay:upload_success')
     else:
         form = HomestayForm()
         image_formset = ImageFormSet(queryset=ReviewImage.objects.none())
-    return render(request, 'homestay/upload_homestay.html', {'form': form, 'image_formset': image_formset})
+        address_form = AddressForm()
+    return render(request, 'homestay/upload_homestay.html', {'form': form, 'image_formset': image_formset, 'address_form': address_form})
 
 # View upload thành công.
 # Mới chỉ làm để test

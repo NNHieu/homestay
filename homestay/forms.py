@@ -12,11 +12,15 @@ class HomestayForm(forms.ModelForm):
         choices=((f.pk, f.name) for f in Facility.objects.filter(is_area_facility=False, is_character=False)))
     area_facilities = forms.MultipleChoiceField(
         choices=((f.pk, f.name) for f in Facility.objects.filter(is_area_facility=True, is_character=False)))
-
+	
     class Meta:
         model = Homestay
         fields = ['title', 'description', 'light_breakfast', 'use_of_kitchen', 'rules']
-
+		
+class AddressForm(forms.ModelForm):
+	class Meta:
+		model = Address
+		fields = ('lat', 'lng')
 
 # Form upload ảnh review
 class ReviewImageForm(forms.ModelForm):
