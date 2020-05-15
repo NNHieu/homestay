@@ -147,8 +147,8 @@ class Contract(models.Model):
 #model về các rating
 class Rating(models.Model):
     contract = models.OneToOneField(Contract,verbose_name = _("Contract"), on_delete=models.CASCADE)
-    homestay_id = models.ForeignKey(Homestay, verbose_name = _("Homestay") ,on_delete=models.SET_NULL)
-    overall = models.SmallIntegerField(_("Overall"), on_delete=models.CASCADE)
+    homestay_id = models.ForeignKey(Homestay, verbose_name = _("Homestay"), on_delete=models.SET_NULL, null=True)
+    overall = models.SmallIntegerField(_("Overall"))
 
     class Reviews(models.IntegerChoices):
         TERRIBLE = 1, _('Terrible')

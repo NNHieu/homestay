@@ -35,6 +35,8 @@ urlpatterns = [
     path('book/<int:hid>', views.booking, name='book'),
     # url thông tin trang web
     path('about/', views.about_view, name='about'),
+    # url rating
+    path('rating/<int:contract_id>', views.rating, name='rating')
 
 ] + test_patterns
 

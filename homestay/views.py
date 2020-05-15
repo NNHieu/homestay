@@ -7,7 +7,7 @@ from django.shortcuts import redirect, render
 from django.views import generic
 
 from .models import *
-from .forms import HomestayForm, BookingForm, BookingGuestInfoForm
+from .forms import HomestayForm, BookingForm, BookingGuestInfoForm, RatingForm
 from django.contrib.auth.decorators import login_required
 from util.utils import Searcher
 
@@ -129,6 +129,18 @@ def booking(request, hid):
         # Mới chỉ có ngày check in và check out
         booking_form = BookingForm(initial={'hid': hid})
     return render(request, 'booking.html', {'form': booking_form, 'guest_form': guest_form, 'hid': hid})
+
+# Rating
+def rating(request, contract_id):
+    if request.method == 'POST':
+        rating_form = RatingForm(request.POST)
+
+        if rating_form.is_valid():
+            rating = rating_form.save(commit=False)
+
+            return HttpResponse('Success')
+        return HttpResponse('Something  wrong')
+    return render(request, 'homestay/rating_form.html', {})
 
 def test_search(request):
     return render(request, 'homestay/search.html', {})
