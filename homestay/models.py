@@ -143,3 +143,24 @@ class Contract(models.Model):
     def save(self, *args, **kwargs):
         super().save(args, kwargs)
         utils.OverlapDateChecker.add(self)
+
+#model về các rating
+class Rating(models.Model):
+    contract = models.OneToOneField(Contract,verbose_name = _("Contract"), on_delete=models.CASCADE)
+    homestay_id = models.ForeignKey(Homestay, verbose_name = _("Homestay"), on_delete=models.SET_NULL, null=True)
+    overall = models.SmallIntegerField(_("Overall"))
+
+    class Reviews(models.IntegerChoices):
+        TERRIBLE = 1, _('Terrible')
+        BAD = 2, _('Bad')
+        NORMAL = 3, _('Normal')
+        GOOD = 4, _('Good')
+        TERRIFIC = 5, _('Terrific')
+
+    facility = models.SmallIntegerField(_("Facility"), choices=Reviews.choices)
+    cleanliness = models.SmallIntegerField(_("Cleanliness"), choices=Reviews.choices)
+    comfort = models.SmallIntegerField(_("Comfort"), choices=Reviews.choices)
+    location = models.SmallIntegerField(_("Location"), choices=Reviews.choices)
+    valueformoney = models.SmallIntegerField(_("Value For Money"), choices=Reviews.choices)
+
+    feedback = models.TextField(_("Feedback"), max_length=1000)
