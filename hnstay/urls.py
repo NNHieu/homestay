@@ -20,6 +20,7 @@ from django.template.defaulttags import url
 from django.urls import path, include
 
 urlpatterns = [
+    path('front', include('frontend.urls')),
     path('admin/', admin.site.urls),
     path('account/', include('user.urls')),
     path('', include('homestay.urls')),

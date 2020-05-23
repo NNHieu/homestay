@@ -15,6 +15,7 @@
 
 {% block style %}
 {{ block.super }}
+<style>
 .ol-attribution {
   line-height: 0.5px
 }
@@ -28,6 +29,12 @@
 .t-check-out .t-datepicker-day {
     left: 50%;
 }
+.detail-para {
+    line-height: var(--line-hight-detail-text);
+    height: calc(var(--number-line-detail-para)*var(--line-hight-detail-text));
+    overflow-y: scroll;
+}
+</style>
 {% endblock style %}
 
 {% block include_js %}
@@ -45,38 +52,38 @@
 {% block content_main %}
 <div class="w3-content" style="max-width:1600px">
   <!-- Side Bar -->
-  <div class="w3-sidebar w3-white" style="width: 300px; z-index: 0" >
-    <div class="w3-display-container">
-        <img src="https://www.w3schools.com/w3images/avatar_hat.jpg" style="width:100%" alt="Avatar">
-        <div class="w3-display-bottomleft w3-container w3-text-black">
-          <h2>Jane Doe</h2>
-        </div>
-    </div>
-    <div class="w3-container">
-      <a href="#" onclick="w3_close()" class="w3-hide-large w3-right w3-small w3-padding w3-hover-grey" title="close menu">
-      <i class="fa fa-remove"></i>
-      </a>
-      <p><i class="fa fa-home fa-fw w3-margin-right w3-large w3-text-teal"></i>London, UK</p>
-      <p><i class="fa fa-envelope fa-fw w3-margin-right w3-large w3-text-teal"></i>ex@mail.com</p>
-      <p><i class="fa fa-phone fa-fw w3-margin-right w3-large w3-text-teal"></i>1224435534</p>
-      <hr>
-        <form action="{% url 'homestay:book' homestay.id %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="checkin_date" id="checkin_date">
-            <input type="hidden" name="checkout_date" id="checkout_date">
-            <div class="t-datepicker">
-              <div class="t-check-in"></div>
-              <div class="t-check-out"></div>
-            </div>
-            <button id="book-button" class="w3-button w3-hide" type="submit">Book</button>
-        </form>
-      <br>
-    </div>
-  <!-- End SideBar -->
-  </div>
+{#  <div class="w3-sidebar w3-white w3-hide-small" style="width: 300px; z-index: 0" >#}
+{#    <div class="w3-display-container">#}
+{#        <img src="https://www.w3schools.com/w3images/avatar_hat.jpg" style="width:100%" alt="Avatar">#}
+{#        <div class="w3-display-bottomleft w3-container w3-text-black">#}
+{#          <h2>Jane Doe</h2>#}
+{#        </div>#}
+{#    </div>#}
+{#    <div class="w3-container">#}
+{#      <a href="#" onclick="w3_close()" class="w3-hide-large w3-right w3-small w3-padding w3-hover-grey" title="close menu">#}
+{#      <i class="fa fa-remove"></i>#}
+{#      </a>#}
+{#      <p><i class="fa fa-home fa-fw w3-margin-right w3-large w3-text-teal"></i>London, UK</p>#}
+{#      <p><i class="fa fa-envelope fa-fw w3-margin-right w3-large w3-text-teal"></i>ex@mail.com</p>#}
+{#      <p><i class="fa fa-phone fa-fw w3-margin-right w3-large w3-text-teal"></i>1224435534</p>#}
+{#      <hr>#}
+{#        <form action="{% url 'homestay:book' homestay.id %}" method="post">#}
+{#            {% csrf_token %}#}
+{#            <input type="hidden" name="checkin_date" id="checkin_date">#}
+{#            <input type="hidden" name="checkout_date" id="checkout_date">#}
+{#            <div class="t-datepicker">#}
+{#              <div class="t-check-in"></div>#}
+{#              <div class="t-check-out"></div>#}
+{#            </div>#}
+{#            <button id="book-button" class="w3-button w3-hide" type="submit">Book</button>#}
+{#        </form>#}
+{#      <br>#}
+{#    </div>#}
+{#  <!-- End SideBar -->#}
+{#  </div>#}
 
   <!-- !PAGE CONTENT! -->
-  <div class="w3-main" style="margin-left: 310px;">
+  <div class="w3-main">
 
     <div class="w3-container w3-card w3-white w3-margin-bottom">
         <h2>About the Homestay</h2>
@@ -84,7 +91,7 @@
           {% show_welcomes homestay.welcomes%}
       </div>
       <div class="grid_12 description">
-          <p>{{ homestay.description }}</p>
+          <p class="detail-para">{{ homestay.description }}</p>
       </div>
       <div class="grid_12">
           <h3>HOUSE FACILITIES</h3>
@@ -99,7 +106,7 @@
         <div id="map" class="map" data-lng="{{ homestay.address.lng }}" data-lat="{{ homestay.address.lat }}"></div>
       </div>
       <div class="grid_4 omega">
-          <p>{{ homestay.address.about_area }}</p>
+          <p class="detail-para">{{ homestay.address.about_area }}</p>
       </div>
       <div class="grid_12">
           <h3>LOCAL AREA FACILITIES</h3>

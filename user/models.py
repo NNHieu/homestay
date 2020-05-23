@@ -11,7 +11,7 @@ from .managers import CustomUserManager
 # Custom User với email làm trường chính
 class CustomUser(AbstractUser):
     username = None
-    email = models.EmailField(_('email address'), unique=True)
+    email = models.EmailField(_('Email address'), unique=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

@@ -1,10 +1,16 @@
 from django.conf.urls import url
 from django.urls import path
+from rest_framework import routers
 
 from . import views
+from .api import UserListCreate
 
 # Nên để là account hay user?
 app_name = 'account'
+
+router = routers.DefaultRouter()
+router.register('api', UserListCreate, 'api')
+
 urlpatterns = [
     # Url sign up
     url(r'^signup/$', views.signup, name='signup'),
@@ -19,4 +25,6 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     # Url sửa profile
     path('edit/', views.edit_profile, name='edit_profile'),
-]
+
+
+] + router.urls

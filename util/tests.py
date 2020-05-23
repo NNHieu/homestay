@@ -16,7 +16,7 @@ class TestDistance(TestCase):
     def test1(self):
         point1 = [20.619810, 106.209887]
         point2 = [20.615070, 106.195253]
-        d = 1630
+        d = 1630d 
         self.assertAlmostEqual(d, dist(point1, point2), delta=10)
 
     def test2(self):
