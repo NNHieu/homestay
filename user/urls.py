@@ -1,15 +1,17 @@
 from django.conf.urls import url
-from django.urls import path
+from django.urls import path, include
 from rest_framework import routers
 
+from knox import views as knox_views
+
 from . import views
-from .api import UserListCreate
+from .api import UserViewSet, RegisterAPI, SignUpAPI, LoginAPI, UserAPI
 
 # Nên để là account hay user?
 app_name = 'account'
 
 router = routers.DefaultRouter()
-router.register('api', UserListCreate, 'api')
+router.register('api', UserViewSet, 'api')
 
 urlpatterns = [
     # Url sign up
@@ -26,5 +28,12 @@ urlpatterns = [
     # Url sửa profile
     path('edit/', views.edit_profile, name='edit_profile'),
 
-
+    path('api/auth', include('knox.urls')),
+    path('api/auth/register', RegisterAPI.as_view()),
+    path('api/auth/signup', SignUpAPI.as_view()),
+    path('api/auth/login', LoginAPI.as_view()),
+    path('api/auth/user', UserAPI.as_view()),
+    path('api/auth/logout', knox_views.LogoutView.as_view(), name='knox_logout'),
+    path('api/auth/logoutall', knox_views.LogoutAllView.as_view(),
+         name='knox_logoutall'),
 ] + router.urls

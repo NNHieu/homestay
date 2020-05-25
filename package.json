@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack --mode development --watch ./frontend/src/index.js --output ./frontend/static/frontend/main.js",
+    "dev-login": "webpack --mode development --watch ./frontend/src/login.js --output ./frontend/static/frontend/login.js",
     "build": "webpack --mode production ./frontend/src/index.js --output ./frontend/static/frontend/main.js"
   },
   "keywords": [],
@@ -21,12 +22,14 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "js-cookie": "^2.2.1",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-alert": "^7.0.1",
     "react-alert-template-basic": "^1.0.0",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.0",
+    "react-router-dom": "^5.2.0",
     "react-transition-group": "^4.4.1",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",

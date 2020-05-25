@@ -16,7 +16,6 @@ from .validators import validate_user_id
 
 # Rest Framwork
 from rest_framework import generics
-from .serializers import CustomUserSerializer
 
 # Báo lỗi
 # -1 email or password sai
@@ -28,6 +27,8 @@ errors_list = {
 }
 
 # View cho trang login
+
+
 def login_view(request):
 
     errors = 0
@@ -43,7 +44,8 @@ def login_view(request):
                 if not user.is_active:
                     errors = -2
                 else:
-                    user = authenticate(email=email, password=form.cleaned_data['password'])
+                    user = authenticate(
+                        email=email, password=form.cleaned_data['password'])
                     # Nếu authenticate thành công
                     if user is not None:
                         # Login cho user
@@ -140,18 +142,22 @@ def logout_view(request):
     return redirect("homestay:index")
 
 # Thay đổi profile
+
+
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
         form = EditProfileForm(request.POST, instance=request.user)
-        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.userprofile)  # request.FILES is show the selected image or file
+        # request.FILES is show the selected image or file
+        profile_form = ProfileForm(
+            request.POST, request.FILES, instance=request.user.userprofile)
         if form.is_valid() and profile_form.is_valid():
             user_form = form.save()
             custom_form = profile_form.save(False)
             custom_form.user = user_form
             custom_form.save()
             return HttpResponse('Success')
-        
+
     else:
         # Gửi form với thông tin khởi tạo từ user đang đăng nhập
         form = EditProfileForm(instance=request.user)

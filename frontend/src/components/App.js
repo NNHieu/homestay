@@ -9,19 +9,23 @@ import store from '../store';
 
 import Header from "./layout/Header";
 import Alerts from "./layout/Alerts";
-import { default as UserSignupForm } from "./users/Forms";
+import { SignUp as UserSignupForm, Login as LoginForm, SignUpForm } from "./users/Forms";
 
-import Users from "./users/Users";
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+
 
 //Alert Options
 const alertOptions = {
     timeout: 3000,
     position: positions.TOP_CENTER,
     offset: '10px',
-
 }
 
-class App extends Component {
+export class App extends Component {
+    onLoginClick = e => {
+
+    }
+
     render() {
         return (
             <Provider store={store} >
@@ -29,9 +33,14 @@ class App extends Component {
                     <Fragment>
                         <Header />
                         <Alerts />
-                        <div className="container">
-                            <UserSignupForm />
-                            <Users />
+                        <div className="auth-wrapper">
+                            <div className="auth-inner">
+                                <Switch>
+                                    <Route exact path='/' component={() => { return <h1>Hello</h1> }} />
+                                    <Route path="/login" component={LoginForm} />
+                                    <Route path="/signup" component={SignUpForm} />
+                                </Switch>
+                            </div>
                         </div>
                     </Fragment>
                 </AlertProvider>
@@ -40,4 +49,4 @@ class App extends Component {
     }
 }
 
-ReactDOM.render(<App />, document.getElementById('app'))
+export default App
