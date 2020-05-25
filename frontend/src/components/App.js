@@ -10,7 +10,7 @@ import store from '../store';
 import Header from "./layout/Header";
 import Alerts from "./layout/Alerts";
 import { SignUp as UserSignupForm, Login as LoginForm, SignUpForm } from "./users/Forms";
-
+import { HomestayCard } from './homestay/HomestayCard'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 
 
@@ -19,6 +19,17 @@ const alertOptions = {
     timeout: 3000,
     position: positions.TOP_CENTER,
     offset: '10px',
+}
+
+class HomePage extends Component {
+    render() {
+        return (
+            <>
+                <h1>Hello</h1>
+                <HomestayCard />
+            </>
+        )
+    }
 }
 
 export class App extends Component {
@@ -36,7 +47,7 @@ export class App extends Component {
                         <div className="auth-wrapper">
                             <div className="auth-inner">
                                 <Switch>
-                                    <Route exact path='/' component={() => { return <h1>Hello</h1> }} />
+                                    <Route exact path='/' component={HomePage} />
                                     <Route path="/login" component={LoginForm} />
                                     <Route path="/signup" component={SignUpForm} />
                                 </Switch>
