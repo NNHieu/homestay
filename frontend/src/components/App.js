@@ -48,7 +48,6 @@ export class App extends Component {
                                 </div>
                             </div>
                         </Fragment>
-
                     </DndProvider>
                 </AlertProvider>
             </Provider >

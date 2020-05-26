@@ -35,9 +35,11 @@ axios.defaults.headers.post['X-CSRFToken'] = Cookies.get('csrftoken');
 let api_url = '/homestay/api'
 
 // LOAD LIST HOMESTAY
-export const loadList = () => dispatch => {
+export const loadList = (params) => dispatch => {
+    console.log('Loading list')
+    console.log(params)
     axios
-        .get(`${api_url}/list`)
+        .get(`${api_url}`, { params })
         .then(res => {
             console.log(res.data)
             dispatch({

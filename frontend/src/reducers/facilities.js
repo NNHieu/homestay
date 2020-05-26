@@ -4,11 +4,12 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { createSelector } from 'reselect'
 
+import { loadList } from './homestays'
 
 const initialState = {
     list: [],
-    visibilityFilter: 'SHOW_ALL',
-    filterList: []
+    filterString: "",
+    visibilityFilter: 'SHOW_ALL'
 }
 
 export default function (state = initialState, action) {
@@ -21,13 +22,27 @@ export default function (state = initialState, action) {
             })
             return {
                 ...state,
-                list: list
+                list: list,
+                filterString: ""
             }
         case TOGGLE_FACILITY:
-            state.list[action.payload].checked = !state.list[action.payload].checked
+            let newFilterString = ""
+
+            list = state.list.map(f => {
+                if (f.id === action.payload) {
+                    f.checked = !f.checked
+                }
+                if (f.checked) {
+                    newFilterString += `&${f.id}`
+                }
+                return f
+            })
+            console.log('TOGGLE FACILITY ACTION')
+            action.reload({ facilities: newFilterString })
             return {
                 ...state,
-                filterList: state.filterList.map(f => f.checked ? f : undefined)
+                list: list,
+                filterString: newFilterString
             }
         default:
             return state;
@@ -64,29 +79,28 @@ export const loadFacilities = () => dispatch => {
 
 
 
-export const toggleFacilityChecked = (findex) => dispatch => dispatch({
-    type: TOGGLE_FACILITY,
-    payload: findex //index cua facility trong list
-})
+export const toggleFacilityChecked = (fid, reloadHListFunc) => dispatch => {
+    console.log(reloadHListFunc)
+    dispatch({
+        type: TOGGLE_FACILITY,
+        payload: fid, //id cua facility trong list
+        reload: reloadHListFunc
+    })
+}
 
 
 /*
     Selector
 */
 
-const getVisibilityFilter = state => state.facilities.visibilityFilter
 const getFacilities = state => state.facilities.list
 
 export const getCheckedFacility = createSelector(
-    [getVisibilityFilter, getFacilities],
-    (visibilityFilter, facilities) => {
-        switch (visibilityFilter) {
-            case 'SHOW_ALL':
-                return facilities
-            case 'SHOW_INCLUDED':
-                return facilities.filter(f => f.checked)
-            case 'SHOW_EXCLUDED':
-                return facilities.filter(f => !f.checked)
-        }
+    getFacilities,
+    facilities => {
+        return facilities.filter(f => {
+            console.log(f.checked)
+            return f.checked
+        })
     }
 )

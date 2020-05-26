@@ -1,50 +1,54 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux';
-import { loadFacilities, toggleFacilityChecked } from '../../reducers/facilities'
+import { loadFacilities, toggleFacilityChecked, getCheckedFacility } from '../../reducers/facilities'
+import { loadList } from '../../reducers/homestays'
 import PropTypes from 'prop-types'
 
 // import { WithContext as ReactTags } from 'react-tag-input'
 
 // onChange={() => this.props.onChange(facility.id)} checked={facility.checked}
 class FilterItem extends Component {
-    state = {
-        active: this.props.checked
+    constructor(props) {
+        super(props)
     }
 
     render() {
+        let className = "btn btn-primary filter-item"
+        if (this.props.checked)
+            className += " active"
         return (
-            <button type="button" className={"btn btn-primary filter-item" + (this.state.active ? " active" : "")}
-                data-toggle="button" aria-pressed="false" autocomplete="off" onClick={e => {
-                    this.state.active = !this.state.active
-                    this.props.onClick(this.props.index)
-                }}>
+            <button type="button" className={className} aria-pressed="false" onClick={e => {
+                console.log(this.props.index)
+                this.props.onClick(this.props.index)
+            }}>
                 {this.props.name}
             </button>
         )
     }
 }
 
-class FacilityItem extends Component {
+class ToggleButon extends Component {
     render() {
         const facility = this.props.facility
         return (
             <li className="nav-item">
                 <div className="row align-items-center" style={{ padding: "4px 10px 4px 30px" }} >
                     <label className="switch">
-                        <input type="checkbox" name={facility.id} defaultChecked={facility.checked}
+                        <input type="checkbox" name={this.props.inputName} defaultChecked={this.props.checked}
                             onChange={e => {
                                 this.props.onChange(this.props.index)
                             }} />
                         <span className="slider round"></span>
                     </label>
                     <a className="nav-link" href="#">
-                        {facility.name}
+                        {this.props.name}
                     </a>
                 </div>
             </li >
         )
     }
 }
+
 
 class FacilityToggleList extends Component {
     static propTypes = {
@@ -66,7 +70,7 @@ class FacilityToggleList extends Component {
 
     render() {
         // const facilities = this.props.flist.map((facility, index) => <FacilityItem key={facility.id} index={index} facility={facility} onChange={this.props.toggleFacilityChecked} />)
-        const facilities = this.props.flist.map((facility, index) => <FilterItem key={facility.id} index={index} name={facility.name} checked={facility.checked} onClick={this.props.toggleFacilityChecked}></FilterItem>)
+        const facilities = this.props.flist.map((facility, index) => <FilterItem key={facility.id} index={facility.id} name={facility.name} checked={facility.checked} onClick={fid => this.props.toggleFacilityChecked(fid, this.props.loadList)}></FilterItem>)
 
         return (
             <>
@@ -83,6 +87,26 @@ class FacilityToggleList extends Component {
 }
 
 
+class FacilityCheckedList extends Component {
+    static propTypes = {
+        checkedList: PropTypes.array.isRequired,
+        toggleFacilityChecked: PropTypes.func.isRequired
+    }
+
+    render() {
+        console.log('rendering FacilitiesCheckedList')
+        console.log(this.props.toggleFacilityChecked)
+        console.log(this.props.loadList)
+        const facilities = this.props.checkedList.map(facility => <FilterItem key={facility.id} index={facility.id} name={facility.name} checked={facility.checked} onClick={fid => this.props.toggleFacilityChecked(fid, this.props.loadList)}></FilterItem>)
+        return (
+            <div className="active-filter">
+                {facilities}
+            </div>
+        )
+    }
+}
+
+export const FCheckedList = connect(state => ({ checkedList: getCheckedFacility(state) }), { toggleFacilityChecked, loadList })(FacilityCheckedList)
 
 const KeyCodes = {
     comma: 188,
@@ -170,9 +194,9 @@ class FacilityTags extends Component {
 
 const mapState2Props = state => ({
     flist: state.facilities.list,
-    filterList: state.facilities.filterList
+    filterList: getCheckedFacility(state)
 })
 
 export const FTags = connect(mapState2Props, { loadFacilities, toggleFacilityChecked })(FacilityTags)
-export const FToggleList = connect(mapState2Props, { loadFacilities, toggleFacilityChecked })(FacilityToggleList)
+export const FToggleList = connect(mapState2Props, { loadFacilities, toggleFacilityChecked, loadList })(FacilityToggleList)
 
