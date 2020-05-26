@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { signUp as authSignUp, login as authLogin } from '../../actions/auth';
+import { signUp as authSignUp, login as authLogin } from '../../reducers/auth';
 
 class Input extends Component {
 

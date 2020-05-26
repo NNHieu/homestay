@@ -24,6 +24,11 @@ test_patterns = [
 router = routers.DefaultRouter()
 router.register('api', HomestayViewset, 'homestay_api')
 
+api_urls = path('api/', include([
+    path('list', HomestayListAPI.as_view()),
+    path('facilities/list', FacilityListAPI.as_view()),
+]))
+
 urlpatterns = [
     # url trang chủ
     path('', views.BrowseView.as_view(), name='index'),
@@ -42,6 +47,6 @@ urlpatterns = [
     # url thông tin trang web
     path('about/', views.about_view, name='about'),
     # url rating
-    path('rating/<int:contract_id>', views.rating, name='rating')
-
+    path('rating/<int:contract_id>', views.rating, name='rating'),
+    api_urls,
 ] + test_patterns + router.urls

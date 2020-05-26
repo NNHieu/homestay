@@ -26,7 +26,8 @@ class CustomUser(AbstractUser):
 # Cần lưu gì với mỗi user?
 class UserProfile(models.Model):
     # Foreign key
-    user = models.OneToOneField(get_user_model(), verbose_name=_("Account"), on_delete=models.CASCADE)
+    user = models.OneToOneField(get_user_model(), verbose_name=_(
+        "Account"), on_delete=models.CASCADE)
     # SĐT
     phone_number = PhoneNumberField(_("Phone number"))
     # Địa chỉ. Giờ mới chỉ là VAR CHAR cho đơn giản dể test.
@@ -40,7 +41,8 @@ class UserProfile(models.Model):
         UNKNOWN = -1
     gender = models.IntegerField(choices=Gender.choices)
     # Ảnh hồ sơ
-    profile_picture = models.ImageField(upload_to='images/account_profile', blank=True)
+    profile_picture = models.ImageField(
+        upload_to='images/account_profile', blank=True)
 
     def __unicode__(self):
         return u'Profile of user: %s' % self.user

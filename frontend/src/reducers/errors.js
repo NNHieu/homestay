@@ -1,4 +1,4 @@
-import { GET_ERRORS } from '../actions/types.js';
+import { GET_ERRORS } from './types.js';
 
 const initialState = {
     error_code: null,
@@ -16,3 +16,18 @@ export default function (state = initialState, action) {
             return state;
     }
 }
+
+/*
+    ACTION
+*/
+
+export const getErrors = (err) => {
+    const error = {
+        error_code: err.response.status,
+        msg: err.response.data
+    };
+    return {
+        type: GET_ERRORS,
+        payload: error
+    }
+};

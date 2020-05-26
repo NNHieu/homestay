@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { loadUser, logout } from '../../actions/auth'
+import { loadUser, logout } from '../../reducers/auth'
 import PropTypes from 'prop-types'
 import auth from '../../reducers/auth'
 
@@ -68,7 +68,7 @@ export class Header extends Component {
 
     render() {
         return (
-            <nav className={"navbar navbar-expand-lg " + (this.state.schemeLight ? "navbar-light bg-light" : "navbar-dark bg-dark")} >
+            <nav className={"navbar navbar-expand-lg fixed-top " + (this.state.schemeLight ? "navbar-light bg-light" : "navbar-dark bg-dark")} >
                 <a className="navbar-brand" href="#">Navbar</a>
                 <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
