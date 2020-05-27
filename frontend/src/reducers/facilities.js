@@ -29,10 +29,7 @@ export default function (state = initialState, action) {
             let newFilterString = ""
 
             list = state.list.map(f => {
-                if (f.id === action.payload) {
-                    f.checked = !f.checked
-                }
-                if (f.checked) {
+                if (action.payload.includes(f.id)) {
                     newFilterString += `&${f.id}`
                 }
                 return f
@@ -41,7 +38,6 @@ export default function (state = initialState, action) {
             action.reload({ facilities: newFilterString })
             return {
                 ...state,
-                list: list,
                 filterString: newFilterString
             }
         default:
@@ -79,11 +75,11 @@ export const loadFacilities = () => dispatch => {
 
 
 
-export const toggleFacilityChecked = (fid, reloadHListFunc) => dispatch => {
+export const toggleFacilityChecked = (fids, reloadHListFunc) => dispatch => {
     console.log(reloadHListFunc)
     dispatch({
         type: TOGGLE_FACILITY,
-        payload: fid, //id cua facility trong list
+        payload: fids, //cac id cua facility trong checked list
         reload: reloadHListFunc
     })
 }
@@ -102,5 +98,12 @@ export const getCheckedFacility = createSelector(
             console.log(f.checked)
             return f.checked
         })
+    }
+)
+
+export const getListSuggestFacility = createSelector(
+    getFacilities,
+    facilities => {
+        return facilities.map(f => ({ title: f.name, fid: f.id }))
     }
 )

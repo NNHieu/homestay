@@ -6,7 +6,7 @@ from rest_framework.exceptions import ParseError
 
 import re
 
-page_size = 3
+page_size = 10
 
 
 class HomestayViewset(viewsets.ModelViewSet):
@@ -28,7 +28,7 @@ class HomestayViewset(viewsets.ModelViewSet):
         if page:
             try:
                 page = int(page)
-            except ValueError as e:
+            except ValueError:
                 raise ParseError(detail='Invalid argument')
         else:
             page = 0

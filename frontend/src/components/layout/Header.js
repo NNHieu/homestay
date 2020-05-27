@@ -1,99 +1,193 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { loadUser, logout } from '../../reducers/auth'
+import React, { Component, useState } from 'react'
 import PropTypes from 'prop-types'
-import auth from '../../reducers/auth'
 
-import { BrowserRouter as Router, Switch, Link } from 'react-router-dom'
+//material-ui
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import {
+    AppBar, Toolbar, Divider, Typography, Button, IconButton, TextField,
+    Grid
+}
+    from '@material-ui/core';
 
-function NavItem(props) {
-    return (
-        <li className="nav-item">
-            <a className="nav-link disabled" href={props.href}>{props.text}</a>
-        </li>
-    )
+import { makeStyles } from '@material-ui/core/styles';
+
+import parse from 'autosuggest-highlight/parse';
+import throttle from 'lodash/throttle';
+//Icons
+import HomeIcon from '@material-ui/icons/Home';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
+
+import { testOutputGoogleAutoComplete } from '../../utils/location'
+
+
+function loadScript(src, position, id) {
+    if (!position) {
+        return;
+    }
+
+    const script = document.createElement('script');
+    script.setAttribute('async', '');
+    script.setAttribute('id', id);
+    script.src = src;
+    position.appendChild(script);
 }
 
-export class Dropdown extends Component {
-    items = this.props.items.map(item => <a key={item.text} className="dropdown-item" href={item.href}>{item.text}</a>)
-
-    render() {
-        return (
-            <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {this.props.name}
-                </a>
-                <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                    {this.items}
-                </div>
-            </li>
-        )
+const autocompleteService = {
+    current: (request, callback) => {
+        console.log('In autocompleteService')
+        console.log('request and callback')
+        console.log(request)
+        console.log(callback)
+        const result = JSON.parse(testOutputGoogleAutoComplete)
+        console.log(result)
+        callback(result.predictions)
     }
-}
+};
 
+const googleMapStyle = makeStyles((theme) => ({
+    icon: {
+        color: theme.palette.text.secondary,
+        marginRight: theme.spacing(2),
+    },
+}));
 
-export class Header extends Component {
-    state = { schemeLight: false }
-    static propTypes = {
-        isAuthenticated: PropTypes.bool.isRequired,
-        user: PropTypes.object
-    }
+export default function GoogleMaps() {
+    const classes = googleMapStyle();
+    const [value, setValue] = React.useState(null);
+    const [inputValue, setInputValue] = React.useState('');
+    const [options, setOptions] = React.useState([]);
+    const loaded = React.useRef(false);
 
-    componentDidMount() {
-        this.props.loadUser()
-    }
+    const fetch = React.useMemo(
+        () =>
+            throttle((request, callback) => {
+                autocompleteService.current(request, callback);
+            }, 200),
+        [],
+    );
 
-    onClick = e => {
-        this.setState({ schemeLight: !this.state.schemeLight })
-    }
+    React.useEffect(() => {
+        let active = true;
 
-    accountForm = () => {
-        console.log(this.props.isAuthenticated)
-        if (this.props.isAuthenticated) {
-            return (
-                <form className="form-inline">
-                    <button className="btn btn-outline-success my-2 my-sm-0" >{this.props.user.first_name}</button>
-                    <button className="btn btn-outline-success my-2 my-sm-0" onClick={this.props.logout}>Sign Out</button>
-                </form>
-            )
-        } else {
-            return (
-                <form className="form-inline" action="/front/login">
-                    <Link className="nav-link my-2 my-sm-0" to={"/login"}>Log in</Link>
-                    <Link className="nav-link btn btn-outline-success my-2 my-sm-0" to={"/signup"}>Sign Up</Link>
-                </form>
-            )
+        if (!autocompleteService.current) {
+            return undefined;
         }
-    }
 
-    render() {
-        return (
-            <nav className={"navbar navbar-expand-lg fixed-top " + (this.state.schemeLight ? "navbar-light bg-light" : "navbar-dark bg-dark")} >
-                <a className="navbar-brand" href="#">Navbar</a>
-                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
+        if (inputValue === '') {
+            setOptions(value ? [value] : []);
+            return undefined;
+        }
 
-                <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul className="navbar-nav mr-auto">
-                        <li className="nav-item active">
-                            <Link className="nav-link" to={"/"}>Home<span className="sr-only">(current)</span></Link>
-                        </li>
-                        <Dropdown name="Dropdown" items={[{ href: "#", text: "Menu" }]} />
-                        <li>
-                            <button className="btn btn-outline-success" type="buttom" onClick={this.onClick}>Change</button>
-                        </li>
-                    </ul>
-                    {this.accountForm()}
-                </div>
-            </nav>
-        )
-    }
+        fetch({ input: inputValue }, (results) => {
+            if (active) {
+                let newOptions = [];
+
+                if (value) {
+                    newOptions = [value];
+                }
+
+                if (results) {
+                    newOptions = [...newOptions, ...results];
+                }
+
+                setOptions(newOptions);
+            }
+        });
+
+        return () => {
+            active = false;
+        };
+    }, [value, inputValue, fetch]);
+
+    return (
+        <Autocomplete
+            id="google- map-demo"
+            style={{ width: 300, color: "white" }}
+            getOptionLabel={(option) => (typeof option === 'string' ? option : option.description)}
+            filterOptions={(x) => x}
+            options={options}
+            autoComplete
+            includeInputInList
+            filterSelectedOptions
+            value={value}
+            onChange={(event, newValue) => {
+                setOptions(newValue ? [newValue, ...options] : options);
+                setValue(newValue);
+            }}
+            onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue);
+            }}
+            renderInput={(params) => (
+                <TextField {...params} label="Search location" variant="outlined" fullWidth />
+            )}
+            renderOption={(option) => {
+                const matches = option.structured_formatting.main_text_matched_substrings;
+                const parts = parse(
+                    option.structured_formatting.main_text,
+                    matches.map((match) => [match.offset, match.offset + match.length]),
+                );
+
+                return (
+                    <Grid container alignItems="center">
+                        <Grid item>
+                            <LocationOnIcon className={classes.icon} />
+                        </Grid>
+                        <Grid item xs>
+                            {parts.map((part, index) => (
+                                <span key={index} style={{ fontWeight: part.highlight ? 700 : 400 }}>
+                                    {part.text}
+                                </span>
+                            ))}
+
+                            <Typography variant="body2" color="textSecondary">
+                                {option.structured_formatting.secondary_text}
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                );
+            }}
+        />
+    );
 }
 
-const mapState2Props = state => ({
-    isAuthenticated: state.auths.isAuthenticated,
-    user: state.auths.user
-})
+const headerStyle = makeStyles((theme) => ({
+    header: {
+        flexGrow: 1,
+        zIndex: theme.zIndex.drawer + 1,
+        backgroundColor: "rgb(100,100,200)",
+    },
+    searchAddress: {
+        margin: theme.spacing(1),
+        width: '40ch',
+    },
+    menuButton: {
+        marginRight: theme.spacing(2),
+    },
+    title: {
+        flexGrow: 1,
+    },
+}));
 
-export default connect(mapState2Props, { loadUser, logout })(Header)
+export function Header(props) {
+
+    const [classes, setClasses] = useState(headerStyle())
+    return (
+        <AppBar position="fixed" className={classes.header}>
+            <Toolbar>
+                <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+                    <HomeIcon fontSize="large" />
+                </IconButton>
+                <Typography variant="h6" className={classes.title}>
+                    Hanoi Homestay
+                </Typography>
+                <GoogleMaps />
+                <Divider orientation="vertical" flexItem />
+                <Button color="inherit">Login</Button>
+                <Button color="inherit">Sign Up</Button>
+            </Toolbar>
+        </AppBar>
+    )
+
+}
+
+

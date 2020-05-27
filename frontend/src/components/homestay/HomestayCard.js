@@ -1,21 +1,49 @@
-import React, { Component } from 'react'
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 
-export class HomestayCard extends Component {
-    render() {
-        const context = this.props.context
-        return (
-            <div className="card">
-                <img src={context.review_image} className="card-img-top" alt="..." style={{ height: "300px" }} />
-                <div className="card-body">
-                    <h5 className="card-title">{context.title}</h5>
-                    <p className="card-text">{context.description}</p>
-                </div>
-                <div className="card-footer">
-                    <small className="text-muted">Last updated 3 mins ago</small>
-                </div>
-            </div>
-        )
-    }
+const useStyles = makeStyles({
+    root: {
+        maxWidth: 345,
+        // marginRight: "10px"
+    },
+    media: {
+        height: 200,
+    },
+});
+
+export default function HsCard(props) {
+    const classes = useStyles();
+
+    return (
+        <Card className={classes.root}>
+            <CardActionArea>
+                <CardMedia
+                    className={classes.media}
+                    image={props.hinfo.review_image}
+                    title="Contemplative Reptile"
+                />
+                <CardContent>
+                    <Typography gutterBottom variant="h5" component="h2">
+                        {props.hinfo.title}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                        {props.hinfo.description}
+                    </Typography>
+                </CardContent>
+            </CardActionArea>
+            <CardActions>
+                <Button size="small" color="primary">
+                    Learn More
+                </Button>
+            </CardActions>
+        </Card>
+    );
 }
 
-export default HomestayCard

@@ -1,23 +1,26 @@
-import React, { Component, Fragment } from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
 
+//Redux store
 import { Provider } from 'react-redux';
-import { Provider as AlertProvider, positions } from 'react-alert';
-// Dnd
-import { DndProvider } from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
-
-import AlertTemplate from 'react-alert-template-basic';
-
 import store from '../store';
 
-import Header from "./layout/Header";
-import Alerts from "./layout/Alerts";
-import { SignUp as UserSignupForm, Login as LoginForm, SignUpForm } from "./users/Forms";
+//Alert
+import { Provider as AlertProvider, positions } from 'react-alert';
+import AlertTemplate from 'react-alert-template-basic';
+
+import { makeStyles } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import ScopedCssBaseline from '@material-ui/core/ScopedCssBaseline';
+import Toolbar from '@material-ui/core/Toolbar';
+import List from '@material-ui/core/List';
+import Typography from '@material-ui/core/Typography';
+
+
+import { Sidebar } from './layout/Sidebar'
+import { Header } from './layout/Header'
+import { useStyles } from './UseStyles'
 import HsList from './homestay/HsList'
-import FacilityToggleList from './homestay/FacilityList'
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
-import Sidebar from './homestay/Sidebar'
+
 
 //Alert Options
 const alertOptions = {
@@ -26,33 +29,32 @@ const alertOptions = {
     offset: '10px',
 }
 
-export class App extends Component {
-    onLoginClick = e => {
 
-    }
+function App() {
+    const classes = useStyles();
 
-    render() {
-        return (
-            <Provider store={store} >
-                <AlertProvider template={AlertTemplate} {...alertOptions}>
-                    <DndProvider backend={HTML5Backend}>
-                        <Fragment>
-                            <Header />
-                            <Alerts />
-                            <div className="container-fluid">
-                                <div className="row">
-                                    <Sidebar />
-                                    <main className="col-md-9 ml-sm-auto col-lg-10 px-4" role="main">
-                                        <HsList />
-                                    </main>
-                                </div>
-                            </div>
-                        </Fragment>
-                    </DndProvider>
-                </AlertProvider>
-            </Provider >
-        )
-    }
+    return (
+        <Provider store={store}>
+
+            <div className={classes.root}>
+                <CssBaseline />
+                <Header classes={classes} />
+                <Sidebar classes={classes} />
+                <main className={classes.content}>
+                    <Toolbar />
+
+                    <HsList />
+                </main>
+            </div>
+        </ Provider>
+    );
 }
 
-export default App
+export default function MyApp() {
+    return (
+        <ScopedCssBaseline>
+            {/* The rest of your application */}
+            <App />
+        </ScopedCssBaseline>
+    );
+}
