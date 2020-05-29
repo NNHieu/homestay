@@ -33,22 +33,27 @@ class MyView(LoginRequiredMixin, generic.ListView):
         return Homestay.objects.filter(owner=self.request.user).all()
 
 # View Thông tin chi tiết
+
+
 class HomestayView(generic.DetailView):
     model = Homestay
 
     def get_template_names(self):
-        return 'homestay/detail2.html'  # if 'test/' not in self.request.path else 'homestay/detail2.html'
+        # if 'test/' not in self.request.path else 'homestay/detail2.html'
+        return 'homestay/detail2.html'
 
 
 # View upload
 @login_required(login_url='/account/login')
 def upload_view(request):
     # Tạo 1 image form set để upload nhiều image
-    ImageFormSet = inlineformset_factory(Homestay, ReviewImage, fields=('image',))
+    ImageFormSet = inlineformset_factory(
+        Homestay, ReviewImage, fields=('image',))
     if request.method == 'POST':
         # Feed cho form điền thông tin homestay và up images
         form = HomestayForm(request.POST)
-        image_formset = ImageFormSet(request.POST, request.FILES, queryset=ReviewImage.objects.none())
+        image_formset = ImageFormSet(
+            request.POST, request.FILES, queryset=ReviewImage.objects.none())
         address_form = AddressForm(request.POST)
         # Kiểm tra form hợp lệ
         if form.is_valid() and address_form.is_valid():
@@ -64,7 +69,8 @@ def upload_view(request):
                         photo = ReviewImage(homestay=homestay, image=image)
                         photo.save()
             try:
-                homestay.welcomes = reduce(lambda a, b: int(a) | int(b), form.cleaned_data['welcomes'])
+                homestay.welcomes = reduce(lambda a, b: int(
+                    a) | int(b), form.cleaned_data['welcomes'])
                 for f in form.cleaned_data['homestay_facilities'] + form.cleaned_data['area_facilities']:
                     homestay.facilities.add(int(f))
             except ValueError:
@@ -82,6 +88,8 @@ def upload_view(request):
 
 # View upload thành công.
 # Mới chỉ làm để test
+
+
 def upload_success_view(request):
     return render(request, 'homestay/upload_success.html', {})
 
@@ -134,6 +142,8 @@ def booking(request, hid):
     return render(request, 'booking.html', {'form': booking_form, 'guest_form': guest_form, 'hid': hid})
 
 # Rating
+
+
 def rating(request, contract_id):
     if request.method == 'POST':
         rating_form = RatingForm(request.POST)
@@ -144,6 +154,7 @@ def rating(request, contract_id):
             return HttpResponse('Success')
         return HttpResponse('Something  wrong')
     return render(request, 'homestay/rating_form.html', {})
+
 
 def test_search(request):
     return render(request, 'homestay/search.html', {})

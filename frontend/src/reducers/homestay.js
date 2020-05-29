@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 
 const initialState = {
     list: [],
-    detail: [],
+    detail: null,
 }
 
 export default function (state = initialState, action) {
@@ -36,8 +36,6 @@ let api_url = '/homestay/api'
 
 // LOAD LIST HOMESTAY
 export const loadList = (params) => dispatch => {
-    console.log('Loading list')
-    console.log(params)
     axios
         .get(`${api_url}`, { params })
         .then(res => {
@@ -59,9 +57,8 @@ export const loadList = (params) => dispatch => {
 // LOAD DETAIL HOMESTAY
 export const loadDetail = (hid) => dispatch => {
     axios
-        .get(`${api_url}/${hid}`)
+        .get(`${api_url}/detail/${hid}`)
         .then(res => {
-            console.log(res)
             dispatch({
                 type: LOAD_DETAIL_HOMESTAY,
                 payload: res.data

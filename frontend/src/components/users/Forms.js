@@ -1,170 +1,196 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { signUp as authSignUp, login as authLogin } from '../../reducers/auth';
+import React, { Fragment } from 'react';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+import Link from '@material-ui/core/Link'
 
-class Input extends Component {
+import { Route } from 'react-router-dom';
 
-    self = undefined
-    is_valid = 0
-    invalidFeedback = undefined
+import { Link as RouteLink } from 'react-router-dom'
+import { LOGIN_URL, SIGNUP_URL } from '../../urls';
+import { validateEmail, validatePassword } from '../../utils/validates'
 
-    componentDidMount() {
-        this.self = document.getElementById(this.props.id)
-        this.invalidFeedback = document.getElementById(this.props.id + "-invalid-feedback")
-    }
-
-    onChange = e => {
-        console.log('is checking')
-        this.props.onChange(e)
-        if (this.props.checkValid) {
-            let msg = this.props.checkValid(this.self.value)
-            console.log(msg)
-            if (msg) {
-                this.markInvalid(msg)
-            } else {
-                this.markValid()
-            }
-        }
-    }
-
-    onFocus = e => {
-        e.target.classList.remove('is-invalid');
-    }
-    input_html = () => {
-        if (this.props.required)
-            return <input onFocus={this.onFocus} onChange={this.onChange} type={this.props.type} className="form-control" id={this.props.id} required />
-        else
-            return <input onFocus={this.onFocus} onChange={this.onChange} type={this.props.type} className="form-control" id={this.props.id} />
-    }
-
-    markInvalid = (msg) => {
-        this.self.classList.remove('is-valid')
-        this.self.classList.add('is-invalid')
-        this.invalidFeedback.innerText = msg
-    }
-
-    markValid = () => {
-        this.self.classList.remove('is-invalid')
-        this.self.classList.add('is-valid')
-        this.invalidFeedback.innerText = ""
-    }
-
-
-
-    render() {
-        return (
-            <div className="form-group">
-                <label htmlFor={this.props.id}>{this.props.label}</label>
-                {this.input_html()}
-                <small id={this.props.id + "HelpBlock"} className="form-text text-muted">{this.props.help ? this.props.help : ""}</small>
-                {/* <div className="valid-feedback">Looks good!</div> */}
-                <div className="invalid-feedback" id={this.props.id + "-invalid-feedback"}>
-                    {this.props.invalidFeedback ? this.props.invalidFeedback : ""}
-                </div>
-            </div >
-        )
-    }
+function Copyright() {
+    return (
+        <Typography variant="body2" color="textSecondary" align="center">
+            {'Copyright © '}
+            <Link color="inherit" href="https://material-ui.com/">
+                Your Website
+      </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+        </Typography>
+    );
 }
 
-export class SignUpForm extends Component {
-    render() {
-        return (
-            <div className="card card-body mt-4 mb-4">
-                <h2>Add User</h2>
-                <form id="signup-form" onSubmit={this.onSubmit} noValidate>
+const useStyles = makeStyles((theme) => ({
+    paper: {
+        marginTop: theme.spacing(8),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    avatar: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.secondary.main,
+    },
+    form: {
+        width: '100%', // Fix IE 11 issue.
+        marginTop: theme.spacing(3),
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
+    },
+}));
 
-                    <Input id="first_name" label="First Name" type="text" onChange={this.onChange} required
-                        invalidFeedback="This field is required"
-                    />
-                    <Input id="last_name" label="Last Name" type="text" onChange={this.onChange} required
-                        invalidFeedback="This field is required"
-                    />
-                    <Input id="email" label="Email" type="email" onChange={this.onChange} required checkValid={validateEmail} />
-                    <Input id="password1" label="Password" type="password" onChange={this.onChange} required
-                        invalidFeedback="Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji."
-                    />
-                    <Input id="password2" label="Confirm Password" type="password" onChange={this.confirmPasswordChange} required
-                        invalidFeedback="Empty password or Confirms Password does not match"
-                    />
-                    <div className="form-group form-check">
-                        <input onFocus={this.onFocus} onChange={this.onChange} type="checkbox" className="form-check-input" id="checkbox" />
-                        <label className="form-check-label" htmlFor="checkbox">Check me out</label>
-                    </div>
-                    <button type="submit" className="btn btn-primary" >Submit</button>
+export function AuthForm(props) {
+    const classes = useStyles();
+    const [emailError, setEmailError] = React.useState({ isError: false, helperText: '' })
+    const [passwordError, setPasswordError] = React.useState({
+        isError: false,
+        helperText: ''
+    })
+    const passwordHelpText = 'Minimum eight characters, at least one letter, one number and one special character'
+    const signUpComponents = (
+        <Fragment>
+            <Grid item xs={12} sm={6}>
+                <TextField
+                    autoComplete="fname"
+                    name="firstName"
+                    variant="outlined"
+                    required
+                    fullWidth
+                    id="firstName"
+                    label="First Name"
+                    autoFocus
+                />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <TextField
+                    variant="outlined"
+                    required
+                    fullWidth
+                    id="lastName"
+                    label="Last Name"
+                    name="lastName"
+                    autoComplete="lname"
+                />
+            </Grid>
+        </Fragment>)
+
+    return (
+        <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <div className={classes.paper}>
+                <Avatar className={classes.avatar}>
+                    <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                    {props.match.params.subpath == "signup" ? "Sign up" : "Sign in"}
+                </Typography>
+                <form className={classes.form}>
+                    <Grid container spacing={2}>
+                        {props.match.params.subpath == "signup" && signUpComponents}
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                type="email"
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="off"
+                                error={emailError.isError}
+                                helperText={emailError.helperText}
+                                onBlur={
+                                    e => {
+                                        if (!validateEmail(e.target.value)) {
+                                            const isError = true
+                                            let helperText = 'This field is Required'
+                                            if (e.target.value !== "")
+                                                helperText = 'Invalid email'
+                                            setEmailError({ isError, helperText })
+                                        }
+                                        else
+                                            setEmailError({ isError: false, helperText: "" })
+                                    }
+                                }
+                                onChange={
+                                    e => {
+                                        if (validateEmail(e.target.value))
+                                            setEmailError({ isError: false, helperText: "" })
+                                    }
+                                }
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type="password"
+                                id="password"
+                                autoComplete="off"
+                                error={passwordError.isError}
+                                helperText={passwordError.helperText}
+                                onBlur={
+                                    e => {
+                                        console.log(passwordError)
+                                        const isError = !validatePassword(e.target.value)
+                                        setPasswordError({ isError, helperText: isError ? passwordHelpText : '' })
+                                    }
+                                }
+                                onChange={
+                                    e => {
+                                        if (validatePassword(e.target.value))
+                                            setPasswordError({ isError: false, helperText: "" })
+                                    }
+                                }
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControlLabel
+                                control={<Checkbox value="allowExtraEmails" color="primary" />}
+                                label="I want to receive inspiration, marketing promotions and updates via email."
+                            />
+                        </Grid>
+                    </Grid>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        className={classes.submit}
+                    >
+                        Sign Up
+                    </Button>
+                    <Grid container justify="flex-end">
+                        <Grid item>
+                            {props.match.params.subpath == "signup" ?
+                                <RouteLink to={LOGIN_URL}>Already have an account? Sign in</RouteLink>
+                                :
+                                <RouteLink to={SIGNUP_URL}>Nead an account? Sign up</RouteLink>
+                            }
+
+                        </Grid>
+                    </Grid>
                 </form>
             </div>
-        )
-    }
+            <Box mt={5}>
+                <Copyright />
+            </Box>
+        </Container >
+    );
 }
-
-
-class LoginForm extends Component {
-    state = {
-        email: '',
-        password: '',
-    }
-
-    onChange = e => {
-        this.setState({ [e.target.id]: e.target.value })
-    }
-
-    errorHandler = error_msg => {
-        console.log('In errorHandler');
-        console.log(error_msg.email);
-        if (error_msg.email != undefined) {
-            let email = document.getElementById('email')
-            email.setCustomValidity(error_msg.email[0])
-        }
-        // if (error_msg.password !== undefined) {
-        //     console.log('get email error');
-        //     document.getElementById('emailError').innerText = error_msg.email;
-        //     this.markInvalid(document.getElementById('password1'));
-        // }
-    }
-
-    onSubmit = e => {
-        e.preventDefault();
-        let form = document.getElementById('login-form')
-        if (form.checkValidity() === false) {
-            event.stopPropagation();
-        } else {
-            const { email, password } = this.state;
-            const authInfo = { email, password }
-            this.props.authLogin(authInfo, this.errorHandler)
-
-        }
-        form.classList.add('was-validated');
-    }
-
-
-    render() {
-        return (
-            <div className="card card-body mt-4 mb-4">
-                <h2>Login</h2>
-                <form id='login-form' onSubmit={this.onSubmit} noValidate>
-                    <Input id="email" label="Email" type="email" onChange={this.onChange} required checkValid={validateEmail} />
-                    <Input id="password" label="Password" type="password" onChange={this.onChange} required
-                        invalidFeedback="Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji."
-                    />
-                    <button type="submit" className="btn btn-primary" >Submit</button>
-                </form>
-            </div>
-        )
-    }
-}
-
-function validateEmail(email) {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (re.test(String(email).toLowerCase())) {
-        return ""
-    }
-    return "Invalid email format"
-}
-
-
-
-const SignUp = connect(null, { authSignUp })(SignUpForm)
-const Login = connect(null, { authLogin })(LoginForm)
-
-export { SignUp, Login }

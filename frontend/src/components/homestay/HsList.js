@@ -12,7 +12,8 @@ import StarBorderIcon from '@material-ui/icons/StarBorder';
 
 import HsCard from './HomestayCard'
 import { connect } from 'react-redux'
-import { loadList } from '../../reducers/homestays'
+import { loadList } from '../../reducers/homestay'
+import { ListItem, List } from '@material-ui/core';
 
 const useStyles = theme => ({
     root: {
@@ -48,21 +49,23 @@ class HsList extends Component {
     render() {
         const { classes, children, className } = this.props
         let homestays = this.props.hlist.map(h =>
-            <GridListTile key={h.id}>
+            <ListItem key={h.id}>
                 <HsCard hinfo={h} />
-            </GridListTile>
+            </ListItem>
         )
         console.log(homestays[0])
         return (
             <div className={clsx(classes.root, className)}>
-                {homestays}
+                <List >
+                    {homestays}
+                </List>
             </div>
         )
     }
 }
 
 const mapState2Props = state => ({
-    hlist: state.homestays.list
+    hlist: state.homestay.list
 })
 
 export default withStyles(useStyles)(connect(mapState2Props, { loadList })(HsList))

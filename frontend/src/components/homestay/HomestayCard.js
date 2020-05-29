@@ -7,41 +7,49 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import history from '../../utils/history'
+
 
 const useStyles = makeStyles({
     root: {
-        maxWidth: 345,
-        // marginRight: "10px"
+        width: "80%",
+        marginRight: 2,
+        transition: "height 2s"
     },
     media: {
-        height: 200,
+        height: 300,
     },
 });
 
 export default function HsCard(props) {
     const classes = useStyles();
+    const hinfo = props.hinfo
+    const goToDetail = () => history.push(`/homestay/${hinfo.id}`)
+    const [showDesc, setShowDesc] = React.useState(false)
 
     return (
         <Card className={classes.root}>
-            <CardActionArea>
+            <CardActionArea onClick={goToDetail} onMouseEnter={() => setShowDesc(true)} onMouseLeave={() => setShowDesc(false)}>
                 <CardMedia
                     className={classes.media}
-                    image={props.hinfo.review_image}
+                    image={hinfo.review_image}
                     title="Contemplative Reptile"
                 />
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="h2">
-                        {props.hinfo.title}
+                        {hinfo.title}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
-                        {props.hinfo.description}
+                    <Typography noWrap={!showDesc} variant="body2" color="textSecondary" component="p">
+                        {hinfo.description}
                     </Typography>
                 </CardContent>
             </CardActionArea>
             <CardActions>
-                <Button size="small" color="primary">
-                    Learn More
-                </Button>
+                <form>
+                    <Button size="small" color="primary" onClick={goToDetail}>
+                        Learn More
+                    </Button>
+                </form>
             </CardActions>
         </Card>
     );

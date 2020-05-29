@@ -4,57 +4,50 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import store from '../store';
 
-//Alert
-import { Provider as AlertProvider, positions } from 'react-alert';
-import AlertTemplate from 'react-alert-template-basic';
-
-import { makeStyles } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import ScopedCssBaseline from '@material-ui/core/ScopedCssBaseline';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
 
+//Router
+import {
+    Router,
+    Switch,
+    Route,
+    Link,
+    useRouteMatch,
+    useParams
+} from "react-router-dom";
+import history from '../utils/history'
 
-import { Sidebar } from './layout/Sidebar'
-import { Header } from './layout/Header'
-import { useStyles } from './UseStyles'
-import HsList from './homestay/HsList'
-
-
-//Alert Options
-const alertOptions = {
-    timeout: 3000,
-    position: positions.TOP_CENTER,
-    offset: '10px',
-}
-
+// import Home from './Home'
+// import { AuthForm } from './users/Forms'
+// import Detail from './Detail'
+// import Checkout from './checkout/Checkout'
+import FilterDiv from './homestay/FilterDiv'
+import Upload from './upload/Upload'
+// function App() {
+//     return (
+//             <Router history={history}>
+//                 <Switch>
+//                     <Route path='/auth/:subpath(login|signup)' component={AuthForm} />
+//                     <Route path='/homestay/:hid([0-9]+)' component={Detail} />
+//                     <Route path='/checkout' component={Checkout} />
+//                     <Route path="/" component={Home} />
+//                 </Switch>
+//             </Router>
+//     );
+// }
 
 function App() {
-    const classes = useStyles();
-
     return (
-        <Provider store={store}>
-
-            <div className={classes.root}>
-                <CssBaseline />
-                <Header classes={classes} />
-                <Sidebar classes={classes} />
-                <main className={classes.content}>
-                    <Toolbar />
-
-                    <HsList />
-                </main>
-            </div>
-        </ Provider>
-    );
+        <Upload />
+    )
 }
 
 export default function MyApp() {
     return (
         <ScopedCssBaseline>
-            {/* The rest of your application */}
-            <App />
+            <Provider store={store}>
+                <App />
+            </Provider>
         </ScopedCssBaseline>
     );
 }

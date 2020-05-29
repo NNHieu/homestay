@@ -3,7 +3,7 @@ from .models import Homestay, q_homestay_contains_facilities
 from rest_framework import generics, viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
-
+from util.utils import Searcher
 import re
 
 page_size = 10
@@ -20,6 +20,7 @@ class HomestayViewset(viewsets.ModelViewSet):
     serializer_class = HomestaySerializer
 
     def get_queryset(self):
+        print(self.request)
         queryset = None
         query_params = self.request.query_params
         print(query_params)
@@ -41,13 +42,31 @@ class HomestayViewset(viewsets.ModelViewSet):
         return queryset[page:min(page + page_size, len(queryset))]
 
 
-class HomestayListAPI(generics.ListAPIView):
-    serializer_class = HomestaySerializer
-
-    def get_queryset(self):
-        return Homestay.objects.all()[:3]
-
-
 class FacilityListAPI(generics.ListAPIView):
     serializer_class = FacilitySerializer
     queryset = Facility.objects.all()
+
+
+class SearchListAPI(generics.ListAPIView):
+    serializer_class = HomestaySerializer
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        try:
+            lng = float(query_params.get('lng'))
+            lat = float(query_params.get('lat'))
+        except ValueError | KeyError:
+            raise ParseError(detail="Invalid argument")
+        results = Searcher.knn([lat, lng], 3)
+        return [adr.homestay for adr in results]
+
+
+class HomestayDetailAPI(generics.RetrieveAPIView):
+    serializer_class = HomestayDetailSerializer
+
+    def get_object(self):
+        pk = self.kwargs['pk']
+        print(pk)
+        h = Homestay.objects.get(pk=pk)
+        print(h)
+        return h
