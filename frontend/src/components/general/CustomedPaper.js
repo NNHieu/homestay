@@ -1,5 +1,6 @@
-import React from 'react'
-import { Typography, Grid, Paper, makeStyles } from '@material-ui/core'
+import React, { Fragment } from 'react'
+import { Typography, Grid, Paper, makeStyles, RadioGroup, FormControlLabel, Box, Radio } from '@material-ui/core'
+import { Margin } from './Margin';
 
 const useStyles = makeStyles((theme) => ({
     title: {
@@ -23,7 +24,7 @@ export default function CustomedPaper(props) {
     return (
         <Grid container>
             <Grid item xs={12}>
-                <Typography component="h1" variant="h4" gutterBottom className={classes.title}>
+                <Typography component="h3" variant="h5" gutterBottom className={classes.title}>
                     {title}
                 </Typography>
             </Grid>
@@ -38,5 +39,36 @@ export default function CustomedPaper(props) {
                 </Paper>
             </Grid>
         </Grid>
+    )
+}
+
+export function CustomedPaperWithCheckBoxs(props) {
+    const { title, shortDescription, options } = props
+    return (
+        <CustomedPaper title={title} shortDescription={shortDescription}>
+            <RadioGroup>
+                {options.map(option => {
+                    return (
+                        <Fragment key={option.value}>
+                            <Margin size="10px" />
+                            <FormControlLabel
+                                value={option.value}
+                                control={
+                                    <Radio />
+                                }
+                                labelPlacement="end"
+                                label={
+                                    <Box>
+                                        <Typography variant="h6">{option.mainText}</Typography>
+                                        {option.subText && <Typography>{option.subText}</Typography>}
+                                    </Box>
+                                }
+                            />
+                        </Fragment>
+                    )
+                }
+                )}
+            </RadioGroup>
+        </CustomedPaper>
     )
 }
