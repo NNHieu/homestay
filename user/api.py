@@ -16,6 +16,10 @@ from django.utils.encoding import force_bytes, force_text
 from django.contrib.auth import login
 # CustomUser Viewset
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserAllInfoSerializer
@@ -83,13 +87,14 @@ class LoginAPI(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
+        logger.info('Receive request')
         serializer = self.get_serializer(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)
         except Exception as e:
-            print("************")
-            print(e)
-            raise e
+            logger.exception(e)
+            raise AuthenticationFailed(
+                detail=e.get_full_details())
         user = serializer.validated_data
         # if AuthToken.objects.filter(user=user).exists():
         #     raise AuthenticationFailed(

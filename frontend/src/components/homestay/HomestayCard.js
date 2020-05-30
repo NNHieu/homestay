@@ -12,12 +12,12 @@ import history from '../../utils/history'
 
 const useStyles = makeStyles({
     root: {
-        width: "80%",
+        width: "300px",
         marginRight: 2,
         transition: "height 2s"
     },
     media: {
-        height: 300,
+        height: 145,
     },
 });
 

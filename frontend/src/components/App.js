@@ -17,30 +17,30 @@ import {
 } from "react-router-dom";
 import history from '../utils/history'
 
-// import Home from './Home'
-// import { AuthForm } from './users/Forms'
-// import Detail from './Detail'
-// import Checkout from './checkout/Checkout'
+import Home from './Home'
+import { AuthForm } from './users/AuthForms'
+import Detail from './Detail'
 import FilterDiv from './homestay/FilterDiv'
 import Upload from './upload/Upload'
-// function App() {
-//     return (
-//             <Router history={history}>
-//                 <Switch>
-//                     <Route path='/auth/:subpath(login|signup)' component={AuthForm} />
-//                     <Route path='/homestay/:hid([0-9]+)' component={Detail} />
-//                     <Route path='/checkout' component={Checkout} />
-//                     <Route path="/" component={Home} />
-//                 </Switch>
-//             </Router>
-//     );
-// }
-
+import SignInSide from './users/SignInSide';
 function App() {
     return (
-        <Upload />
-    )
+        <Router history={history}>
+            <Switch>
+                <Route path='/auth/:subpath(login|signup)' component={AuthForm} />
+                <Route path='/homestay/:hid([0-9]+)' component={Detail} />
+                {/* <Route path='/checkout' component={Checkout} /> */}
+                <Route path="/" component={Home} />
+            </Switch>
+        </Router>
+    );
 }
+
+// function App() {
+//     return (
+//         <Upload />
+//     )
+// }
 
 export default function MyApp() {
     return (

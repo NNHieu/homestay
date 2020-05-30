@@ -19,6 +19,7 @@ const initialState = {
     isAuthenticated: false,
     isLoading: false,
     user: null,
+
 };
 
 export default function (state = initialState, action) {
@@ -90,11 +91,15 @@ export default function (state = initialState, action) {
     ACTION
 */
 
-const api_url = '/account/api';
+const api_url = '/api/account';
 axios.defaults.headers.post['X-CSRFToken'] = Cookies.get('csrftoken');
 
 
-//Signup USER
+/**
+ * 
+ * @param {Object} user firstName, lastName, email, password
+ * @param {requestCallback} errorHandler 
+ */
 export const signUp = (user, errorHandler) => dispatch => {
     console.log(Cookies.get('csrftoken'));
     console.log(user);
@@ -117,6 +122,11 @@ export const signUp = (user, errorHandler) => dispatch => {
         });
 }
 
+/**
+ * 
+ * @param { Object } authInfo email, password
+ * @callback errorHandler error call back
+ */
 export const login = (authInfo, errorHandler) => dispatch => {
     axios
         .post(`${api_url}/auth/login`, authInfo)
@@ -155,7 +165,6 @@ export const loadUser = () => (dispatch) => {
             type: AUTH_ERROR,
         });
     } else {
-
         dispatch({ type: USER_LOADING });
         axios
             .get(`${api_url}/auth/user`, authHeaders)

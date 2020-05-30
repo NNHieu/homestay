@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux';
-import auths from './auth';
+import auth from './auth';
 import errors from './errors';
 import homestay from './homestay'
 import facilities from './facilities'
 import upload from './upload'
 
 export default combineReducers({
-    auths,
+    auth,
     errors,
     homestay,
     facilities,
