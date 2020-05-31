@@ -5,12 +5,14 @@ import homestay.models as hmodels
 from geopy.distance import distance
 from intervaltree import Interval, IntervalTree
 
+
 class Singleton(type):
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+            cls._instances[cls] = super(
+                Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
 
 
@@ -31,7 +33,7 @@ class Item(object):
 
 
 def dist(p1, p2):
-    return distance(p1, p2).m
+    return distance(p1, p2)
 
 
 class Searcher(metaclass=Singleton):
@@ -44,14 +46,16 @@ class Searcher(metaclass=Singleton):
     @classmethod
     def setup(cls):
         print('sSearcher etting up')
-        cls.kdtree = kdtree.create([Item(adr.lat, adr.lng, adr) for adr in hmodels.Address.objects.all()])
+        cls.kdtree = kdtree.create(
+            [Item(adr.lat, adr.lng, adr) for adr in hmodels.Address.objects.all()])
 
     @classmethod
     def search(cls, point, r):
         if not cls.kdtree:
             cls.setup()
         nn = []
-        cls.kdtree._search_nn_dist(point, r, nn, get_dist=lambda n: dist(point, n.data))
+        cls.kdtree._search_nn_dist(
+            point, r, nn, get_dist=lambda n: dist(point, n.data))
         results = [x.data for x in nn]
         return results
 
@@ -65,6 +69,7 @@ class Searcher(metaclass=Singleton):
 
 class OverlapDateChecker(metaclass=Singleton):
     dict = None
+
     def __call__(self):
         self.setup()
 

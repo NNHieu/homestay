@@ -4,8 +4,6 @@ import string
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 # Create your tests here.
-from numpy.random.mtrand import random_sample
-from scipy import rand
 
 from homestay.models import Homestay, Address, Contract
 
@@ -26,7 +24,7 @@ def create_homestay():
     address.save()
     h = Homestay(title=title, owner=user, address=address, light_breakfast=False, use_of_kitchen=False)
     h.save()
-    return h;
+    return h
 
 
 # test case đặt phòng

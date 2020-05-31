@@ -18,7 +18,6 @@
                     <input type="text" id="{{ field.id_for_label }}" name="{{ field.name }}" class="w3-input w3-border"
                            value="{{ field.value|default_if_none:'' }}" required
                            autocomplete="off" data-validate-url="{% url "account:validate" %}">
-
                     {% if field.name == 'username' or field.name == 'email' %}
                         <i class='fas fa-check-circle tick' id="i_{{ field.name }}"></i>
                     {% endif %}

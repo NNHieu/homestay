@@ -16,17 +16,16 @@ class TestDistance(TestCase):
     def test1(self):
         point1 = [20.619810, 106.209887]
         point2 = [20.615070, 106.195253]
-        d = 1630
         self.assertAlmostEqual(d, dist(point1, point2), delta=10)
 
     def test2(self):
-        point1 =  [20.619810, 106.209887]
+        point1 = [20.619810, 106.209887]
         ipoints = [[20.615070, 106.195253],
-                    [20.618070, 106.205253],
-                    [20.619810, 106.209887]]
+                   [20.618070, 106.205253],
+                   [20.619810, 106.209887]]
 
         opoints = [[20.619810, 108.209887],
-                    [22.619810, 109.209887]]
+                   [22.619810, 109.209887]]
 
         for p in ipoints:
             Address(lat=p[0], lng=p[1]).save()

@@ -14,12 +14,23 @@ from django.core.mail import EmailMessage
 from django.contrib.auth.decorators import login_required
 from .validators import validate_user_id
 
+# Rest Framwork
+from rest_framework import generics
+
+# Báo lỗi
+# -1 email or password sai
+# -2 account chưa active
+# -3 user with email not exists
+errors_list = {
+    -1: "Your email or password didn't match. Please try again.",
+    -2: "Your account haven't been activated yet."
+}
 
 # View cho trang login
+
+
 def login_view(request):
-    # Báo lỗi
-    # -1 email or password sai
-    # -2 account chưa active
+
     errors = 0
     if request.method == 'POST':
         # Nếu request là POST
@@ -28,12 +39,13 @@ def login_view(request):
         if form.is_valid():
             # Authenticate user với thông tin từ request POST
             email = form.cleaned_data['email']
-            user = get_user_model().objects.get(email=email)
+            user = get_user_model().objects.safe_get(email=email)
             if user:
                 if not user.is_active:
                     errors = -2
                 else:
-                    user = authenticate(email=email, password=form.cleaned_data['password'])
+                    user = authenticate(
+                        email=email, password=form.cleaned_data['password'])
                     # Nếu authenticate thành công
                     if user is not None:
                         # Login cho user
@@ -45,12 +57,13 @@ def login_view(request):
                         errors = -1
             else:
                 errors = -1
+            return render(request, 'user/login.html', {'form': form, 'errors': errors_list[errors]})
     else:
         # Nếu request không là POST
         # Tạo form ban đầu để nhập
         form = CustomUserLoginForm()
-    # Gửi phản hồi sử dụng template user/login.html context {'form': form}
-    return render(request, 'user/login.html', {'form': form, 'errors': errors})
+        # Gửi phản hồi sử dụng template user/login.html context {'form': form}
+        return render(request, 'user/login.html', {'form': form})
 
 
 # View cho trang sign up
@@ -61,7 +74,7 @@ def signup(request):
             # Save user object nhưng không đẩy lên database
             user = form.save(commit=False)
             user.is_active = False  # Chưa cho tài khoản này được sử dụng
-            user.save()
+            # user.save()
 
             # Gen token và gửi email
             current_site = get_current_site(request)
@@ -76,10 +89,11 @@ def signup(request):
             email = EmailMessage(
                 mail_subject, message, to=[to_email]
             )
-            email.send()
+            # email.send()
 
             # Gửi phản hồi đơn giản. Cần làm trang thông báo form đăng kí gửi thành công.
-            return HttpResponse('Please confirm your email address to complete the registration')
+            # return HttpResponse('Please confirm your email address to complete the registration')
+            return render(request, 'user/signup_success.html', {})
     else:
         form = CustomUserCreationForm()
     return render(request, 'user/signup.html', {'form': form})
@@ -128,18 +142,22 @@ def logout_view(request):
     return redirect("homestay:index")
 
 # Thay đổi profile
+
+
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
         form = EditProfileForm(request.POST, instance=request.user)
-        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.userprofile)  # request.FILES is show the selected image or file
+        # request.FILES is show the selected image or file
+        profile_form = ProfileForm(
+            request.POST, request.FILES, instance=request.user.userprofile)
         if form.is_valid() and profile_form.is_valid():
             user_form = form.save()
             custom_form = profile_form.save(False)
             custom_form.user = user_form
             custom_form.save()
             return HttpResponse('Success')
-        
+
     else:
         # Gửi form với thông tin khởi tạo từ user đang đăng nhập
         form = EditProfileForm(instance=request.user)

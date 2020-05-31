@@ -48,12 +48,15 @@
 
     {% endblock %}
     </style>
-    {% block src_script %}{% endblock %}
+    {% block src_script %}
+            <script src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+    {% endblock %}
 </head>
 <body>
     {% block navbar %}
     {% include 'homestay/navbar.html' with user=request.user only%}
     {% endblock %}
+    {% block content %}
     <div class="container">
         <div class="content-form">
             <div class="form-main">
@@ -62,7 +65,7 @@
                     <h2>Welcome</h2>
                 </div>
                 <div class="w3-container">
-                    {% block error_alect %}{% endblock %}
+                    <div class="error-display">{% block error_alect %}{% endblock %}</div>
                     <form class="w3-form" id="login-from" action="" method="post" autocomplete="off">
                         {% csrf_token %}
                         <div class="input">
@@ -80,6 +83,7 @@
             {% block other_option %}{% endblock %}
         </div>
     </div>
+    {% endblock %}
     {% block script %}
     {% endblock %}
 </body>

@@ -3,6 +3,9 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.urls import path, include
 
+from rest_framework import routers
+
+from .api import *
 from . import views
 
 app_name = 'homestay'
@@ -11,12 +14,16 @@ view_patterns = [
 
 ]
 
-# các url để dẫn đến trang thử chức năng.
-test_patterns = [
-    url('test/', include([
-        path('search/', views.test_search, name='test_search'),
-    ])),
-]
+router = routers.DefaultRouter()
+router.register('api', HomestayViewset, 'homestay_api')
+
+api_urls = [
+    path('api/', include([
+        path('facilities/list', FacilityListAPI.as_view()),
+        path('search/', SearchListAPI.as_view()),
+        path('detail/<int:pk>', HomestayDetailAPI.as_view())
+    ]))
+] + router.urls
 
 urlpatterns = [
     # url trang chủ
@@ -36,10 +43,5 @@ urlpatterns = [
     # url thông tin trang web
     path('about/', views.about_view, name='about'),
     # url rating
-    path('rating/<int:contract_id>', views.rating, name='rating')
-
-] + test_patterns
-
-
-
-
+    path('rating/<int:contract_id>', views.rating, name='rating'),
+] + api_urls

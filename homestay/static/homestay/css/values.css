@@ -23,4 +23,7 @@
     --color-orange: 247, 154, 99;
     --color-yellow: 247, 191, 99;
     --color-green: 123, 213, 85;
+
+    --line-hight-detail-text: 1.8;
+    --number-line-detail-para: 5;
 }

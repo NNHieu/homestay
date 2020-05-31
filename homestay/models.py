@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
@@ -5,6 +6,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 
+import re
 # Create your models here.
 
 import util.utils as utils
@@ -37,7 +39,8 @@ class Homestay(models.Model):
         def ALL(self):
             return 0b11111
 
-    welcomes = models.PositiveSmallIntegerField(validators=[validator_welcome_value], default=31)
+    welcomes = models.PositiveSmallIntegerField(
+        validators=[validator_welcome_value], default=31)
 
     # # SET_NULL vì có thể thay ảnh, hệ thông phải xủ lí
     # main_image = models.PositiveIntegerField(null=True)
@@ -56,7 +59,8 @@ class Homestay(models.Model):
     #
     address = models.OneToOneField('Address', on_delete=models.CASCADE)
     # Thông tin đánh giá:
-    score = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(10)], null=True)
+    score = models.FloatField(
+        validators=[MinValueValidator(0), MaxValueValidator(10)], null=True)
 
     def __str__(self):
         return self.title
@@ -96,6 +100,9 @@ class Address(models.Model):
 
 # Model về các tiện ích
 class Facility(models.Model):
+
+    class Meta:
+        verbose_name_plural = 'Facilities'
     name = models.CharField(max_length=20, unique=True)
     is_area_facility = models.BooleanField(default=False)  # Thuộc về khu vực
     is_character = models.BooleanField(default=False)  # Thuộc về người
@@ -113,7 +120,8 @@ class ReviewImage(models.Model):
 
 
 class GuestInfo(models.Model):
-    user = models.ForeignKey(get_user_model(), verbose_name=_('User'), null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(get_user_model(), verbose_name=_(
+        'User'), null=True, on_delete=models.SET_NULL)
     email = models.EmailField(_("Email"), max_length=254)
     first_name = models.CharField(_("First name"), max_length=50)
     last_name = models.CharField(_("Last name"), max_length=50)
@@ -121,10 +129,14 @@ class GuestInfo(models.Model):
 
 
 class Contract(models.Model):
-    homestay = models.ForeignKey("Homestay", verbose_name=_("Homestay"), on_delete=models.CASCADE)
-    guest = models.ForeignKey(GuestInfo, verbose_name=_("Guest"), on_delete=models.CASCADE)
-    user = models.ForeignKey(get_user_model(), verbose_name=_("User"), null=True, on_delete=models.SET_NULL)
-    create_date = models.DateTimeField(_("Create date"), auto_now=True, auto_now_add=False)
+    homestay = models.ForeignKey("Homestay", verbose_name=_(
+        "Homestay"), on_delete=models.CASCADE)
+    guest = models.ForeignKey(GuestInfo, verbose_name=_(
+        "Guest"), on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), verbose_name=_(
+        "User"), null=True, on_delete=models.SET_NULL)
+    create_date = models.DateTimeField(
+        _("Create date"), auto_now=True, auto_now_add=False)
     checkin_date = models.DateField(_("Check in"))
     checkout_date = models.DateField(_("Check out"))
 
@@ -144,10 +156,14 @@ class Contract(models.Model):
         super().save(args, kwargs)
         utils.OverlapDateChecker.add(self)
 
-#model về các rating
+# model về các rating
+
+
 class Rating(models.Model):
-    contract = models.OneToOneField(Contract,verbose_name = _("Contract"), on_delete=models.CASCADE)
-    homestay_id = models.ForeignKey(Homestay, verbose_name = _("Homestay"), on_delete=models.SET_NULL, null=True)
+    contract = models.OneToOneField(
+        Contract, verbose_name=_("Contract"), on_delete=models.CASCADE)
+    homestay_id = models.ForeignKey(Homestay, verbose_name=_(
+        "Homestay"), on_delete=models.SET_NULL, null=True)
     overall = models.SmallIntegerField(_("Overall"))
 
     class Reviews(models.IntegerChoices):
@@ -158,9 +174,28 @@ class Rating(models.Model):
         TERRIFIC = 5, _('Terrific')
 
     facility = models.SmallIntegerField(_("Facility"), choices=Reviews.choices)
-    cleanliness = models.SmallIntegerField(_("Cleanliness"), choices=Reviews.choices)
+    cleanliness = models.SmallIntegerField(
+        _("Cleanliness"), choices=Reviews.choices)
     comfort = models.SmallIntegerField(_("Comfort"), choices=Reviews.choices)
     location = models.SmallIntegerField(_("Location"), choices=Reviews.choices)
-    valueformoney = models.SmallIntegerField(_("Value For Money"), choices=Reviews.choices)
+    valueformoney = models.SmallIntegerField(
+        _("Value For Money"), choices=Reviews.choices)
 
     feedback = models.TextField(_("Feedback"), max_length=1000)
+
+
+def q_homestay_contains_facilities(query):
+    reg = r'^([\^&]\d+)+$'
+    h = Homestay.objects.all()
+    if re.match(reg, query):
+        ops = re.findall(r'[\^&]\d+', query)
+        for op in ops:
+            tmp = Homestay.objects.filter(facilities__id=int(op[1:]))
+            if op[0] == '^':
+                h = h.difference(tmp)
+            else:
+                h = h.intersection(tmp)
+            if not len(h):
+                break
+        return h
+    return None

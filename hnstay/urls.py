@@ -20,7 +20,11 @@ from django.template.defaulttags import url
 from django.urls import path, include
 
 urlpatterns = [
+    path('api/account/', include('user.api_urls')),
+
+
     path('admin/', admin.site.urls),
     path('account/', include('user.urls')),
-    path('', include('homestay.urls')),
+    path('homestay/', include('homestay.urls')),
+    path('', include('frontend.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
