@@ -18,3 +18,16 @@ export function mapToObj(objs, maps, filter) {
     })
     return newObjs
 }
+
+export function loadScript(src, position, id, onload) {
+    if (!position) {
+        return;
+    }
+
+    const script = document.createElement('script');
+    script.setAttribute('async', '');
+    script.setAttribute('id', id);
+    script.src = src;
+    script.onload = onload
+    position.appendChild(script);
+}

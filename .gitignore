@@ -3,6 +3,7 @@
 /static/
 *.zip$
 .vscode
+.vs
 
 # Created by https://www.gitignore.io/api/django,reactnative
 # Edit at https://www.gitignore.io/?templates=django,reactnative
@@ -13,7 +14,7 @@
 *.pyc
 __pycache__/
 local_settings.py
-db.sqlite3
+# db.sqlite3
 db.sqlite3-journal
 media
 

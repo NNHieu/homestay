@@ -9,5 +9,5 @@ urlpatterns = [
     path('auth/login', views.index),
     path('auth/signup', views.index),
     path('homestay/<int:pk>', views.detail),
-    path('checkout/', views.index),
+    path('upload/', views.index),
 ]

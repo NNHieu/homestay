@@ -9,12 +9,26 @@ import ScopedCssBaseline from '@material-ui/core/ScopedCssBaseline';
 import Toolbar from '@material-ui/core/Toolbar';
 
 import { Header } from './layout/Header'
-import { useStyles } from './UseStyles'
 import HsList from './homestay/HsList'
+import StickyFooter from './layout/Footer';
+import { makeStyles } from '@material-ui/core';
 
 
 
-
+export const useStyles = makeStyles((theme) => ({
+    root: {
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+    },
+    a: {
+        textDecoration: "none",
+    },
+    content: {
+        flexGrow: 1,
+        padding: theme.spacing(3),
+    },
+}));
 
 
 function Home() {
@@ -23,12 +37,13 @@ function Home() {
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <Header classes={classes} />
+            <Header />
             <main className={classes.content}>
                 <Toolbar />
 
                 <HsList />
             </main>
+            <StickyFooter />
         </div>
     );
 }

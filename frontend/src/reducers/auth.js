@@ -4,9 +4,13 @@ import {
     AUTH_ERROR,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
+    LOGIN,
     LOGOUT_SUCCESS,
+    LOGOUT_FAIL,
     REGISTER_SUCCESS,
+    REGISTER,
     REGISTER_FAIL,
+    AUTH_ERROR_HANDLE,
 } from './types';
 
 import axios from 'axios';
@@ -19,7 +23,7 @@ const initialState = {
     isAuthenticated: false,
     isLoading: false,
     user: null,
-
+    errors: null
 };
 
 export default function (state = initialState, action) {
@@ -36,23 +40,32 @@ export default function (state = initialState, action) {
                 isLoading: false,
                 user: action.payload,
             };
-        case LOGIN_SUCCESS:
-            Cookies.set('auth_token', action.payload.token)
-            return {
-                ...state,
-                isAuthenticated: true,
-                isLoading: false,
-                user: action.payload.user,
-                token: action.payload.token
-            };
-        case REGISTER_SUCCESS:
-            Cookies.set('auth_token', action.payload.token)
-            return {
-                ...state,
-                ...action.payload,
-                isAuthenticated: true,
-                isLoading: false,
-            };
+        case LOGIN:
+        case REGISTER:
+            const success = action.payload.success
+            action.callback(success, action.payload.errors)
+            if (success) {
+                // resonse success từ server
+                Cookies.set('auth_token', action.payload.token)
+                return {
+                    ...state,
+                    isAuthenticated: true,
+                    isLoading: false,
+                    user: action.payload.user,
+                    token: action.payload.token
+                }
+            } else {
+                // response not success từ server
+                console.log(action.payload.errors)
+                return {
+                    ...state,
+                    isAuthenticated: false,
+                    isLoading: false,
+                    user: null,
+                    token: null,
+                    errors: action.payload.errors
+                }
+            }
         case AUTH_ERROR:
             Cookies.remove('auth_token')
             return {
@@ -62,6 +75,8 @@ export default function (state = initialState, action) {
                 isLoading: false,
                 user: null,
             }
+        case LOGOUT_FAIL:
+            return state
         case LOGIN_FAIL:
         case LOGOUT_SUCCESS:
             console.log('Loging oouts')
@@ -73,15 +88,11 @@ export default function (state = initialState, action) {
                 isLoading: false,
                 user: null,
             };
-        case REGISTER_FAIL:
-            Cookies.remove('auth_token')
+        case AUTH_ERROR_HANDLE:
             return {
                 ...state,
-                token: null,
-                user: null,
-                isAuthenticated: false,
-                isLoading: false,
-            };
+                errors: null,
+            }
         default:
             return state;
     }
@@ -100,25 +111,23 @@ axios.defaults.headers.post['X-CSRFToken'] = Cookies.get('csrftoken');
  * @param {Object} user firstName, lastName, email, password
  * @param {requestCallback} errorHandler 
  */
-export const signUp = (user, errorHandler) => dispatch => {
+export const signUp = (user, callback) => dispatch => {
     console.log(Cookies.get('csrftoken'));
     console.log(user);
+    dispatch({ type: USER_LOADING })
     axios
-        .post(api_url, user)
+        .post(`${api_url}/auth/signup`, user)
         .then(res => {
-            console.log('Hela');
             dispatch({
-                type: ADD_USER,
+                type: REGISTER,
                 payload: res.data,
+                callback: callback,
             })
         })
         .catch(err => {
-            console.log('Helo');
-            console.log(err.response.data);
-            let error_state = getErrors(err);
-            console.log(error_state);
-            dispatch(error_state);
-            errorHandler(error_state.payload.msg);
+            console.log('in signup action: ')
+            console.log(err)
+            console.log('-----------------')
         });
 }
 
@@ -127,23 +136,22 @@ export const signUp = (user, errorHandler) => dispatch => {
  * @param { Object } authInfo email, password
  * @callback errorHandler error call back
  */
-export const login = (authInfo, errorHandler) => dispatch => {
+export const login = (authInfo, callback) => dispatch => {
+    dispatch({ type: USER_LOADING });
     axios
         .post(`${api_url}/auth/login`, authInfo)
         .then(res => {
-            console.log(res.data)
             dispatch({
-                type: LOGIN_SUCCESS,
-                payload: res.data
+                type: LOGIN,
+                payload: res.data,
+                callback: callback,
             })
         })
-        .catch((err) => {
-            errorHandler(err.response.data)
-            dispatch(getErrors(err))
-            dispatch({
-                type: LOGIN_FAIL,
-            })
-        })
+        .catch(err => {
+            console.log('in login action: ')
+            console.log(err)
+            console.log('-----------------')
+        });
 }
 
 // Setup config with token - helper function
@@ -193,11 +201,10 @@ export const logout = () => (dispatch) => {
             type: AUTH_ERROR,
         });
     } else {
-
         dispatch({ type: USER_LOADING });
         console.log('Loging oout')
         axios
-            .post(`${api_url}/auth/logout`, authHeaders)
+            .post(`${api_url}/auth/logout`, {}, authHeaders)
             .then((res) => {
                 console.log('Logout success'),
                     dispatch({
@@ -210,7 +217,7 @@ export const logout = () => (dispatch) => {
                 console.log(err.response)
                 dispatch(getErrors(err));
                 dispatch({
-                    type: AUTH_ERROR,
+                    type: LOGOUT_FAIL,
                 });
             });
     }

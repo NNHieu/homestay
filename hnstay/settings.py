@@ -22,6 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'jyhrimm@=-f0sm-)+g1z&der%gc-b$$b!f+$4e=*fr)a-e^e2t'
+ReCAPTCHA_SECRET = '6LctIv4UAAAAALBU8RgbaJXghZz6Kvuf_blWRbZ7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -147,6 +148,11 @@ REST_FRAMEWORK = {
         'knox.auth.TokenAuthentication',
     ),
 }
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.AllowAllUsersModelBackend'
+]
+
 LOGGING_CONFIG = None
 LOGLEVEL = os.environ.get('LOGLEVEL', 'info').upper()
 logging.config.dictConfig({

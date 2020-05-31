@@ -5,7 +5,6 @@ from rest_framework import routers
 from knox import views as knox_views
 
 from . import views
-from .api import UserViewSet, RegisterAPI, SignUpAPI, LoginAPI, UserAPI
 
 # Nên để là account hay user?
 app_name = 'account'
@@ -14,8 +13,8 @@ urlpatterns = [
     # Url sign up
     # url(r'^signup/$', views.signup, name='signup'),
     # # Url verify email dạng /activate/<user id>/<token>
-    # url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-    #     views.activate, name='activate'),
+    url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        views.activate, name='activate'),
     # # Url kiểm tra tên tài khoản với ajax
     # path('validate/', views.validate_ajax_answer, name='validate'),
     # # Url đăng nhập

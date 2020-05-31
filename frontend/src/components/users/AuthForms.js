@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 
 import Avatar from '@material-ui/core/Avatar';
@@ -16,25 +16,23 @@ import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link'
 
 
-import { Link as RouteLink } from 'react-router-dom'
+import { Link as RouteLink, Redirect } from 'react-router-dom'
 import { LOGIN_URL, SIGNUP_URL } from '../../urls';
 import { validateAuthForm } from '../../utils/validates'
 
 //Reducers 
-import { login, loadUser } from '../../reducers/auth'
+import { login, loadUser, signUp } from '../../reducers/auth'
+import { CircularProgress, Input } from '@material-ui/core';
+import AuthInput from '../general/AuthInput';
 
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="https://material-ui.com/">
-                Your Website
-      </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
+//ReCaptcha
+import ReCAPTCHA from 'react-google-recaptcha'
+
+import { loadScript } from '../../utils/collection'
+import { AUTH_ERROR_HANDLE } from '../../reducers/types';
+import Autosuggest from 'react-autosuggest';
+import Copyright from '../layout/Copyright';
+
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -55,19 +53,21 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(3, 0, 2),
     },
 }));
-const textFieldProps = (name, label, autoComplete, type = 'text', required = true, ) => ({
-    variant: "outlined",
-    name,
-    id: name,
-    required,
-    fullWidth: true,
-    label,
-    type,
-    autoComplete
-})
 
-const signupFields = ['email', 'password', 'firstName', 'lastName']
+const signupFields = ['firstName', 'lastName', 'email', 'password']
 const loginFields = ['email', 'password']
+const loginTexts = {
+    submitLabel: "Sign in",
+    checkBoxText: "Remember me",
+    otherText: "Nead an account? Sign up",
+    otherUrl: SIGNUP_URL
+}
+const signupTexts = {
+    submitLabel: "Sign up",
+    checkBoxText: "I want to receive inspiration, marketing promotions and updates via email.",
+    otherText: "Already have an account? Sign in",
+    otherUrl: LOGIN_URL
+}
 
 const initialShowErrorState = {}
 const initialIsError = {}
@@ -75,27 +75,15 @@ signupFields.forEach(f => {
     initialShowErrorState[f] = { showError: false, helperText: 'This field is required' }
     initialIsError[f] = true
 })
-/**
- * Form login and signup
- * @param {*} props 
- */
-export function AuthForm(props) {
-    console.log('run comp')
-    const auth = useSelector(state => state.auth)
-    const dispatch = useDispatch()
-    if (auth.token && !auth.isAuthenticated && !auth.isLoading) {
-        console.log(`tfasd`)
-        console.log(auth)
-        loadUser()(dispatch)
-    }
-    // React.useEffect(() => {
-    //     console.log(auth)
-    // }, [auth.isAuthenticated])
-    const classes = useStyles();
-    const signupPage = props.match.params.subpath == "signup"
-    let fields = signupPage ? signupFields : loginFields
+
+export default function MainForm(props) {
+
+    const { signupPage, classes, onValidSubmit } = props
+    const fields = signupPage ? signupFields : loginFields
+    const texts = signupPage ? signupTexts : loginTexts
+
     // Track previous auth page
-    const refIsSignUp = React.useRef(signupPage)
+    // const refIsSignUp = React.useRef(signupPage)
     // Ref input component
     const refInputComp = React.useRef({
         password: null,
@@ -103,9 +91,17 @@ export function AuthForm(props) {
         firstName: null,
         lastName: null,
     })
+    const [recaptcha, setRecaptcha] = useState({ load: true, expired: false, value: null })
+    const handleCaptchaChange = value => {
+        console.log("Captcha value:", value);
+        if (value) {
+            document.getElementById('iknown').style.borderStyle = "none"
+        }
+        setRecaptcha({ ...recaptcha, value })
+    };
     //States
     // const [authInfo, setAuthInfo] = React.useState(initialAuthState)
-    const [inputError, setError] = React.useState(initialShowErrorState)
+    const [handleError, setError] = React.useState(initialShowErrorState)
     // Is error 
     const isError = React.useRef(initialIsError)
     // Reset 
@@ -123,13 +119,13 @@ export function AuthForm(props) {
                 inputComps[inp].value = ''
         })
         isError.current = { ...initialIsError, email: isError.current.email }
-        refIsSignUp.current = signupPage
+        // refIsSignUp.current = signupPage
         // console.log(refInputComp)
     }
     const checkInput = (value, name) => {
         const helperText = validateAuthForm(value, name)
         const iserr = helperText !== ''
-        if (isError.current[name] !== iserr || inputError[name].helperText != helperText) {
+        if (isError.current[name] !== iserr || handleError[name].helperText != helperText) {
             isError.current[name] = iserr
             setError(prev => ({
                 ...prev,
@@ -139,28 +135,25 @@ export function AuthForm(props) {
                 showError(name)
             }
         }
-        console.log(`is error ${iserr}`)
+        // console.log(`is error ${iserr}`)
         return iserr
     }
 
     const showError = (name) => {
-        // if () {
         setError(prev => ({
             ...prev,
             [name]: { ...prev[name], showError: isError.current[name] }
         }))
-        console.log(inputError[name].isError)
-        // }
     }
 
     const checkValid = () => {
-        console.log('check valid')
+        // console.log('check valid')
         let valid = true
         const validFormData = {}
         fields.forEach(f => {
             const { value, name } = refInputComp.current[f]
-            console.log(value)
-            console.log(name)
+            // console.log(value)
+            // console.log(name)
             if (checkInput(value, name))
                 valid = false
             else {
@@ -168,9 +161,157 @@ export function AuthForm(props) {
             }
             showError(name)
         })
-        return { valid, validFormData, signup: signupPage }
+        // if (recaptcha.value == null) {
+        //     valid = false
+        //     document.getElementById('iknown').style.border = "2px solid red"
+        // } else {
+        //     validFormData['captcha_value'] = recaptcha.value
+        // }
+        if (valid) {
+            onValidSubmit(validFormData, signupPage, signUpCallback)
+        }
+        // return { valid, validFormData, signup: signupPage }
     }
 
+    // if (signupPage && !document.querySelector('#recaptcha-src')) {
+    //     loadScript("https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit",
+    //         document.querySelector('head'),
+    //         'recaptcha-src',
+    //         () => {
+    //             recaptchaLoaded.current = true
+    //             console.log('recapt loaded')
+    //         }
+    //     )
+    // }
+
+    //callback khi nhan response tu server
+    const signUpCallback = (success, authErrors) => {
+        if (!success) {
+            for (var key in authErrors) {
+                if (key == 'activate') {
+                    alert(authErrors[key])
+                    return
+                }
+                // skip loop if the property is from prototype
+                if (!authErrors.hasOwnProperty(key)) continue;
+                handleError[key].helperText = authErrors[key][0]
+                handleError[key].showError = true
+                isError.current[key] = true
+            }
+            setError(handleError)
+            console.log('not success')
+            console.log(handleError)
+            console.log(isError)
+        } else {
+
+        }
+    }
+
+    // if (authErrors) {
+
+    // }
+    console.log('test pre main auth form')
+    console.log(handleError)
+    console.log(isError)
+    return (
+        <form className={classes.form}>
+            <Grid container spacing={2}>
+                {
+                    fields.map((line, index) =>
+                        (
+                            <Grid item xs={12} sm={line == 'firstName' || line == 'lastName' < 2 && 6} key={line}>
+                                <AuthInput name={line}
+                                    error={handleError[line].showError}
+                                    helperText={handleError[line].helperText}
+                                    checkInput={checkInput}
+                                    inref={refInputComp.current}
+                                // onFocus={authErrors && authErrors[line] ? () => { dispatch({ type: AUTH_ERROR_HANDLE }) } : null}
+                                />
+                            </Grid>
+                        )
+                    )
+                }
+                <Grid item xs={12}>
+                    <FormControlLabel
+                        control={<Checkbox value="allowExtraEmails" color="primary" />}
+                        label={texts.checkBoxText}
+                    />
+                </Grid>
+            </Grid>
+            {/* <Input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
+            <Input type="hidden" name="action" value="validate_captcha" /> */}
+            {/* <div className="g-recaptcha" data-sitekey="6LctIv4UAAAAAFz_rnIP9ltDPGkSmHjQ_R7F4fus"></div> */}
+            {signupPage && <div id='iknown'>
+                {/* <ReCAPTCHA sitekey="6LctIv4UAAAAAFz_rnIP9ltDPGkSmHjQ_R7F4fus"
+                    onChange={handleCaptchaChange}
+                    asyncScriptOnLoad={() => { setRecaptcha({ load: true, expired: false }) }}
+                /> */}
+            </div>}
+            <Button
+                type="button" fullWidth variant="contained" color="primary" className={classes.submit}
+                onClick={checkValid}
+                disabled={props.isLoading || (signupPage && !recaptcha.load)}
+            >
+                {props.isLoading || (signupPage && !recaptcha.load) ? <CircularProgress color="white" /> : texts.submitLabel}
+
+            </Button>
+            <Grid container justify="flex-end">
+                {!signupPage && <Grid item xs> <Link href="#" variant="body2"> Forgot password?</Link> </Grid>}
+                <Grid item>
+                    <RouteLink onClick={resetValue} to={texts.otherUrl}>{texts.otherText}</RouteLink>
+                </Grid>
+            </Grid>
+        </form>
+    )
+}
+
+
+
+function LoadingBox() {
+    return (
+        <Box display="flex" justifyContent="center" m={1} p={1}>
+            <CircularProgress />
+        </Box>
+    )
+}
+
+
+/**
+ * Form login and signup
+ * @param {*} props 
+ */
+export function AuthForm(props) {
+    console.log('run asdfas comp')
+    const classes = useStyles();
+    const auth = useSelector(state => state.auth)
+    const dispatch = useDispatch()
+    const isSignUp = props.match.params.subpath == "signup"
+
+    if (auth.token && !auth.isAuthenticated && !auth.isLoading) {
+        console.log(`tfasd`)
+        console.log(auth)
+        loadUser()(dispatch)
+        return (
+            <div>
+                <CircularProgress />
+            </div>
+        )
+    } else if (auth.isAuthenticated) {
+        // if (isSignUp) {
+        //     return <Redirect to="/" />
+        // }
+        return <Redirect to="/" />
+    }
+
+
+    const onValidSubmit = (validFormData, isSignUp, callback) => {
+        console.log(validFormData)
+        console.log(isSignUp)
+        if (!isSignUp)
+            login(validFormData, callback)(dispatch)
+        else
+            signUp(validFormData, callback)(dispatch)
+    }
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -179,74 +320,16 @@ export function AuthForm(props) {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    {signupPage ? "Sign up" : "Sign in"}
+                    {isSignUp ? "Sign up" : "Sign in"}
                 </Typography>
-                <form className={classes.form}>
-                    <Grid container spacing={2}>
-                        {/* {signupPage && userName} */}
-                        {
-                            [
-                                { type: 'text', name: 'firstName', label: "First Name", autoComplete: 'fname' },
-                                { type: 'text', name: 'lastName', label: "Last Name", autoComplete: 'lname' },
-                                { type: "email", name: 'email', label: "Email Address", autoComplete: 'off' },
-                                { type: "password", name: 'password', label: "Password", autoComplete: 'off' },
-                            ].map((line, index) => {
-                                if (!signupPage && index < 2)
-                                    return undefined
-                                return (
-                                    <Grid item xs={12} sm={index < 2 && 6} key={line.name}>
-                                        <TextField
-                                            {...textFieldProps(line.name, line.label, line.autoComplete, line.type)}
-                                            error={inputError[line.name].showError}
-                                            helperText={inputError[line.name].showError ? inputError[line.name].helperText : ''}
-                                            // onBlur={e => showError(e.target.name)}
-                                            onChange={e => checkInput(e.target.value, e.target.name)}
-                                            inputRef={input => (
-                                                refInputComp.current[line.name] = input
-                                            )}
-                                        />
-                                    </Grid>
-                                )
-                            })
-                        }
-                        <Grid item xs={12}>
-                            <FormControlLabel
-                                control={<Checkbox value="allowExtraEmails" color="primary" />}
-
-                                label={
-                                    signupPage ?
-                                        "I want to receive inspiration, marketing promotions and updates via email."
-                                        :
-                                        "Remember me"
-                                }
-                            />
-                        </Grid>
-                    </Grid>
-                    <Button
-                        type="button"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
-                        onClick={checkValid}
-                    >
-                        {signupPage ? "Sign up" : "Sign in"}
-                    </Button>
-                    <Grid container justify="flex-end">
-                        {!signupPage && <Grid item xs>
-                            <Link href="#" variant="body2">
-                                Forgot password?
-                        </Link>
-                        </Grid>}
-                        <Grid item>
-                            {signupPage ?
-                                <RouteLink onClick={resetValue} to={LOGIN_URL}>Already have an account? Sign in</RouteLink>
-                                :
-                                <RouteLink onClick={resetValue} to={SIGNUP_URL}>Nead an account? Sign up</RouteLink>
-                            }
-                        </Grid>
-                    </Grid>
-                </form>
+                {
+                    (auth.isAuthenticated && !auth.user.is_active) ?
+                        <form className={classes.form}>
+                            <TextField variant='outlined' label='enter your verify code'></TextField>
+                        </form>
+                        :
+                        <MainForm classes={classes} signupPage={isSignUp} onValidSubmit={onValidSubmit} isLoading={auth.isLoading} />
+                }
             </div>
             <Box mt={5}>
                 <Copyright />

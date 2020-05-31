@@ -12,6 +12,7 @@ geopy = "*"
 pillow = "*"
 coverage = "*"
 django-rest-knox = "*"
+requests = "*"
 
 [dev-packages]
 pylint = "*"
