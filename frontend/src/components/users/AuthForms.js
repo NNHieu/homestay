@@ -161,12 +161,12 @@ export default function MainForm(props) {
             }
             showError(name)
         })
-        // if (recaptcha.value == null) {
-        //     valid = false
-        //     document.getElementById('iknown').style.border = "2px solid red"
-        // } else {
-        //     validFormData['captcha_value'] = recaptcha.value
-        // }
+        if (signupPage && recaptcha.value == null) {
+            valid = false
+            document.getElementById('iknown').style.border = "2px solid red"
+        } else {
+            validFormData['captcha_value'] = recaptcha.value
+        }
         if (valid) {
             onValidSubmit(validFormData, signupPage, signUpCallback)
         }
@@ -214,7 +214,7 @@ export default function MainForm(props) {
     console.log(handleError)
     console.log(isError)
     return (
-        <form className={classes.form}>
+        <form className={classes.form} onSubmit={e => e.preventDefault()}>
             <Grid container spacing={2}>
                 {
                     fields.map((line, index) =>
@@ -241,14 +241,16 @@ export default function MainForm(props) {
             {/* <Input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
             <Input type="hidden" name="action" value="validate_captcha" /> */}
             {/* <div className="g-recaptcha" data-sitekey="6LctIv4UAAAAAFz_rnIP9ltDPGkSmHjQ_R7F4fus"></div> */}
-            {signupPage && <div id='iknown'>
-                {/* <ReCAPTCHA sitekey="6LctIv4UAAAAAFz_rnIP9ltDPGkSmHjQ_R7F4fus"
-                    onChange={handleCaptchaChange}
-                    asyncScriptOnLoad={() => { setRecaptcha({ load: true, expired: false }) }}
-                /> */}
-            </div>}
+            {
+                signupPage && <div id='iknown'>
+                    <ReCAPTCHA sitekey="6LctIv4UAAAAAFz_rnIP9ltDPGkSmHjQ_R7F4fus"
+                        onChange={handleCaptchaChange}
+                        asyncScriptOnLoad={() => { setRecaptcha({ load: true, expired: false }) }}
+                    />
+                </div>
+            }
             <Button
-                type="button" fullWidth variant="contained" color="primary" className={classes.submit}
+                type="submit" fullWidth variant="contained" color="primary" className={classes.submit}
                 onClick={checkValid}
                 disabled={props.isLoading || (signupPage && !recaptcha.load)}
             >
@@ -261,7 +263,7 @@ export default function MainForm(props) {
                     <RouteLink onClick={resetValue} to={texts.otherUrl}>{texts.otherText}</RouteLink>
                 </Grid>
             </Grid>
-        </form>
+        </form >
     )
 }
 
