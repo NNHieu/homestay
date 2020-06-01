@@ -29,6 +29,7 @@ class SignUpAPI(generics.GenericAPIView):
                 "errors": e.detail
             })
         user = serializer.save()
+        login(request, user)
         return Response({
             "success": True,
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
@@ -68,9 +69,9 @@ class LoginAPI(generics.GenericAPIView):
 
 
 class UserAPI(generics.RetrieveAPIView):
-    # permission_classes = [
-    #     permissions.IsAuthenticated,
-    # ]
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
     serializer_class = UserSerializer
 
     # def get(self, request):

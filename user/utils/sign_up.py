@@ -74,9 +74,9 @@ def activate(request):
     except(TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
         user = -1, None
     if user is not None and account_activation_token.check_token(user, token):
-        if user.is_active:
+        if user.is_verified:
             return 1, user
-        user.is_active = True
+        user.is_verified = True
         user.save()
         return 0, user
     else:
