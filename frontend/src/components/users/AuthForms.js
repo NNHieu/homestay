@@ -91,7 +91,7 @@ export default function MainForm(props) {
         firstName: null,
         lastName: null,
     })
-    const [recaptcha, setRecaptcha] = useState({ load: true, expired: false, value: null })
+    const [recaptcha, setRecaptcha] = useState({ loaded: false, expired: false, value: null })
     const handleCaptchaChange = value => {
         console.log("Captcha value:", value);
         if (value) {
@@ -161,12 +161,12 @@ export default function MainForm(props) {
             }
             showError(name)
         })
-        // if (recaptcha.value == null) {
-        //     valid = false
-        //     document.getElementById('iknown').style.border = "2px solid red"
-        // } else {
-        //     validFormData['captcha_value'] = recaptcha.value
-        // }
+        if (signupPage && recaptcha.value == null) {
+            valid = false
+            document.getElementById('iknown').style.border = "2px solid red"
+        } else {
+            validFormData['captcha_value'] = recaptcha.value
+        }
         if (valid) {
             onValidSubmit(validFormData, signupPage, signUpCallback)
         }
@@ -207,14 +207,8 @@ export default function MainForm(props) {
         }
     }
 
-    // if (authErrors) {
-
-    // }
-    console.log('test pre main auth form')
-    console.log(handleError)
-    console.log(isError)
     return (
-        <form className={classes.form}>
+        <form className={classes.form} onSubmit={e => e.preventDefault()}>
             <Grid container spacing={2}>
                 {
                     fields.map((line, index) =>
@@ -242,17 +236,17 @@ export default function MainForm(props) {
             <Input type="hidden" name="action" value="validate_captcha" /> */}
             {/* <div className="g-recaptcha" data-sitekey="6LctIv4UAAAAAFz_rnIP9ltDPGkSmHjQ_R7F4fus"></div> */}
             {signupPage && <div id='iknown'>
-                {/* <ReCAPTCHA sitekey="6LctIv4UAAAAAFz_rnIP9ltDPGkSmHjQ_R7F4fus"
+                <ReCAPTCHA sitekey="6LctIv4UAAAAAFz_rnIP9ltDPGkSmHjQ_R7F4fus"
                     onChange={handleCaptchaChange}
-                    asyncScriptOnLoad={() => { setRecaptcha({ load: true, expired: false }) }}
-                /> */}
+                    asyncScriptOnLoad={() => { setRecaptcha({ loaded: true, expired: false }) }}
+                />
             </div>}
             <Button
-                type="button" fullWidth variant="contained" color="primary" className={classes.submit}
+                type="submit" fullWidth variant="contained" color="primary" className={classes.submit}
                 onClick={checkValid}
-                disabled={props.isLoading || (signupPage && !recaptcha.load)}
+                disabled={props.isLoading || (signupPage && !recaptcha.loaded)}
             >
-                {props.isLoading || (signupPage && !recaptcha.load) ? <CircularProgress color="white" /> : texts.submitLabel}
+                {props.isLoading || (signupPage && !recaptcha.loaded) ? <CircularProgress color="white" /> : texts.submitLabel}
 
             </Button>
             <Grid container justify="flex-end">
