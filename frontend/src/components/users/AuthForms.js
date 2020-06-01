@@ -213,7 +213,7 @@ export default function MainForm(props) {
                 {
                     fields.map((line, index) =>
                         (
-                            <Grid item xs={12} sm={line == 'firstName' || line == 'lastName' < 2 && 6} key={line}>
+                            <Grid item xs={12} sm={line == 'firstName' || line == 'lastName' ? 6 : 12} key={line}>
                                 <AuthInput name={line}
                                     error={handleError[line].showError}
                                     helperText={handleError[line].helperText}
@@ -319,7 +319,11 @@ export function AuthForm(props) {
                 {
                     (auth.isAuthenticated && !auth.user.is_active) ?
                         <form className={classes.form}>
-                            <TextField variant='outlined' label='enter your verify code'></TextField>
+                            <Grid container spacing={2} justify="center">
+                                <Grid item xs={12} sm={6} >
+                                    <TextField variant='outlined' label='enter your verify code'></TextField>
+                                </Grid>
+                            </Grid>
                         </form>
                         :
                         <MainForm classes={classes} signupPage={isSignUp} onValidSubmit={onValidSubmit} isLoading={auth.isLoading} />
