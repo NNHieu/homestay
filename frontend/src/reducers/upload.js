@@ -5,6 +5,7 @@ import {
     UPLOAD_FACILITIES,
     UPLOAD_PRICES,
     UPLOAD_RESESRVATION_DATE,
+    UPLOAD_IMAGES
 } from './types';
 
 import axios from 'axios';
@@ -75,7 +76,8 @@ const initialState = {
         availableDate: null,
         cancel: null,
         excludeDays: []
-    }
+    },
+    images: []
 };
 
 for (let k in facilties_list) {
@@ -114,7 +116,11 @@ export default function (state = initialState, action) {
                 ...state,
                 reservationDate: { ...action.payload }
             }
-
+        case UPLOAD_IMAGES:
+            return {
+                ...state,
+                images: { ...action.payload }
+            }
         default:
             return state;
     }
@@ -162,6 +168,13 @@ export const saveReservationDate = (info) => dispatch => {
     })
 }
 
+export const saveImages = (info) => dispatch => {
+    dispatch({
+        type: UPLOAD_IMAGES,
+        payload: info
+    })
+}
+
 export const validate = (info, field) => {
     return true
     console.log('validating')
@@ -170,4 +183,11 @@ export const validate = (info, field) => {
             return false
     }
     return true
+}
+
+export const post = (data) => {
+    axios.post('/api/account/auth/signup', data)
+        .then(res => {
+            console.log(data)
+        })
 }

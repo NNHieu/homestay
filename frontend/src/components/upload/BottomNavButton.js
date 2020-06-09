@@ -1,5 +1,7 @@
 import React from 'react'
 import { makeStyles, Button } from '@material-ui/core';
+import { post } from '../../reducers/upload';
+import { useSelector } from 'react-redux';
 const useStyles = makeStyles((theme) => ({
     buttons: {
         display: 'flex',
@@ -14,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function BottomNavButton(props) {
     const classes = useStyles()
-
+    const data = useSelector(state => state.upload)
     return (
         <div className={classes.buttons}>
             {props.activeStep !== 0 && (
@@ -25,7 +27,7 @@ export default function BottomNavButton(props) {
             <Button
                 variant="contained"
                 color="primary"
-                onClick={props.handleNext}
+                onClick={props.activeStep === props.stepLenght - 1 ? () => post(data) : props.handleNext}
                 className={classes.button}
             >
                 {props.activeStep === props.stepLenght - 1 ? 'Place order' : 'Next'}
