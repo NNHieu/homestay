@@ -111,14 +111,13 @@ export default function MainForm(props) {
         console.log(inputComps)
         setError(prev => ({
             ...initialShowErrorState,
-            email: prev.email
         }))
         fields.forEach(inp => {
             console.log(inp)
             if (inp !== 'email')
                 inputComps[inp].value = ''
         })
-        isError.current = { ...initialIsError, email: isError.current.email }
+        isError.current = { ...initialIsError }
         // refIsSignUp.current = signupPage
         // console.log(refInputComp)
     }
