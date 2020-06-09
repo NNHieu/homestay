@@ -15,8 +15,9 @@ import MailIcon from '@material-ui/icons/Mail';
 import { Grid } from '@material-ui/core';
 
 // Custom Components
-import UploadMain from './UploadMain'
 import ProgressSidebar from './ProgressSidebar';
+import BottomNavButton from './BottomNavButton'
+import Copyright from '../layout/Copyright'
 
 //Progress components
 import BasicInfo from './progress-components/BasicInfo'
@@ -28,6 +29,7 @@ import Facilities from './progress-components/Facilities';
 import Prices from './progress-components/Prices';
 import ReservationDate from './progress-components/ReservationDate';
 import UploadImage from './progress-components/UploadImage';
+import CompleteFillUploadForm from './progress-components/CompleteFillUploadForm.js'
 import Cloudinary from '../general/Cloudinary';
 
 const drawerWidth = 400;
@@ -52,29 +54,39 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         padding: theme.spacing(3),
     },
+    layout: {
+        width: 'auto',
+        marginLeft: theme.spacing(2),
+        marginRight: theme.spacing(2),
+        [theme.breakpoints.up(1000 + theme.spacing(2) * 2)]: {
+            width: 1000,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+        },
+    },
 }));
 
 
 const steps = ['Thông tin cơ bản', 'Địa điểm', 'Mô tả', 'Vật dụng', 'Giá cả', 'Phòng trống', 'Hình ảnh', 'Hồ sơ', 'Đăng bài'];
 
-function getStepContent(step) {
+function getStepContent(step, validateRef) {
     switch (step) {
         case 0:
-            return <BasicInfo />
+            return <BasicInfo validateRef={validateRef} />
         case 1:
-            return <AddressForm />;
+            return <AddressForm validateRef={validateRef} />;
         case 2:
-            return <Descript />;
+            return <Descript validateRef={validateRef} />;
         case 3:
-            return <Facilities />;
+            return <Facilities validateRef={validateRef} />;
         case 4:
-            return <Prices />;
+            return <Prices validateRef={validateRef} />;
         case 5:
-            return <ReservationDate />;
+            return <ReservationDate validateRef={validateRef} />;
         case 6:
-            return <Cloudinary />;
+            return <Cloudinary validateRef={validateRef} />;
         default:
-            return <Review />;;
+            return <Review validateRef={validateRef} />;
     }
 }
 
@@ -101,8 +113,12 @@ function getStepDescription(step) {
 export default function ClippedDrawer() {
     const classes = useStyles();
     const [activeStep, setActiveStep] = React.useState(0);
+    const validateRef = React.useRef()
     const handleNext = () => {
-        setActiveStep(activeStep + 1);
+        console.log(activeStep)
+        console.log(validateRef.current())
+        if (validateRef.current())
+            setActiveStep(activeStep + 1);
     };
 
     const handleBack = () => {
@@ -134,7 +150,22 @@ export default function ClippedDrawer() {
                     </Grid>
                 </div>
             </Drawer>
-            <UploadMain activeStep={activeStep} handleNext={handleNext} handleBack={handleBack} steps={steps} getStepContent={getStepContent} />
+            <main className={classes.layout}>
+                <Toolbar />
+                <Toolbar />
+                {/* <Paper className={classes.paper}> */}
+                <React.Fragment>
+                    {activeStep === steps.length ? (
+                        <CompleteFillUploadForm />
+                    ) : (
+                            <React.Fragment>
+                                {getStepContent(activeStep, validateRef)}
+                                <BottomNavButton handleBack={handleBack} handleNext={handleNext} activeStep={activeStep} stepLenght={steps.length} />
+                            </React.Fragment>
+                        )}
+                </React.Fragment>
+                <Copyright />
+            </main>
         </div>
     );
 }

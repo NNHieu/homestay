@@ -7,20 +7,76 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import NumberPlusMinus from '../../general/NumberPlusMinus'
 import { Margin } from '../../general/Margin'
-import { saveReservationDate } from '../../../reducers/upload'
+import { saveReservationDate, validate } from '../../../reducers/upload'
+import DayPicker, { DateUtils } from 'react-day-picker';
+import 'react-day-picker/lib/style.css';
+import './ReservationDate.css'
 
+
+
+class SelectMultibleCalendar extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleDayClick = this.handleDayClick.bind(this);
+        this.state = {
+            selectedDays: props.defaul ? props.defaul : [],
+        };
+    }
+
+    handleDayClick(day, { selected }) {
+        const { selectedDays } = this.state;
+        if (selected) {
+            const selectedIndex = selectedDays.findIndex(selectedDay =>
+                DateUtils.isSameDay(selectedDay, day)
+            );
+            selectedDays.splice(selectedIndex, 1);
+        } else {
+            selectedDays.push(day);
+        }
+        this.setState({ selectedDays });
+    }
+
+    componentWillUnmount() {
+        this.props.onUnmount(this.state.selectedDays)
+    }
+
+    render() {
+        return (
+            <div>
+                <DayPicker
+                    disabledDays={{
+                        before: new Date()
+                    }}
+                    selectedDays={this.state.selectedDays}
+                    onDayClick={this.handleDayClick}
+                />
+            </div>
+        );
+    }
+}
 
 export default function ReservationDate(props) {
     const defaultValue = useSelector(state => state.upload.reservationDate)
     const dispatch = useDispatch()
+    props.validateRef.current = () => validate(defaultValue, 'reservationDate')
+
+
     const [preTime, setPreTime] = React.useState(defaultValue.preTime);
     const handlePreTime = (event, newValue) => {
         defaultValue.preTime = newValue
         setPreTime(newValue);
     };
 
+    const [showCalendar, setshowCalendar] = React.useState(defaultValue.availableDate === 'exclude')
     React.useEffect(() => () => saveReservationDate(defaultValue)(dispatch), [])
 
+    const calendar = <div>
+        <SelectMultibleCalendar
+            // onDayClick={handleDayClick}/
+            defaul={defaultValue.excludeDays}
+            onUnmount={selected => defaultValue.excludeDays = selected}
+        />
+    </div>
     return (
         <List>
             <ListItem>
@@ -71,9 +127,16 @@ export default function ReservationDate(props) {
                             { value: "add-after", mainText: "Tôi sẽ thêm lượng phòng trống sau" },
                         ]
                     }
-                    onChange={e => defaultValue.availableDate = e.target.value}
+                    onChange={e => {
+                        setshowCalendar(e.target.value === 'exclude')
+                        defaultValue.availableDate = e.target.value
+                    }}
                     defaultValue={defaultValue.availableDate}
                 />
+                {
+                    showCalendar &&
+                    calendar
+                }
             </ListItem>
             <ListItem>
                 <CustomedPaperWithCheckBoxs

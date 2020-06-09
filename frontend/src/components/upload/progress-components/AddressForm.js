@@ -10,7 +10,7 @@ import CustomedPaper from '../../general/CustomedPaper';
 import GoogleMapAutocomplete from '../../general/GoogleMapAutocomplete'
 
 //Reducers
-import { saveAddress } from '../../../reducers/upload'
+import { saveAddress, validate } from '../../../reducers/upload'
 
 //OL Map
 import 'ol/ol.css';
@@ -84,9 +84,11 @@ function loadMap() {
   return map
 }
 
-export default function AddressForm() {
+export default function AddressForm(props) {
   const state = useSelector(state => state.upload.address)
   const dispatch = useDispatch()
+  props.validateRef.current = () => validate(state, 'address')
+
   const handleInputChange = (value, name) => {
     console.log(value)
     console.log(name)

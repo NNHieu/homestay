@@ -74,6 +74,7 @@ const initialState = {
         maxNight: 1,
         availableDate: null,
         cancel: null,
+        excludeDays: []
     }
 };
 
@@ -159,4 +160,14 @@ export const saveReservationDate = (info) => dispatch => {
         type: UPLOAD_RESESRVATION_DATE,
         payload: info,
     })
+}
+
+export const validate = (info, field) => {
+    return true
+    console.log('validating')
+    for (let k in initialState[field]) {
+        if (info[k] === undefined || info[k] === null || info[k] === '')
+            return false
+    }
+    return true
 }

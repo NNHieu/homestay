@@ -3,7 +3,7 @@ import { List, ListItem, TextField } from '@material-ui/core'
 import CustomedPaper from '../../general/CustomedPaper'
 import CheckBoxList from '../../general/CheckBoxList'
 
-import { facilties_list } from '../../../reducers/upload'
+import { facilties_list, validate } from '../../../reducers/upload'
 import { useSelector, useDispatch } from 'react-redux'
 import { UPLOAD_FACILITIES } from '../../../reducers/types'
 
@@ -15,11 +15,13 @@ function initRefCheckboxs() {
     return init
 }
 
-export default function Facilities() {
+export default function Facilities(props) {
     const refCheckboxs = React.useRef(initRefCheckboxs())
     const listFacilitiesComponents = []
     const defaults = useSelector(state => state.upload.facilities)
     const dispatch = useDispatch()
+    props.validateRef.current = () => true
+
 
     React.useEffect(() => {
         return () => {

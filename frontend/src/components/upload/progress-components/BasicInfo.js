@@ -26,7 +26,7 @@ import clsx from 'clsx';
 import ApartmentIcon from '@material-ui/icons/Apartment';
 
 //Reducers
-import { saveBasicInfo } from '../../../reducers/upload'
+import { saveBasicInfo, validate } from '../../../reducers/upload'
 
 
 
@@ -105,10 +105,12 @@ NumberFormatCustom.propTypes = {
 
 const Margin = (props) => (<div style={{ margin: props.size }}></div>)
 
-export default function BasicInfo() {
+export default function BasicInfo(props) {
     const state = useSelector(state => state.upload.basicInfo)
     const dispatch = useDispatch()
     const classes = useStyles()
+
+    props.validateRef.current = () => validate(state, 'basicInfo')
 
     const handleChose = (e, option) => {
         state.type = state.type !== option ? option : null

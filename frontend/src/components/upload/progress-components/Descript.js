@@ -6,7 +6,7 @@ import CustomedPaper from '../../general/CustomedPaper'
 import SimpleRating from '../../general/Rating'
 
 //Reducers
-import { saveDescription } from '../../../reducers/upload'
+import { saveDescription, validate } from '../../../reducers/upload'
 
 const hintDescription = `Ví dụ:
 - Cách phương tiện công cộng 5 phút đi bộ 
@@ -23,8 +23,10 @@ const multilineTextField = {
     placeholder: hintDescription,
     margin: "normal"
 }
-export default function Descript() {
+export default function Descript(props) {
     const state = useSelector(state => state.upload.description)
+    props.validateRef.current = () => validate(state, 'description')
+
     const dispatch = useDispatch()
     const handleInputChange = (value, name) => {
         console.log(value)

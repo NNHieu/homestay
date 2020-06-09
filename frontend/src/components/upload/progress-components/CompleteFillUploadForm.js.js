@@ -5,11 +5,10 @@ export default function CompleteFillUploadForm() {
     return (
         <React.Fragment>
             <Typography variant="h5" gutterBottom>
-                Thank you for your order.
+                All done!
         </Typography>
             <Typography variant="subtitle1">
-                Your order number is #2001539. We have emailed your order confirmation, and will
-                send you an update when your order has shipped.
+                Your homestay is uploaded. We will send you an email when your homestay is verified.
         </Typography>
         </React.Fragment>
     )

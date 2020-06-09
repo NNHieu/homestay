@@ -6,7 +6,7 @@ import NumberPlusMinus from '../../general/NumberPlusMinus'
 import NumberFormat from 'react-number-format';
 import { useSelector, useDispatch } from 'react-redux'
 
-import { savePrices } from '../../../reducers/upload'
+import { savePrices, validate } from '../../../reducers/upload'
 
 const Margin = (props) => (<div style={{ margin: props.size }}></div>)
 function NumberFormatCustom(props) {
@@ -33,9 +33,10 @@ function NumberFormatCustom(props) {
         />
     );
 }
-export default function Prices() {
+export default function Prices(props) {
     const defaultValue = useSelector(state => state.upload.prices)
     const dispatch = useDispatch()
+    props.validateRef.current = () => validate(defaultValue, 'prices')
     const [prices, setPrices] = React.useState(
         {
             min: '',
