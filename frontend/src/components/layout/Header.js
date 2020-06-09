@@ -65,7 +65,7 @@ export function Header(props) {
                             </>
                         ) : (
                             <>
-                                {userInfo.is_active ?
+                                {userInfo.is_verified ?
                                     <>
                                         <Button color="primary" variant="contained" onClick={() => history.push('/upload')}>Upload your homestay</Button>
                                         <Button color="inherit" onClick={() => logout()(dispatch)}> {userInfo.first_name} </Button>

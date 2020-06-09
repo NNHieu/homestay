@@ -22,6 +22,22 @@ def validator_welcome_value(value):
 
 # Model cho Homestay
 class Homestay(models.Model):
+
+    class HomestayType(models.IntegerChoices):
+        APARTMENT = 1, _('Apartment')
+        BUNGALOW = 2, _('Bungalow')
+        GROUND_HOUSE = 3, _('Ground house')
+        VILLA = 4, _('Villa')
+
+    homestay_type = models.SmallIntegerField(verbose_name=_('Type'),
+                                             choices=HomestayType.choices, null=False)
+    area = models.FloatField(verbose_name=_('Area'))
+
+    # Thông tin phòng ở
+    capacity = models.PositiveSmallIntegerField()
+    bathroom = models.PositiveSmallIntegerField()
+    bedroom = models.PositiveSmallIntegerField()
+
     # owner = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     title = models.CharField(max_length=35)
@@ -72,24 +88,44 @@ class Homestay(models.Model):
     #     self.modified = timezone.now()
 
 
-# class Room(models.Model):
-#     name = models.CharField(max_length=50)
-#     num_guests = models.PositiveSmallIntegerField()
-#     num_single_beds = models.PositiveSmallIntegerField()
-#     num_double_beds = models.PositiveSmallIntegerField()
-#     price_per_night = models.FloatField()
-#     currency = models.CharField(max_length=4)
-#     homestay_id = models.ForeignKey('Homestay', on_delete=models.CASCADE)
-#     images = models.ManyToManyField('ReviewImage', symmetrical=False)
-#
-#
+class Price(models.Model):
+    min_price = models.FloatField()
+    additionFrom = models.PositiveSmallIntegerField()
+    addition = models.FloatField()
 
+    class PaymentMethod(models.IntegerChoices):
+        BANK = 1, _('Transfer')
+        COD = 2, _('COD')
+    payment_method = models.SmallIntegerField(verbose_name=_(
+        'Payment Method'), choices=PaymentMethod.choices)
+
+    class CancellationPolicy(models.IntegerChoices):
+        FLEX = 1, _('Flexibility')
+        LAW = 2, _('Law')
+        STRICT = 3, _('Strict')
+
+    cancellation_policy = models.SmallIntegerField(
+        verbose_name=_('Cancellation Policy'), choices=CancellationPolicy.choices)
 # Model lưu thông tin địa chỉ
+
+
+class UnavailableDate(models.Model):
+    is_weekly = models.BooleanField()
+    is_monthly = models.BooleanField()
+    is_yearly = models.BooleanField()
+
+
 class Address(models.Model):
     lat = models.FloatField()
     lng = models.FloatField()
-    about_area = models.TextField(max_length=1000)
-    address = models.CharField(blank=True, max_length=200)
+    address_line1 = models.CharField(max_length=200)
+    address_line2 = models.CharField(max_length=200)
+    city = models.CharField(max_length=50)
+    state = models.CharField(max_length=50)
+    postal_code = models.CharField(max_length=50)
+    country = models.CharField(max_length=50)
+
+    how_to_find = models.CharField(max_length=400)
 
     def __str__(self):
         return f'{self.lat}, {self.lng}'

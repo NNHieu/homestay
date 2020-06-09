@@ -91,7 +91,7 @@ export default function MainForm(props) {
         firstName: null,
         lastName: null,
     })
-    const [recaptcha, setRecaptcha] = useState({ load: true, expired: false, value: null })
+    const [recaptcha, setRecaptcha] = useState({ loaded: false, expired: false, value: null })
     const handleCaptchaChange = value => {
         console.log("Captcha value:", value);
         if (value) {
@@ -206,19 +206,13 @@ export default function MainForm(props) {
         }
     }
 
-    // if (authErrors) {
-
-    // }
-    console.log('test pre main auth form')
-    console.log(handleError)
-    console.log(isError)
     return (
         <form className={classes.form} onSubmit={e => e.preventDefault()}>
             <Grid container spacing={2}>
                 {
                     fields.map((line, index) =>
                         (
-                            <Grid item xs={12} sm={line == 'firstName' || line == 'lastName' < 2 && 6} key={line}>
+                            <Grid item xs={12} sm={line == 'firstName' || line == 'lastName' ? 6 : 12} key={line}>
                                 <AuthInput name={line}
                                     error={handleError[line].showError}
                                     helperText={handleError[line].helperText}
@@ -240,20 +234,18 @@ export default function MainForm(props) {
             {/* <Input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
             <Input type="hidden" name="action" value="validate_captcha" /> */}
             {/* <div className="g-recaptcha" data-sitekey="6LctIv4UAAAAAFz_rnIP9ltDPGkSmHjQ_R7F4fus"></div> */}
-            {
-                signupPage && <div id='iknown'>
-                    <ReCAPTCHA sitekey="6LctIv4UAAAAAFz_rnIP9ltDPGkSmHjQ_R7F4fus"
-                        onChange={handleCaptchaChange}
-                        asyncScriptOnLoad={() => { setRecaptcha({ load: true, expired: false }) }}
-                    />
-                </div>
-            }
+            {signupPage && <div id='iknown'>
+                <ReCAPTCHA sitekey="6LctIv4UAAAAAFz_rnIP9ltDPGkSmHjQ_R7F4fus"
+                    onChange={handleCaptchaChange}
+                    asyncScriptOnLoad={() => { setRecaptcha({ loaded: true, expired: false }) }}
+                />
+            </div>}
             <Button
                 type="submit" fullWidth variant="contained" color="primary" className={classes.submit}
                 onClick={checkValid}
-                disabled={props.isLoading || (signupPage && !recaptcha.load)}
+                disabled={props.isLoading || (signupPage && !recaptcha.loaded)}
             >
-                {props.isLoading || (signupPage && !recaptcha.load) ? <CircularProgress color="white" /> : texts.submitLabel}
+                {props.isLoading || (signupPage && !recaptcha.loaded) ? <CircularProgress color="white" /> : texts.submitLabel}
 
             </Button>
             <Grid container justify="flex-end">
@@ -326,7 +318,11 @@ export function AuthForm(props) {
                 {
                     (auth.isAuthenticated && !auth.user.is_active) ?
                         <form className={classes.form}>
-                            <TextField variant='outlined' label='enter your verify code'></TextField>
+                            <Grid container spacing={2} justify="center">
+                                <Grid item xs={12} sm={6} >
+                                    <TextField variant='outlined' label='enter your verify code'></TextField>
+                                </Grid>
+                            </Grid>
                         </form>
                         :
                         <MainForm classes={classes} signupPage={isSignUp} onValidSubmit={onValidSubmit} isLoading={auth.isLoading} />

@@ -3,39 +3,56 @@ import { List, ListItem, TextField } from '@material-ui/core'
 import CustomedPaper from '../../general/CustomedPaper'
 import CheckBoxList from '../../general/CheckBoxList'
 
+import { facilties_list, validate } from '../../../reducers/upload'
+import { useSelector, useDispatch } from 'react-redux'
+import { UPLOAD_FACILITIES } from '../../../reducers/types'
 
-const basicFacilities = [
-    { title: "máy điều hòa", id: 100 },
-    { title: "tivi", id: 101 },
-    { title: "internet miễn phí", id: 102 },
-    { title: "bộ ga giường", id: 103 },
-    { title: "máy sấy tóc", id: 104 },
-    { title: "truyền hình cáp", id: 105 },
-    { title: "máy giặt", id: 106 },
-    { title: "khăn các loại", id: 107 },
-]
+function initRefCheckboxs() {
+    const init = {}
+    for (let k in facilties_list) {
+        init[k] = new Array(facilties_list[k].list.length)
+    }
+    return init
+}
 
-const comfortFacilities = [
-    { title: "lối vào riêng", id: 200 },
-    { title: "thang máy trong tòa nhà", id: 201 },
-    { title: "xe lăn vào được", id: 202 },
-    { title: "chuông/liên lạc không dây", id: 203 },
-    { title: "nhân viên trực cửa", id: 204 },
-]
+export default function Facilities(props) {
+    const refCheckboxs = React.useRef(initRefCheckboxs())
+    const listFacilitiesComponents = []
+    const defaults = useSelector(state => state.upload.facilities)
+    const dispatch = useDispatch()
+    props.validateRef.current = () => true
 
-export default function Facilities() {
+
+    React.useEffect(() => {
+        return () => {
+            for (let k in facilties_list) {
+                for (let c in refCheckboxs.current[k]) {
+                    defaults[k][c] = refCheckboxs.current[k][c].checked
+                }
+            }
+            dispatch({
+                type: UPLOAD_FACILITIES,
+                payload: defaults
+            })
+        }
+    }, [])
+
+    for (let k in facilties_list) {
+        let group = facilties_list[k]
+        listFacilitiesComponents.push(
+            <ListItem key={k}>
+                <CustomedPaper title={group.title}>
+                    <CheckBoxList options={group.list} refs={refCheckboxs.current[k]} defaults={defaults[k]} />
+                </CustomedPaper>
+            </ListItem>
+        )
+    }
+
     return (
         <List>
-            <ListItem>
-                <CustomedPaper title="Tiện nghi thiết yếu">
-                    <CheckBoxList options={basicFacilities} />
-                </CustomedPaper>
-            </ListItem>
-            <ListItem>
-                <CustomedPaper title="Sự thoải mái">
-                    <CheckBoxList options={comfortFacilities} />
-                </CustomedPaper>
-            </ListItem>
+            {
+                listFacilitiesComponents
+            }
         </List>
     )
 }

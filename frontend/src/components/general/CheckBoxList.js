@@ -11,16 +11,7 @@ import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 
 
 export default function CheckBoxList(props) {
-    const { options, onChange, name } = props
-    const [state, setState] = React.useState(options.map((option, index) => ({
-        [option.id]: option.checked
-    })));
-
-    const handleChange = (event) => {
-        setState({ ...state, [event.target.name]: event.target.checked });
-        onChange({ [event.target.name]: event.target.checked }, name)
-    };
-
+    const { options, refs, defaults } = props
     return (
         <FormGroup>
             {options.map((option, index) => {
@@ -28,10 +19,15 @@ export default function CheckBoxList(props) {
                     key={option.id}
                     control={
                         <Checkbox
-                            checked={state[option.id]}
-                            onChange={handleChange}
-                            name={String(option.id)}
+                            // checked={state[option.id]}
+                            // onChange={handleChange}
+                            defaultChecked={defaults[index]}
+                            // value={option.id}
                             color="primary"
+                            inputRef={ele => {
+                                // console.log(ele)
+                                refs[index] = ele
+                            }}
                         />
                     }
                     label={option.title}

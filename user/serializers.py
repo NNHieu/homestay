@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('first_name', 'last_name', 'email', 'is_active')
+        fields = ('first_name', 'last_name', 'email', 'is_verified')
 
 # Register Serializer
 
@@ -63,7 +63,8 @@ class SignupSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         logger.debug('create user with data: %s', str(validated_data))
         user = get_user_model().objects.create_user(**validated_data)
-        user.is_active = False  # Chưa cho tài khoản này được sử dụng
+        # user.is_active = False  # Chưa cho tài khoản này được sử dụng
+        user.is_verified = False
         user.save()
         return user
 
@@ -93,10 +94,5 @@ class LoginSerializer(serializers.Serializer):
         user = authenticate(**data)
         if user:
             return user
-        user = get_user_model().objects.get(email=data['email'])
-        if user and not user.is_active:
-            return user
-            # raise serializers.ValidationError(
-            #     {"activate": "Please activate your account first"}, code=401)
         raise serializers.ValidationError(
             {"password": "Authentication Fail"}, code=401)

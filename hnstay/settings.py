@@ -149,9 +149,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.AllowAllUsersModelBackend'
-]
 
 LOGGING_CONFIG = None
 LOGLEVEL = os.environ.get('LOGLEVEL', 'info').upper()

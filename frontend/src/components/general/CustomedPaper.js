@@ -43,10 +43,10 @@ export default function CustomedPaper(props) {
 }
 
 export function CustomedPaperWithCheckBoxs(props) {
-    const { title, shortDescription, options } = props
+    const { title, shortDescription, options, onChange, defaultValue } = props
     return (
         <CustomedPaper title={title} shortDescription={shortDescription}>
-            <RadioGroup>
+            <RadioGroup onChange={onChange} defaultValue={defaultValue}>
                 {options.map(option => {
                     return (
                         <Fragment key={option.value}>

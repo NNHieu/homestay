@@ -12,7 +12,7 @@ from .managers import CustomUserManager
 class CustomUser(AbstractUser):
     username = None
     email = models.EmailField(_('Email address'), unique=True)
-
+    is_verified = models.BooleanField(_('Verified'), default=False)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
