@@ -46,7 +46,7 @@ export default function (state = initialState, action) {
             action.callback(success, action.payload.errors)
             if (success) {
                 // resonse success từ server
-                Cookies.set('auth_token', action.payload.token)
+                Cookies.set('auth_token', action.payload.token, { 'sameSite': 'Strict' })
                 return {
                     ...state,
                     isAuthenticated: true,

@@ -109,6 +109,7 @@ export default function BasicInfo() {
     const state = useSelector(state => state.upload.basicInfo)
     const dispatch = useDispatch()
     const classes = useStyles()
+
     const handleChose = (e, option) => {
         state.type = state.type !== option ? option : null
         saveBasicInfo(state)(dispatch)

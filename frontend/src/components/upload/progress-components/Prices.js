@@ -4,17 +4,21 @@ import CustomedPaper from '../../general/CustomedPaper'
 import CheckBoxList from '../../general/CheckBoxList'
 import NumberPlusMinus from '../../general/NumberPlusMinus'
 import NumberFormat from 'react-number-format';
+import { useSelector, useDispatch } from 'react-redux'
 
+import { savePrices } from '../../../reducers/upload'
 
 const Margin = (props) => (<div style={{ margin: props.size }}></div>)
 function NumberFormatCustom(props) {
-    const { inputRef, onChange, ...other } = props;
-
+    const { inputRef, onChange, defaultValue, ...other } = props;
+    const [value, setValue] = React.useState(defaultValue)
     return (
         <NumberFormat
             {...other}
             getInputRef={inputRef}
+            value={value}
             onValueChange={(values) => {
+                setValue(values.value)
                 onChange({
                     target: {
                         name: props.name,
@@ -30,22 +34,34 @@ function NumberFormatCustom(props) {
     );
 }
 export default function Prices() {
+    const defaultValue = useSelector(state => state.upload.prices)
+    const dispatch = useDispatch()
     const [prices, setPrices] = React.useState(
         {
             min: '',
-            addtition: '',
+            addition: '',
             minFormatted: '',
             additionFormatted: '',
         }
     )
+    const inputRefs = React.useRef({
+        min: null,
+        addition: null
+    })
     const handleChange = (event) => {
-        console.log(event.target.values)
+        console.log(event.target.value)
+        defaultValue[event.target.name] = event.target.value
         setPrices({
             ...prices,
             [event.target.name]: event.target.value,
             [`${event.target.name}Formatted`]: event.target.formattedValue,
         });
     };
+
+    React.useEffect(() => {
+        return () => savePrices(defaultValue)(dispatch)
+    }, [])
+
     return (
         <List>
             <ListItem>
@@ -66,6 +82,9 @@ export default function Prices() {
                                         InputProps={{
                                             inputComponent: NumberFormatCustom,
                                         }}
+                                        inputProps={{
+                                            defaultValue: defaultValue.min
+                                        }}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -82,12 +101,15 @@ export default function Prices() {
                                         InputProps={{
                                             inputComponent: NumberFormatCustom,
                                         }}
+                                        inputProps={{
+                                            defaultValue: defaultValue.min
+                                        }}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Margin size="20px" />
                                     <Typography >Cho mỗi khách sau</Typography>
-                                    <NumberPlusMinus inputProps={{ fullWidth: true }} defaultValue={2} min={2} max={10} />
+                                    <NumberPlusMinus inputProps={{ fullWidth: true, }} onChange={value => defaultValue.additionFrom = value} defaultValue={defaultValue.additionFrom ? defaultValue.additionFrom : 2} min={2} max={10} />
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -124,7 +146,7 @@ export default function Prices() {
                         <Grid item xs={6}>
                             <List>
                                 <ListItem>
-                                    <RadioGroup>
+                                    <RadioGroup defaultValue={defaultValue.paymentMethod} onChange={e => defaultValue.paymentMethod = e.target.value}>
                                         <FormControlLabel
                                             value="bank"
                                             control={

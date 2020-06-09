@@ -1,6 +1,6 @@
 //--------------------------Google Map-----------------------------------
 import React from 'react'
-import { testOutputGoogleAutoComplete } from '../../utils/location'
+import { testOutputGoogleAutoComplete, autoCompleteLocation } from '../../utils/location'
 import { makeStyles } from '@material-ui/core/styles';
 import parse from 'autosuggest-highlight/parse';
 import throttle from 'lodash/throttle';
@@ -28,6 +28,7 @@ const autocompleteService = {
         console.log('request and callback')
         console.log(request)
         console.log(callback)
+        autoCompleteLocation(request.input, result => callback(result.suggestions), console.log)
         const result = JSON.parse(testOutputGoogleAutoComplete)
         console.log(result)
         callback(result.predictions)
@@ -44,7 +45,7 @@ const googleMapStyle = makeStyles((theme) => ({
     }
 }));
 
-export default function InputLocation() {
+export default function InputLocation(props) {
     const classes = googleMapStyle();
     const [value, setValue] = React.useState(null);
     const [inputValue, setInputValue] = React.useState('');
@@ -54,7 +55,7 @@ export default function InputLocation() {
         () =>
             throttle((request, callback) => {
                 autocompleteService.current(request, callback);
-            }, 200),
+            }, 1000),
         [],
     );
 
@@ -71,6 +72,8 @@ export default function InputLocation() {
         }
 
         fetch({ input: inputValue }, (results) => {
+            console.log('results')
+            console.log(results)
             if (active) {
                 let newOptions = [];
 
@@ -110,15 +113,10 @@ export default function InputLocation() {
                 setInputValue(newInputValue);
             }}
             renderInput={(params) => (
-                <TextField {...params} label="Search location" variant="outlined" fullWidth />
+                <TextField {...params} label="Search location" variant={props.inputVariant ? props.inputVariant : "outlined"} fullWidth />
             )}
             renderOption={(option) => {
                 console.log(`Render option ${option}`)
-                const matches = option.structured_formatting.main_text_matched_substrings;
-                const parts = parse(
-                    option.structured_formatting.main_text,
-                    matches.map((match) => [match.offset, match.offset + match.length]),
-                );
 
                 return (
                     <Grid container alignItems="center">
@@ -126,15 +124,17 @@ export default function InputLocation() {
                             <LocationOnIcon className={classes.icon} />
                         </Grid>
                         <Grid item xs>
-                            {parts.map((part, index) => (
+                            {/* {parts.map((part, index) => (
                                 <span key={index} style={{ fontWeight: part.highlight ? 700 : 400 }}>
                                     {part.text}
                                 </span>
-                            ))}
-
-                            <Typography variant="body2" color="textSecondary">
-                                {option.structured_formatting.secondary_text}
-                            </Typography>
+                            ))} */}
+                            {/* <Typography variant="body2" color="textSecondary">
+                                {option.label}
+                            </Typography> */}
+                            <p>
+                                {option.label}
+                            </p>
                         </Grid>
                     </Grid>
                 );

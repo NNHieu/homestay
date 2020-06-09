@@ -2,61 +2,61 @@ import axios from 'axios'
 
 // Call autocomplete location HERE api với input text  
 export function autoCompleteLocation(text, success, errHandler) {
-    axios
-        .get("https://autocomplete.geocoder.ls.hereapi.com/6.2/suggest.json",
-            {
-                params: {
-                    apiKey: 'BA9lq866SwA-ewV-HhDsKdmwqDLrHTYaoCmU4IaHw90',
-                    query: text, f: 'json', country: 'VNM',
-                    beginHighlight: '<b>', endHighlight: '</b>',
-                    language: 'vi'
-                }
-            })
-        .then(res => success(res.data))
-        .catch(err => {
-            if (errHandler)
-                errHandler(err.data)
-        })
+   axios
+      .get("https://autocomplete.geocoder.ls.hereapi.com/6.2/suggest.json",
+         {
+            params: {
+               apiKey: 'BA9lq866SwA-ewV-HhDsKdmwqDLrHTYaoCmU4IaHw90',
+               query: text, f: 'json', country: 'VNM',
+               beginHighlight: '#', endHighlight: '#',
+               language: 'vi'
+            }
+         })
+      .then(res => success(res.data))
+      .catch(err => {
+         if (errHandler)
+            errHandler(err.data)
+      })
 }
 
 // Call detail about location HERE api với input text  
 export function detailLocation(locationId, success, errHandler) {
-    axios
-        .get('https://geocoder.ls.hereapi.com/6.2/geocode.json',
-            {
-                params: {
-                    locationId: locationId,
-                    jsonattributes: '1',
-                    gen: '9',
-                    apiKey: 'BA9lq866SwA-ewV-HhDsKdmwqDLrHTYaoCmU4IaHw90'
-                }
+   axios
+      .get('https://geocoder.ls.hereapi.com/6.2/geocode.json',
+         {
+            params: {
+               locationId: locationId,
+               jsonattributes: '1',
+               gen: '9',
+               apiKey: 'BA9lq866SwA-ewV-HhDsKdmwqDLrHTYaoCmU4IaHw90'
             }
-        )
-        .then(res => success(res.data))
-        .catch(err => {
-            if (errHandler)
-                errHandler(err.data)
-        })
+         }
+      )
+      .then(res => success(res.data))
+      .catch(err => {
+         if (errHandler)
+            errHandler(err.data)
+      })
 }
 
 // Prepare location info object.
 var locationInfo = {
-    geo: null,
-    country: null,
-    state: null,
-    city: null,
-    postalCode: null,
-    street: null,
-    streetNumber: null,
-    reset: function () {
-        this.geo = null;
-        this.country = null;
-        this.state = null;
-        this.city = null;
-        this.postalCode = null;
-        this.street = null;
-        this.streetNumber = null;
-    }
+   geo: null,
+   country: null,
+   state: null,
+   city: null,
+   postalCode: null,
+   street: null,
+   streetNumber: null,
+   reset: function () {
+      this.geo = null;
+      this.country = null;
+      this.state = null;
+      this.city = null;
+      this.postalCode = null;
+      this.street = null;
+      this.streetNumber = null;
+   }
 };
 
 export const testOutputGoogleAutoComplete = `{
