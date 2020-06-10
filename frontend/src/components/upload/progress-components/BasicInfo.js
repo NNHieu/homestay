@@ -132,10 +132,10 @@ export default function BasicInfo(props) {
                     <Grid container >
                         {
                             [
-                                { props: { color: 'blue', option: 'apartment' }, title: 'Chung cư' },
-                                { props: { color: 'default', option: 'bungalow' }, title: 'Bungalow' },
-                                { props: { color: 'blue', option: 'ground-house' }, title: 'Nhà mặt đất' },
-                                { props: { color: 'default', option: 'villa' }, title: 'Biệt thự' },
+                                { props: { color: 'blue', option: 1 }, title: 'Chung cư' },
+                                { props: { color: 'default', option: 2 }, title: 'Bungalow' },
+                                { props: { color: 'blue', option: 3 }, title: 'Nhà mặt đất' },
+                                { props: { color: 'default', option: 4 }, title: 'Biệt thự' },
                             ].map(line => (
                                 <Grid key={line.title} item xs={3}>
                                     <StyledButton {...line.props} value={state.type} onChose={handleChose} >{line.title}</StyledButton>

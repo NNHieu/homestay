@@ -24,6 +24,7 @@ import FilterDiv from './homestay/FilterDiv'
 import Upload from './upload/Upload'
 import SignInSide from './users/SignInSide';
 import { loadUser } from '../reducers/auth';
+import Blog from './detail/Blog';
 function App() {
     const auth = useSelector(state => state.auth)
     const dispatch = useDispatch()
@@ -35,6 +36,7 @@ function App() {
                 <Route path='/auth/:subpath(login|signup)' component={AuthForm} />
                 <Route path='/homestay/:hid([0-9]+)' component={Detail} />
                 <Route path='/upload' component={Upload} />
+                <Route path='/detail' component={Blog} />
                 <Route path="/" component={Home} />
             </Switch>
         </Router>

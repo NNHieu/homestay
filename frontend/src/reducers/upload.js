@@ -119,7 +119,7 @@ export default function (state = initialState, action) {
         case UPLOAD_IMAGES:
             return {
                 ...state,
-                images: { ...action.payload }
+                images: action.payload
             }
         default:
             return state;

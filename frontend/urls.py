@@ -10,4 +10,5 @@ urlpatterns = [
     path('auth/signup', views.index),
     path('homestay/<int:pk>', views.detail),
     path('upload/', views.index),
+    path('detail/', views.index),
 ]
