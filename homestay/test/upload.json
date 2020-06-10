@@ -1,0 +1,59 @@
+{
+    "basicInfo": {
+        "type": "apartment",
+        "area": "",
+        "guestCapacity": 1,
+        "numBathroom": 0,
+        "numBedroom": 0
+    },
+    "address": {
+        "address1": "asd",
+        "address2": "asdf",
+        "city": "asdf",
+        "state": "asd",
+        "country": "afd",
+        "zip": "asdf"
+    },
+    "description": {
+        "name": "asfd",
+        "desc": "asdf",
+        "suggest": "",
+        "houserules": "",
+        "howtofind": "",
+        "ownerrate": 0
+    },
+    "facilities": {
+        "basicFacilities": [
+            false,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+        ],
+        "comfortFacilities": [
+            false,
+            false,
+            false,
+            false,
+            false
+        ]
+    },
+    "prices": {
+        "min": "12",
+        "addition": "21",
+        "additionFrom": null,
+        "paymentMethod": "bank"
+    },
+    "reservationDate": {
+        "preTime": "one_year",
+        "minNight": 1,
+        "maxNight": 1,
+        "availableDate": "anytime",
+        "cancel": "dynamic",
+        "excludeDays": []
+    },
+    "images": {}
+}

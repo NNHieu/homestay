@@ -92,3 +92,45 @@ class OverlapDateChecker(metaclass=Singleton):
     def add(cls, contrast):
         cls.dict[contrast.homestay.pk].addi(contrast.checkin_date, contrast.checkout_date + datetime.timedelta(days=1),
                                             contrast)
+
+# p = {
+#     'basicInfo': {
+#         type: null,
+#         'area': '',
+#         'guestCapacity': 1,
+#         'numBathroom': 0,
+#         'numBedroom': 0
+#     },
+#     'address': {
+#         'address1': '',
+#         'address2': '',
+#         'city': '',
+#         'state': '',
+#         'country': '',
+#         'zip': '',
+#     },
+#     'description': {
+#         'name': '',
+#         'desc': '',
+#         'suggest': '',
+#         'houserules': '',
+#         'howtofind': '',
+#         'ownerrate': 0
+#     },
+#     'facilities': {},
+#     'prices': {
+#         'min': null,
+#         'addition': null,
+#         'additionFrom': null,
+#         'paymentMethod': null,
+#     },
+#     'reservationDate': {
+#         'preTime': 'anytime',
+#         'minNight': 1,
+#         'maxNight': 1,
+#         'availableDate': null,
+#         'cancel': null,
+#         'excludeDays': []
+#     },
+#     'images': []
+# }

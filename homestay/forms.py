@@ -12,22 +12,24 @@ from util.utils import OverlapDateChecker
 #     #     choices=((f.pk, f.name) for f in Facility.objects.filter(is_area_facility=False, is_character=False)))
 #     area_facilities = forms.MultipleChoiceField(
 #         choices=((f.pk, f.name) for f in Facility.objects.filter(is_area_facility=True, is_character=False)))
-	
+
 #     class Meta:
 #         model = Homestay
 #         fields = ['title', 'description', 'light_breakfast', 'use_of_kitchen', 'rules']
-		
+
 class AddressForm(forms.ModelForm):
-	class Meta:
-		model = Address
-		fields = ('lat', 'lng')
+    class Meta:
+        model = Address
+        fields = ('lat', 'lng')
 
 # Form upload ảnh review
+
+
 class ReviewImageForm(forms.ModelForm):
     image = forms.ImageField(label='Image')
 
     class Meta:
-        model = ReviewImage
+        model = HCImage
         fields = ('image',)
 
 
@@ -69,4 +71,5 @@ class RatingForm(forms.ModelForm):
     # feedback = forms.CharField(widget=forms.TextInput)
     class Meta:
         model = Rating
-        fields = ('overall', 'facility', 'comfort',  'valueformoney', 'location', 'cleanliness', 'feedback')
+        fields = ('overall', 'facility', 'comfort',  'valueformoney',
+                  'location', 'cleanliness', 'feedback')

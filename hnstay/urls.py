@@ -21,6 +21,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('api/account/', include('user.api_urls')),
+    path('api/homestay/', include('homestay.api_urls')),
 
 
     path('admin/', admin.site.urls),

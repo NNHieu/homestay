@@ -1,8 +1,11 @@
 from rest_framework import serializers
-from .models import Homestay, ReviewImage, Facility
+from .models import Homestay, HCImage, Facility, Address
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-class HomestaySerializer(serializers.ModelSerializer):
+class HomestayGeneralSerializer(serializers.ModelSerializer):
     review_image = serializers.SerializerMethodField()
 
     class Meta:
@@ -10,9 +13,14 @@ class HomestaySerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'description', 'review_image', 'facilities')
 
     def get_review_image(self, homestay):
-        review_image = ReviewImage.objects.filter(
+        review_image = HCImage.objects.filter(
             homestay=homestay)[0].image.url
         return review_image
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
 
 
 class HomestayDetailSerializer(serializers.ModelSerializer):
@@ -28,7 +36,7 @@ class HomestayDetailSerializer(serializers.ModelSerializer):
 
     def get_images(self, homestay):
         images = map(
-            lambda rimg: {"url": rimg.image.url, "title": rimg.title},
+            lambda cimg: {"pid": cimg.public_id, "title": cimg.title},
             ReviewImage.objects.filter(
                 homestay=homestay
             )
@@ -41,6 +49,31 @@ class HomestayDetailSerializer(serializers.ModelSerializer):
                 "text": address_model.address,
                 "about": address_model.about_area
                 }
+
+
+class HomestayCreateSerializer(serializers.ModelSerializer):
+    images = serializers.ListField(child=serializers.CharField())
+
+    class Meta:
+        model = Homestay
+        fields = ('id', 'homestay_type', 'area', 'capacity', 'bathroom',
+                  'bedroom', 'title', 'general_description', 'owner')
+
+    def validate_homestay_type(self, value):
+        if not isinstance(value, int) or value < 1 or value > 4:
+            raise serializers.ValidationError('Invalid homestay type')
+        return value
+
+    def create(self, validated_data):
+        h = Homestay(**validated_data)
+        logger.info(validated_data)
+        logger.info(h)
+        h.save()
+        for i in validated_data['images']:
+            img = HCImage(public_id=i, homestay=h)
+            img.save()
+        logger.info(Homestay.objects.all())
+        return h
 
 
 class FacilitySerializer(serializers.ModelSerializer):

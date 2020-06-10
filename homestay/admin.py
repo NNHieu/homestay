@@ -10,7 +10,7 @@ class HomestayAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Homestay, HomestayAdmin)
-admin.site.register(ReviewImage)
+admin.site.register(HCImage)
 admin.site.register(Facility)
 admin.site.register(Address)
 admin.site.register(Contract)

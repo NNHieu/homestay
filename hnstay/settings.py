@@ -192,6 +192,12 @@ logging.config.dictConfig({
             # required to avoid double logging with root logger
             'propagate': False,
         },
+        'homestay': {
+            'level': LOGLEVEL,
+            'handlers': ['console'],
+            # required to avoid double logging with root logger
+            'propagate': False,
+        },
         'django.server': DEFAULT_LOGGING['loggers']['django.server'],
     },
 })

@@ -3,8 +3,11 @@ from .models import Homestay, q_homestay_contains_facilities
 from rest_framework import generics, viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
+from rest_framework.serializers import ValidationError as SerialValidationError
 from util.utils import Searcher
 import re
+
+from user import permissions as user_permission
 
 page_size = 10
 
@@ -17,7 +20,7 @@ class HomestayViewset(viewsets.ModelViewSet):
     permission_classes = [
         permissions.AllowAny
     ]
-    serializer_class = HomestaySerializer
+    serializer_class = HomestayGeneralSerializer
 
     def get_queryset(self):
         print(self.request)
@@ -48,7 +51,7 @@ class FacilityListAPI(generics.ListAPIView):
 
 
 class SearchListAPI(generics.ListAPIView):
-    serializer_class = HomestaySerializer
+    serializer_class = HomestayGeneralSerializer
 
     def get_queryset(self):
         query_params = self.request.query_params
@@ -70,3 +73,43 @@ class HomestayDetailAPI(generics.RetrieveAPIView):
         h = Homestay.objects.get(pk=pk)
         print(h)
         return h
+
+
+def process_upload_data(request):
+    data = request.data
+    basic_info = data.get('basicInfo')
+    description = data.get('description')
+    return {
+        'homestay_type': basic_info.get('type'),
+        'area': basic_info.get('area'),
+        'capacity': basic_info.get('guestCapacity'),
+        'bathroom': basic_info.get('numBathroom'),
+        'bedroom': basic_info.get('numBedroom'),
+        'title': description.get('name'),
+        'general_description': description.get('desc'),
+        'images': data.get('images'),
+        'owner': request.user.pk
+    }
+
+
+class UploadHomestayAPI(generics.CreateAPIView):
+    serializer_class = HomestayCreateSerializer
+    # permission_classes = [
+    #     permissions.IsAuthenticated,
+    #     user_permission.IsVerified,
+    # ]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=process_upload_data(request))
+        try:
+            serializer.is_valid(raise_exception=True)
+        except SerialValidationError as e:
+            return Response({
+                "success": False,
+                "errors": e.detail
+            })
+        homestay = serializer.save()
+        return Response({
+            "success": True,
+            "h": HomestayCreateSerializer(homestay, context=self.get_serializer_context()).data
+        })

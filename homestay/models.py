@@ -10,6 +10,7 @@ import re
 # Create your models here.
 
 import util.utils as utils
+from django.utils import timezone
 
 
 def validator_welcome_value(value):
@@ -22,6 +23,7 @@ def validator_welcome_value(value):
 
 # Model cho Homestay
 class Homestay(models.Model):
+    is_verified = models.BooleanField(default=False)
 
     class HomestayType(models.IntegerChoices):
         APARTMENT = 1, _('Apartment')
@@ -29,6 +31,7 @@ class Homestay(models.Model):
         GROUND_HOUSE = 3, _('Ground house')
         VILLA = 4, _('Villa')
 
+    # Basic info
     homestay_type = models.SmallIntegerField(verbose_name=_('Type'),
                                              choices=HomestayType.choices, null=False)
     area = models.FloatField(verbose_name=_('Area'))
@@ -38,54 +41,36 @@ class Homestay(models.Model):
     bathroom = models.PositiveSmallIntegerField()
     bedroom = models.PositiveSmallIntegerField()
 
-    # owner = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
-    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    # Mo ta
     title = models.CharField(max_length=35)
-    description = models.TextField(max_length=1000)
+    general_description = models.TextField(max_length=1000)
 
-    class Welcome(models.IntegerChoices):
-        MALES = 1, _('Males')
-        FEMALES = 1 << 1, _('Females')
-        COUPLES = 1 << 2, _('Couples')
-        FAMILIES = 1 << 3, _('Families')
-        STUDENTS = 1 << 4, _('Students')
-
-        # ALL = 0b11111, _('All')
-        @property
-        def ALL(self):
-            return 0b11111
-
-    welcomes = models.PositiveSmallIntegerField(
-        validators=[validator_welcome_value], default=31)
-
-    # # SET_NULL vì có thể thay ảnh, hệ thông phải xủ lí
-    # main_image = models.PositiveIntegerField(null=True)
-    #
-    # id dùng cho crawl
-    homestay_dot_com_id = models.PositiveIntegerField(unique=True, null=True)
-
+    # Tien ich
     facilities = models.ManyToManyField('Facility', symmetrical=False)
 
-    #
     # Meals
-    light_breakfast = models.BooleanField(_('Complimentary Light Breakfast'))
-    use_of_kitchen = models.BooleanField(_('Use of Kitchen'))
-    #
-    rules = models.TextField(_('House rules'), max_length=1000)
-    #
-    address = models.OneToOneField('Address', on_delete=models.CASCADE)
-    # Thông tin đánh giá:
-    score = models.FloatField(
-        validators=[MinValueValidator(0), MaxValueValidator(10)], null=True)
+    # light_breakfast = models.BooleanField(_('Complimentary Light Breakfast'))
+    # use_of_kitchen = models.BooleanField(_('Use of Kitchen'))
+
+    # Dia chi
+    # address = models.OneToOneField('Address', on_delete=models.CASCADE)
+
+    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
 
-    # def save(self, *args, **kwargs):
-    #     ''' On save, update timestamps '''
-    #     if not self.id:
-    #         self.created = timezone.now()
-    #     self.modified = timezone.now()
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        super(Homestay, self).save(*args, **kwargs)
+
+
+class DetailDescription(models.Model):
+    homestay = models.OneToOneField('Homestay', on_delete=models.CASCADE)
+    rules = models.TextField(_('House rules'), max_length=1000)
 
 
 class Price(models.Model):
@@ -136,22 +121,23 @@ class Address(models.Model):
 
 # Model về các tiện ích
 class Facility(models.Model):
-
     class Meta:
         verbose_name_plural = 'Facilities'
     name = models.CharField(max_length=20, unique=True)
-    is_area_facility = models.BooleanField(default=False)  # Thuộc về khu vực
-    is_character = models.BooleanField(default=False)  # Thuộc về người
+    description = models.CharField(max_length=50, blank=True)
+    is_leaf = models.BooleanField()
+    parent = models.ForeignKey('Facility', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.name
 
 
 # Model về các ảnh review
-class ReviewImage(models.Model):
-    image = models.ImageField(unique=True, upload_to='image/mysite/')
+class HCImage(models.Model):
+    Homestay = models.ForeignKey('Homestay', on_delete=models.CASCADE)
     title = models.CharField(max_length=50, blank=True)
-    homestay = models.ForeignKey(Homestay, on_delete=models.CASCADE)
+    public_id = models.CharField(verbose_name=_(
+        'Cloudinary Public Id'), max_length=100, blank=False)
     first_save = models.DateTimeField(null=True, auto_now_add=True)
 
 
