@@ -47,41 +47,44 @@ export function Header(props) {
 
     const classes = headerStyle()
     return (
-        <AppBar position="fixed" className={classes.header}>
-            <Toolbar>
-                <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                    <HomeIcon fontSize="large" />
-                </IconButton>
-                <Typography variant="h6" className={classes.title}>
-                    Hanoi Homestay
+        <>
+            <AppBar position="fixed" className={classes.header}>
+                <Toolbar>
+                    <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+                        <HomeIcon fontSize="large" />
+                    </IconButton>
+                    <Typography variant="h6" className={classes.title}>
+                        Hanoi Homestay
                 </Typography>
-                <Divider orientation="vertical" flexItem />
-                {
-                    !authState ?
-                        (
-                            <>
-                                <Button color="inherit" onClick={() => history.push(LOGIN_URL)}> Login</Button>
-                                <Button color="primary" variant="contained" onClick={() => history.push(SIGNUP_URL)}>Sign Up</Button>
-                            </>
-                        ) : (
-                            <>
-                                {userInfo.is_verified ?
-                                    <>
-                                        <Button color="primary" variant="contained" onClick={() => history.push('/upload')}>Upload your homestay</Button>
-                                        <Button color="inherit" onClick={() => logout()(dispatch)}> {userInfo.first_name} </Button>
-                                    </>
-                                    :
-                                    <RedButton >{userInfo.first_name} </RedButton>
-                                }
+                    <Divider orientation="vertical" flexItem />
+                    {
+                        !authState ?
+                            (
+                                <>
+                                    <Button color="inherit" onClick={() => history.push(LOGIN_URL)}> Login</Button>
+                                    <Button color="primary" variant="contained" onClick={() => history.push(SIGNUP_URL)}>Sign Up</Button>
+                                </>
+                            ) : (
+                                <>
+                                    {userInfo.is_verified ?
+                                        <>
+                                            <Button color="primary" variant="contained" onClick={() => history.push('/upload')}>Upload your homestay</Button>
+                                            <Button color="inherit" onClick={() => logout()(dispatch)}> {userInfo.first_name} </Button>
+                                        </>
+                                        :
+                                        <RedButton >{userInfo.first_name} </RedButton>
+                                    }
 
-                                <Button color="inherit" onClick={() => logout()(dispatch)}> Logout</Button>
-                            </>
+                                    <Button color="inherit" onClick={() => logout()(dispatch)}> Logout</Button>
+                                </>
 
-                        )
-                }
+                            )
+                    }
 
-            </Toolbar>
-        </AppBar >
+                </Toolbar>
+            </AppBar >
+            <Toolbar />
+        </>
     )
 
 }
