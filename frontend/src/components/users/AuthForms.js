@@ -28,6 +28,8 @@ import AuthInput from '../general/AuthInput';
 //ReCaptcha
 import ReCAPTCHA from 'react-google-recaptcha'
 
+import qs from 'qs'
+
 import { loadScript } from '../../utils/collection'
 import { AUTH_ERROR_HANDLE } from '../../reducers/types';
 import Autosuggest from 'react-autosuggest';
@@ -251,7 +253,7 @@ export default function MainForm(props) {
             <Grid container justify="flex-end">
                 {!signupPage && <Grid item xs> <Link href="#" variant="body2"> Forgot password?</Link> </Grid>}
                 <Grid item>
-                    <RouteLink onClick={resetValue} to={texts.otherUrl}>{texts.otherText}</RouteLink>
+                    <RouteLink onClick={resetValue} to={texts.otherUrl + (props.next ? "?next=" + props.next : "")}>{texts.otherText}</RouteLink>
                 </Grid>
             </Grid>
         </form >
@@ -274,7 +276,7 @@ function LoadingBox() {
  * @param {*} props 
  */
 export function AuthForm(props) {
-    console.log('run asdfas comp')
+    const GET_params = qs.parse(props.location.search, { ignoreQueryPrefix: true })
     const classes = useStyles();
     const auth = useSelector(state => state.auth)
     const dispatch = useDispatch()
@@ -290,10 +292,8 @@ export function AuthForm(props) {
             </div>
         )
     } else if (auth.isAuthenticated) {
-        // if (isSignUp) {
-        //     return <Redirect to="/" />
-        // }
-        return <Redirect to="/" />
+        //Chuyển hướng đến trang yêu cầu nếu đã đăng nhập
+        return <Redirect to={GET_params.next ? GET_params.next : "/"} />
     }
 
 
@@ -325,7 +325,7 @@ export function AuthForm(props) {
                             </Grid>
                         </form>
                         :
-                        <MainForm classes={classes} signupPage={isSignUp} onValidSubmit={onValidSubmit} isLoading={auth.isLoading} />
+                        <MainForm classes={classes} signupPage={isSignUp} onValidSubmit={onValidSubmit} isLoading={auth.isLoading} next={GET_params.next} />
                 }
             </div>
             <Box mt={5}>

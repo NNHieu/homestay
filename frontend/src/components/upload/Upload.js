@@ -31,6 +31,8 @@ import ReservationDate from './progress-components/ReservationDate';
 import UploadImage from './progress-components/UploadImage';
 import CompleteFillUploadForm from './progress-components/CompleteFillUploadForm.js'
 import Cloudinary from '../general/Cloudinary';
+import ScopedCssBaseline from '@material-ui/core/ScopedCssBaseline';
+import { Provider } from 'react-redux';
 
 const drawerWidth = 400;
 const useStyles = makeStyles((theme) => ({
@@ -110,7 +112,7 @@ function getStepDescription(step) {
 }
 
 
-export default function ClippedDrawer() {
+export default function Upload() {
     const classes = useStyles();
     const [activeStep, setActiveStep] = React.useState(0);
     const validateRef = React.useRef()

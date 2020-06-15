@@ -33,17 +33,21 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Sidebar(props) {
   const classes = useStyles();
-  const { archives, description, social, title } = props;
+
+  //State Expand phan dat phong
   const [expanded, setExpanded] = useState()
+  //State ngay dat phong
   const [days, setDays] = useState({
     from: undefined,
     to: undefined,
   })
+  //State so luong khach
   const [numberGuest, setNumberGuest] = useState({
     children: 0,
     adults: 2,
     rooms: 1
   })
+
   const refUnchangeFlag = React.useRef(false)
 
   const handleChange = (panel) => (event, isExpanded) => {
@@ -79,7 +83,7 @@ export default function Sidebar(props) {
           </Grid>
           <Grid item xs={12}>
             <Button variant="outlined" disabled={!(days.from && days.to)} color="primary" fullWidth><Typography variant="h5">
-              Đặt phòng
+              Đặt phòng ngay
             </Typography></Button>
           </Grid>
           <Grid item xs={12}>
@@ -90,7 +94,6 @@ export default function Sidebar(props) {
               >
                 <Grid container alignItems="center">
                   <Grid item xs={10}>
-
                     <Typography>
                       {!days.from && !days.to && 'Chọn ngày check-in'}
                       {days.from && !days.to && 'Chọn ngày check-out'}

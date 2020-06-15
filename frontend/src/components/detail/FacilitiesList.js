@@ -20,15 +20,6 @@ const useStyles = makeStyles((theme) => ({
 export default function FacilitiesList(props) {
     const classes = useStyles();
 
-
-    const handleDelete = () => {
-        console.info('You clicked the delete icon.');
-    };
-
-    const handleClick = () => {
-        console.info('You clicked the Chip.');
-    };
-
     return (
         <div className={classes.root}>
             {props.facilities.map(
