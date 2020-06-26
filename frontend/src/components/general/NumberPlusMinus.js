@@ -18,7 +18,8 @@ export default function NumberPlusMinus(props) {
     const changeValue = (value) => {
         if (!(value < min || value > max)) {
             setValue(value)
-            onChange(value, name)
+            if (onChange)
+                onChange(value, name)
         }
     }
     return (

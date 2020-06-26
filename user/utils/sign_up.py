@@ -50,7 +50,7 @@ def send_verify_mail(request, user):
 def get_verify_link(request, user):
     domain = get_current_site(request).domain
     uid, verify_token = get_uid_token_verify(user)
-    return f'http://{ domain }/api/account/auth/activate?uid={uid}&token={verify_token}'
+    return f'http://{ domain }/api/auth/activate?uid={uid}&token={verify_token}'
 
 
 def get_user_data(request):
@@ -72,7 +72,7 @@ def activate(request):
         uid = force_text(urlsafe_base64_decode(uidb64))  # Decode uid
         user = get_user_model().objects.get(pk=uid)  # get user từ uid
     except(TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
-        user = -1, None
+        return -1, None
     if user is not None and account_activation_token.check_token(user, token):
         if user.is_verified:
             return 1, user

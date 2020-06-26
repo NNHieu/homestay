@@ -40,7 +40,6 @@ function Home() {
             <Header />
             <main className={classes.content}>
                 <Toolbar />
-
                 <HsList />
             </main>
             <StickyFooter />

@@ -20,7 +20,7 @@ from django.template.defaulttags import url
 from django.urls import path, include
 
 urlpatterns = [
-    path('api/account/', include('user.api_urls')),
+    path('api/', include('user.api_urls')),
     path('api/homestay/', include('homestay.api_urls')),
 
 

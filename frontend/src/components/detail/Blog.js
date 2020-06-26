@@ -6,7 +6,8 @@ import Container from '@material-ui/core/Container';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import TwitterIcon from '@material-ui/icons/Twitter';
-import Header from './Header';
+// import Header from './Header';
+import { Header } from '../layout/Header'
 import MainFeaturedPost from './MainFeaturedPost';
 import FeaturedPost from './FeaturedPost';
 import Main from './Main';
@@ -15,11 +16,17 @@ import Footer from './Footer';
 import post1 from './blog-post.1.md';
 import post2 from './blog-post.2.md';
 import post3 from './blog-post.3.md';
+import { Fab } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
     marginTop: theme.spacing(3),
   },
+  fab: {
+    position: 'fixed',
+    top: theme.spacing(12),
+    right: theme.spacing(2),
+  }
 }));
 
 const sections = [
@@ -36,7 +43,7 @@ const sections = [
 ];
 
 const mainFeaturedPost = {
-  title: 'Title of a longer featured blog post',
+  title: 'Homestay title',
   description:
     "Multiple lines of text that form the lede, informing new readers quickly and efficiently about what's most interesting in this post's contents.",
   image: 'https://source.unsplash.com/random',
@@ -94,18 +101,13 @@ export default function Blog() {
 
   return (
     <React.Fragment>
-      <CssBaseline />
       <Container maxWidth="lg">
-        <Header title="Blog" sections={sections} />
+        <Header />
         <main>
-          <MainFeaturedPost post={mainFeaturedPost} />
-          <Grid container spacing={4}>
-            {featuredPosts.map((post) => (
-              <FeaturedPost key={post.title} post={post} />
-            ))}
-          </Grid>
           <Grid container spacing={5} className={classes.mainGrid}>
-            <Main title="From the firehose" posts={posts} />
+            <Main title="Comfy and Cozy HomeSTAY nearby Hanoi Opera House"
+              posts={posts}
+              address="969 Hồng Hà, Quận Hoàn Kiếm, Hà Nội, Việt Nam" />
             <Sidebar
               title={sidebar.title}
               description={sidebar.description}
@@ -113,6 +115,9 @@ export default function Blog() {
               social={sidebar.social}
             />
           </Grid>
+          {/* <Fab aria-label={'Book'} className={classes.fab} variant="extended">
+            Đặt phòng
+          </Fab> */}
         </main>
       </Container>
       <Footer title="Footer" description="Something here to give the footer a purpose!" />
