@@ -39,7 +39,7 @@
 * Search:
 - [x] Search Address
 - [ ] Search Title
-- [x] Facilitié Filter
+- [x] Facilities Filter
 - [x] Price Filter
 - [x] Search available date
 
