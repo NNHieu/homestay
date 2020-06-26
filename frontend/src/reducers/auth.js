@@ -102,7 +102,7 @@ export default function (state = initialState, action) {
     ACTION
 */
 
-const api_url = '/api/account';
+const api_url = '/api';
 axios.defaults.headers.post['X-CSRFToken'] = Cookies.get('csrftoken');
 
 

@@ -13,6 +13,16 @@ from .utils.sign_up import get_uid_token_verify, get_verify_link, get_user_data,
 
 logger = logging.getLogger(__name__)
 
+'''API SIGN UP
+ POST DATA form 
+{
+    firstName
+    lastName
+    email
+    password
+}
+'''
+
 
 class SignUpAPI(generics.GenericAPIView):
     serializer_class = SignupSerializer
@@ -85,6 +95,7 @@ class UserAPI(generics.RetrieveAPIView):
 
 class ActivateAccountAPI(generics.GenericAPIView):
     def get(self, request):
+        logger.info('Activate Account')
         logger.info(request.data)
         code, user = activate(request)
         msg = 'success'
@@ -94,6 +105,7 @@ class ActivateAccountAPI(generics.GenericAPIView):
             success = False
         elif code == 1:
             msg = 'Account already acivated'
+            success = False
         else:
             user = UserSerializer(
                 user, context=self.get_serializer_context()).data

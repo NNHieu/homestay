@@ -7,8 +7,7 @@ from knox import views as knox_views
 from . import views
 from .api import SignUpAPI, LoginAPI, UserAPI, ActivateAccountAPI
 
-# Nên để là account hay user?
-app_name = 'account'
+app_name = 'auth'
 urlpatterns = [
     path('auth', include('knox.urls')),
     path('auth/signup', SignUpAPI.as_view()),
