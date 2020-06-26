@@ -6,34 +6,19 @@ import 'react-day-picker/lib/style.css';
 export default class RangeSelectCalendar extends React.Component {
     static defaultProps = {
         numberOfMonths: 2,
-    }; s
+    }
 
     constructor(props) {
-        super(props);
-        this.handleDayClick = this.handleDayClick.bind(this);
-        this.handleResetClick = this.handleResetClick.bind(this);
-        this.state = this.getInitialState();
+        super(props)
+        console.log(this.props)
     }
 
-    getInitialState() {
-        return {
-            from: undefined,
-            to: undefined,
-        };
-    }
-
-    handleDayClick(day) {
-        const range = DateUtils.addDayToRange(day, this.state);
-        this.setState(range);
-        this.props.onDayClick(range)
-    }
-
-    handleResetClick() {
-        this.setState(this.getInitialState());
+    handleDayClick(day, props) {
+        props.onDayClick(DateUtils.addDayToRange(day, props.defaultValue))
     }
 
     render() {
-        const { from, to } = this.state;
+        const { from, to } = this.props.defaultValue;
         const modifiers = { start: from, end: to };
         return (
             <div className="RangeExample">
@@ -55,7 +40,7 @@ export default class RangeSelectCalendar extends React.Component {
                     numberOfMonths={this.props.numberOfMonths}
                     selectedDays={[from, { from, to }]}
                     modifiers={modifiers}
-                    onDayClick={this.handleDayClick}
+                    onDayClick={day => this.handleDayClick(day, this.props)}
                 />
                 <Helmet>
                     <style>{`

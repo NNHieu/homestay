@@ -24,6 +24,6 @@ export default function CloudinaryGallery(props) {
             );
         }
     }
-    return <div id="my-gallery" style={{ maxWidth: "80%" }} />
+    return <div id="my-gallery" style={{ maxWidth: "90%" }} />
 }
 

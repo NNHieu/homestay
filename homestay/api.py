@@ -5,12 +5,14 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
 from rest_framework.serializers import ValidationError as SerialValidationError
 from util.utils import Searcher
+
 import re
+import logging
 
 from user import permissions as user_permission
 
 page_size = 10
-
+logger = logging.getLogger(__name__)
 
 class HomestayViewset(viewsets.ModelViewSet):
     """
@@ -77,6 +79,7 @@ class HomestayDetailAPI(generics.RetrieveAPIView):
 
 def process_upload_data(request):
     data = request.data
+    logger.info(data)
     basic_info = data.get('basicInfo')
     description = data.get('description')
     return {
